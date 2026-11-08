@@ -1,0 +1,20 @@
+.env
+.env.*
+!.env.example
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+.DS_Store
+.clinerules
+
+# raw API cache (re-fetchable); the derived weekly panel is committed
+data/raw/
+data/cache/
+mlruns/
+model/saved_models/
+
+# local runtime state from the old Airflow setup
+airflow/
+logs/
