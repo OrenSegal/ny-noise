@@ -7,7 +7,7 @@
 web
 
 ## Stack
-Streamlit (Python), deployed on Streamlit Community Cloud from the public GitHub repo OrenSegal/ny-noise. Charts are Plotly; custom CSS is injected through `st.markdown`. The app reads committed tables in `data/` only: no network, no secrets, no model files at runtime.
+Python pipeline (pandas, scikit-learn, geopandas, h3, shap) exports static JSON to `web/public/data/`. The web app is React + Vite with deck.gl, MapLibre (CARTO dark basemap) and Observable Plot, deployed on Vercel at ny-noise.vercel.app. No runtime API, no secrets. Chosen by the owner on 2026-11-07 ("react vibes", immersive, sound-like).
 
 ## Users
 Two audiences of equal weight, confirmed by the owner:
@@ -15,7 +15,7 @@ Two audiences of equal weight, confirmed by the owner:
 - NYC residents, community boards and venue operators who want next week's complaint outlook for a ZIP code compared with its own normal.
 
 ## Product Purpose
-Forecast next week's 311 noise complaints for 177 NYC ZIP codes with calibrated 80% intervals, and show how good that forecast is. Success: a visitor finds their ZIP's outlook in seconds, and a reviewer can verify within a minute that the evaluation is leakage-safe and honestly reported.
+Show where New York is loud and what goes with it near any point (a spatial model on a ~250 m hex grid over 24 urban factors), forecast next week's 311 noise complaints for 177 ZIP codes with calibrated 80% intervals, and show how good both are. Success: a visitor finds their ZIP's outlook in seconds, and a reviewer can verify within a minute that the evaluation is leakage-safe and honestly reported.
 
 ## Positioning
 Most noise dashboards show a heat map of past complaints. This one forecasts, scores itself against naive baselines in the open (including the quarter it loses), and says plainly that complaints measure reporting, not decibels.
@@ -25,7 +25,8 @@ Weekly cadence: data rebuilds every Tuesday by GitHub Action once the prior Mond
 
 ## Capabilities and Constraints
 - Data on hand (committed): weekly ZIP panel, per-ZIP forecast with 10th/90th percentiles, 52-week backtest predictions with intervals, weekday-by-hour-by-type counts, ZIP mean positions, metrics.json (holdout, rolling-origin quarters, interval coverage overall and by ZIP, permutation importance), manifest.
-- No basemap tiles or WebGL: the map is a longitude/latitude scatter so it renders everywhere.
+- The spatial model explains and never forecasts; its effects are associations. The two models are never blurred in copy.
+- Repeat callers are de-duplicated (address, day, type) for the spatial model.
 - The target is complaint counts, never decibels. This must stay visible on the first screen.
 - Terminology: WAPE (weighted absolute percentage error), MASE (scaled against seasonal-naive error), sMAPE, coverage, baseline, holdout, rolling origin.
 - Honest result to preserve: the model is about 4% better than last-week persistence on weighted error, wins 3 of 4 quarters, loses the Nov 2025 quarter that holds an unexplained citywide surge, and has worse RMSE and R2 than persistence.

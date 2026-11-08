@@ -23,7 +23,7 @@ Original Readme promise and what v1 does with it:
 | Fetch NYC open data | Kept: 311 noise complaints, Jan 2022 to present | The only source with citywide, long-run, geocoded noise signal |
 | Clean and preprocess | Kept: ZIP validation, dense weekly panel, zero-fill | Missing weeks are real zeros; dense panel makes lags correct |
 | Feature engineering | Kept, redefined: lags, rolling mean, same-week-last-year, seasonality | Features available at prediction time only |
-| Noise score from subway/highway/construction/flights | Cut | Built on placeholder coordinates and a hand-set weighted sum; the model then "predicted" its own inputs (target leakage). OpenSky now needs OAuth. |
+| Noise score from subway/highway/construction/flights | Rebuilt in v2 as a spatial model | v1 cut the hand-weighted score (placeholder coordinates, target leakage). v2 measures 24 real factors per ~250 m cell and explains complaints with spatial CV and SHAP. Live flight tracks still out (OpenSky needs OAuth); airports and heliports enter as distances. |
 | Decibel levels | Cut | 311 has no measurements. The dashboard says so on its first screen. |
 | Train and compare models | Kept: random forest vs gradient boosting, time-blocked CV, naive baselines | |
 | Heatmap dashboard | Kept as ZIP bubble map + explorer + time-of-week + model card | |
@@ -46,7 +46,7 @@ Modelling
 - M5. Fixed seeds; `python -m nynoise.model` reproduces `data/metrics.json` from the committed panel.
 
 Product
-- P1. Deployed on Streamlit Community Cloud with zero secrets and no API calls at runtime: it reads committed tables.
+- P1. Deployed as a static React app on Vercel with zero secrets and no API calls at runtime: it reads exported JSON.
 - P2. First screen: forecast total, holdout error vs baseline, interval coverage, data freshness.
 - P3. Views: forecast map, ZIP explorer with backtest and interval, weekday-by-hour heatmap by type, model card with limitations.
 - P4. Weekly refresh runs in CI; CI runs tests and boots the dashboard.
@@ -64,3 +64,9 @@ Product
 - 311 behavior shifts (policy changes, app changes). Mitigation: rolling features and a yearly holdout; retraining weekly.
 - ZIP is a postal unit, not a neighborhood. Acceptable for v1; a later version could use community districts or H3 cells.
 - Next candidates: weather and holiday covariates, community-district geography, per-type forecasts.
+
+## v2 additions (2026-11-07)
+
+- S1. Spatial model on H3 resolution-9 cells: complaint-days over 104 weeks against 24 measured factors; spatial block CV; skill reported over a units-only baseline; per-type sanity checks; SHAP drivers per cell as multipliers.
+- S2. Immersive map: thermal hex terrain, rings at hotspots, lenses (complaints, expected, surprise, single factor), month replay, click-for-drivers.
+- Non-goals unchanged: no causal claims, no decibels, no real-time.

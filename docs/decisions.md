@@ -39,7 +39,7 @@ Random forest and histogram gradient boosting, small grids, same features. Enoug
 Socrata API -> data/raw/YYYY-MM.csv.gz   (cached, gitignored, idempotent)
             -> data/weekly_panel.csv.gz  (validated, committed)
             -> model -> metrics.json, backtest.csv.gz, forecast.csv (committed)
-            -> streamlit_app.py          (reads committed tables only)
+            -> web/public/data/*.json    (export) -> React app on Vercel
 ```
 
 - Monthly raw files make re-runs cheap and the API throttling survivable; the most recent ~5 weeks are always re-fetched because 311 rows are revised after creation.
@@ -71,3 +71,22 @@ The first version used a tiled map. It could not be verified in the preview envi
 The dashboard follows a statistical-atlas world (classed tints, framed plates, italic captions under figures) because the job is reading data, not browsing. Two choices matter beyond looks. The map's legend is a histogram of ZIPs per class that doubles as the filter, so the distribution and the control are one object. Error is shown as a race with the baselines on the same axes, with the surge weeks shaded, so the weak quarter cannot be missed. Every figure on the Scorecard is computed from the same backtest table the headline reads, and a test asserts the end of the cumulative curve equals the reported WAPE.
 
 Tried and removed: a click-on-bubble pin on the map (selection events did not register in the preview environment and could not be verified, so ZIPs are pinned from the table or the picker); a tiled basemap (see 11).
+
+## 13. A second model for "why here", on a hex grid
+
+The forecast says how many complaints a ZIP will get; it cannot say why a block is loud. A cross-sectional model on H3 resolution-9 cells (~174 m edge, the "250 m" grain) explains two years of complaints from 24 measured features: road class and truck routes (OSM, NYC DOT), surface and elevated rail, stations, airports and heliports (OSM), bar, restaurant, venue and off-premises liquor licences (NY SLA), after-hours construction variances (NYC DOB), fire stations and hospitals for sirens, parks, and PLUTO built form. Distances are computed in EPSG:2263 feet, never haversine to a line.
+
+- Exposure first: residential units are both a feature and the baseline; the headline is the gain over a units-only model, because more people means more callers.
+- Spatial cross-validation by H3 resolution-6 parents. Random folds are reported beside it (0.74 against 0.67 deviance explained) to show the leak.
+- Poisson gradient boosting; SHAP values are in log-rate space and shown as multipliers.
+- Per-type sanity checks (helicopter vs heliports, commercial vs bars, vehicle vs truck routes) must point the right way before any driver is shown. All five do; vehicle vs truck routes is weak.
+- Language is "associated with" throughout. Distances to rare features (three airports, a handful of stadiums) rank high partly as location proxies; the app says so.
+- Rejected: per-ZIP factor regression (too coarse to say what is near a point), causal claims, a GLM as the primary model (kept as an option; the GBM with SHAP gave per-cell explanations at better held-out fit).
+
+## 14. Repeat callers
+
+Raw 311 counts are dominated by a few addresses: one Bronx building filed about 150,000 residential complaints in two years, one Upper West Side address most of the city's helicopter complaints. For the spatial model each exact address counts at most once per day per complaint type ("complaint-days"), which cut the window from 1.6M reports to 1.05M complaint-days. Raw reports stay available and the app shows them when they differ a lot. The ZIP forecast still models raw volume, since that is what 311 receives; this is listed as a limitation.
+
+## 15. From Streamlit to React + deck.gl
+
+The owner asked for an immersive, sound-like experience rather than a dashboard of circles. Streamlit could not run a GPU heat terrain with animated rings at frame rate, and its plot selection events proved unreliable. The pipeline now exports compact JSON (about 2.5 MB, 0.7 MB gzipped) and a static React app renders it with deck.gl (H3 hexagons, rings), MapLibre (CARTO dark basemap) and Observable Plot, deployed on Vercel. The Streamlit app was removed. Motion stops under reduced-motion preferences.
