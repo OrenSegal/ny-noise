@@ -2,7 +2,7 @@
 
 export type Cells = {
   months: string[]; window: [string, string]; years: number; features: string[]; types: string[];
-  h3: string[]; complaints: number[]; reports: number[]; expected: number[]; oof: number[]; base: number[]; units: number[]; night: number[];
+  h3: string[]; complaints: number[]; days: number[]; reports: number[]; top_share: number[]; expected: number[]; oof: number[]; base: number[]; units: number[]; night: number[];
   type_counts: number[][]; monthly: number[][]; x: number[][];
   drivers: [number, number][][]; quieters: [number, number][][];
 };

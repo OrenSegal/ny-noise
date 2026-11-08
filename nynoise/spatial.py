@@ -39,6 +39,7 @@ FEATURES = {
     "restaurant_exposure": ("Restaurants heard from homes", "Nightlife", "equivalents at 30 m"),
     "d_restaurant": ("Distance from homes to the nearest restaurant", "Nightlife", "ft"),
     "venue_exposure": ("Theatres, venues and nightclubs heard from homes", "Nightlife", "equivalents at 30 m"),
+    "dining_exposure": ("Outdoor dining (sidewalk, roadway) heard from homes", "Nightlife", "equivalents at 30 m"),
     "offprem_exposure": ("Bodegas and liquor stores near homes", "Business", "equivalents at 30 m"),
     "highway_exposure": ("Expressway traffic heard from homes", "Roads", "line-equivalents at 30 m"),
     "d_highway": ("Distance from homes to an open-air expressway", "Roads", "ft"),
@@ -47,7 +48,7 @@ FEATURES = {
     "rail_exposure": ("Above-ground rail heard from homes", "Rail and air", "line-equivalents at 30 m"),
     "elevated_exposure": ("Elevated rail heard from homes", "Rail and air", "line-equivalents at 30 m"),
     "d_elevated_rail": ("Distance from homes to elevated rail", "Rail and air", "ft"),
-    "n_stations": ("Rail and subway stations within 600 m", "Rail and air", "stations"),
+    "station_riders": ("Subway riders through stations within 300 m", "Rail and air", "million riders / yr"),
     "d_airport": ("Distance to LGA, JFK or EWR", "Rail and air", "ft"),
     "d_heliport": ("Distance to a heliport", "Rail and air", "ft"),
     "n_ahv": ("After-hours construction permits within 300 m", "Construction", "permits / 2 yrs"),
@@ -142,7 +143,7 @@ def fit(cells: pd.DataFrame) -> dict:
                              "importance": {k: round(float(v), 4) for k, v in st.items()}}
 
     metrics = {
-        "target": "noise complaints per hex cell over 104 weeks",
+        "target": "damped noise complaints per hex cell over 104 weeks (complaint-days, repeat addresses capped)",
         "by_time": by_time,
         "cells": int(len(X)), "cv": "GroupKFold(5) on H3 resolution-6 parents",
         "spatial_cv": {"full": _score(y, oof_full), "units_only": _score(y, oof_base)},

@@ -1,7 +1,7 @@
 import { type Cells, type Spatial, TYPE_COLORS, feet, fmt, pct, thermal } from "./data";
 import PlotFigure, { Plot, plotStyle } from "./Plot";
 
-const KEY_FACTS = ["highway_exposure", "d_highway", "d_elevated_rail", "bar_exposure", "d_bar", "d_restaurant", "n_ahv", "d_park"];
+const KEY_FACTS = ["highway_exposure", "d_highway", "d_elevated_rail", "bar_exposure", "d_bar", "dining_exposure", "station_riders", "n_ahv", "d_park"];
 
 function factValue(name: string, v: number) {
   return name.startsWith("d_") ? feet(v) : name.endsWith("_exposure") ? fmt(v, 2) : fmt(v);
@@ -43,13 +43,14 @@ export default function CellDrawer({ i, cells, spatial, zip, onClose }: {
         </button>
       </div>
       <div className="big">
-        <div><b>{fmt(perYear)}</b><span>complaint-days a year</span></div>
+        <div><b>{fmt(perYear)}</b><span>complaints a year, damped</span></div>
         <div><b>{fmt(expected)}</b><span>expected from its fabric</span></div>
         <div><b>{pct(cells.night[i])}</b><span>at night (22 to 06)</span></div>
       </div>
-      <p className="rank-line">More complaint-days than <b>{pct(pAll)}</b> of NYC blocks, and than <b>{pct(pNight)}</b> at night.</p>
+      <p className="rank-line">More complaints than <b>{pct(pAll)}</b> of NYC blocks, and than <b>{pct(pNight)}</b> at night.</p>
       <p className="verdict">This ~250 m cell is <b>{verdict}</b>. The expectation comes from a model that never saw this neighbourhood.
-        {cells.reports[i] > cells.complaints[i] * 1.5 && <> Raw reports were {fmt(cells.reports[i] / cells.years)} a year; repeat calls from one address on one day count once here.</>}</p>
+        {cells.reports[i] > cells.complaints[i] * 1.5 && <> Raw 311 reports: {fmt(cells.reports[i] / cells.years)} a year, from {fmt(cells.days[i] / cells.years)} address-days.
+          {cells.top_share[i] >= 0.25 && <> One address filed {pct(cells.top_share[i])} of them;</>} each address counts at most 24 times in two years here.</>}</p>
 
       <h3>What is associated with its noise</h3>
       {cells.drivers[i].length === 0 && <p className="verdict">No factor pushes this cell above the city's baseline.</p>}

@@ -199,7 +199,7 @@ function DayNight({ s }: { s: Bundle["spatial"] }) {
         y: { label: null, domain: order }, color: { domain: ["Day 06-22", "Night 22-06"], range: ["#FFB23E", "#8E5CF7"], legend: true },
         marks: [Plot.ruleY(order, { stroke: "#26304D" }), Plot.dot(rows, { y: "label", x: "v", fill: "when", r: 5, tip: true })],
       })} />
-      <figcaption>Two more models, fitted on day and on night complaint-days separately (spatial CV deviance explained: day {bt.day.spatial_cv.d2_poisson.toFixed(2)},
+      <figcaption>Two more models, fitted on day and on night complaints separately (spatial CV deviance explained: day {bt.day.spatial_cv.d2_poisson.toFixed(2)},
         night {bt.night.spatial_cv.d2_poisson.toFixed(2)}). A factor whose purple dot sits right of its amber one matters more at night. Residential units are left out to keep the scale readable.</figcaption>
     </figure>
   );
