@@ -81,8 +81,8 @@ export function classify(cells: Cells, spatial: Spatial, lens: Lens, month: numb
   const labels = Array.from({ length: k }, (_, j) =>
     j === 0 ? `under ${format(breaks[0])}` : j === k - 1 ? `${format(breaks[k - 2])} and up` : `${format(breaks[j - 1])} to ${format(breaks[j])}`);
   const meta = spatial.features[fname];
-  const title = lens === "complaints" ? (month >= 0 ? "Complaint-days, annualised month" : tod === "night" ? "Night complaint-days a year (22-06)" : tod === "day" ? "Day complaint-days a year (06-22)" : "Complaint-days a year")
-    : lens === "expected" ? "Expected complaint-days a year, from the block's fabric"
+  const title = lens === "complaints" ? (month >= 0 ? "Complaints, annualised month" : tod === "night" ? "Night complaints a year (22-06)" : tod === "day" ? "Day complaints a year (06-22)" : "Complaints a year")
+    : lens === "expected" ? "Expected complaints a year, from the block's fabric"
     : lens === "anomaly" ? "Observed against expected" : meta?.label ?? fname;
   const unit = lens === "factor" ? meta?.unit ?? "" : lens === "anomaly" ? "ratio" : "per year";
   return { value, cls, breaks, labels, colors, counts, title, unit, format };

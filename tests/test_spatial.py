@@ -34,6 +34,17 @@ def test_repeat_caller_counts_once_per_day():
     assert row["reports"] == 4 and row["complaints"] == 3 and row["helicopter"] == 2
 
 
+def test_one_address_is_capped_but_neighbours_are_not():
+    days = pd.date_range("2025-01-01", periods=100, freq="D")
+    loud = pd.DataFrame({"lat": 40.79, "lon": -73.97, "created": days})  # one caller, 100 days
+    quiet = pd.DataFrame({"lat": 40.79 + np.arange(10) * 1e-5, "lon": -73.9701, "created": days[:10]})  # 10 households once
+    raw = pd.concat([loud, quiet]).assign(zip="10025", type="Noise - Residential")
+    cells, _, _ = factors.complaint_cells(raw, pd.Timestamp("2025-01-01"), pd.Timestamp("2025-06-01"))
+    row = cells.iloc[0]
+    assert row["complaint_days"] == 110 and row["complaints"] == factors.REPEAT_CAP + 10
+    assert row["top_address_share"] == round(100 / 110, 3)
+
+
 def test_distance_and_length_on_known_geometry():
     line = np.array([shapely.LineString([(10, -50), (10, 50)])], dtype=object)
     pts = np.array([[0.0, 0.0], [30.0, 0.0]])
@@ -68,6 +79,8 @@ def synthetic_cells(n_side=22, seed=0):
     rate = np.exp(0.6 * np.log1p(df["units"]) + 0.25 * df["bar_exposure"] - 2)
     df["complaints"] = rng.poisson(rate)
     df["night"] = rng.binomial(df["complaints"], 0.3)
+    df["complaint_days"] = df["reports"] = df["complaints"]
+    df["top_address_share"] = 0.2
     for t in ("residential", "street", "commercial", "vehicle", "helicopter"):
         df[t] = rng.poisson(rate / 5)
     return df

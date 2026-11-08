@@ -123,6 +123,15 @@ def fetch_all(since: str) -> dict:
             'nwr["aeroway"="heliport"];nwr["leisure"="stadium"];nwr["amenity"~"^(nightclub|music_venue|fire_station|hospital)$"];'
             'node["railway"="station"];node["station"="subway"];')),
         "parks": _cached_json("osm_parks", lambda: _overpass('way["leisure"="park"];relation["leisure"="park"];')),
+        # Open Restaurants: sidewalk and roadway seating approved 2020-2023 (the programme's whole record)
+        "dining": _cached_json("dining", lambda: _socrata(f"https://{nyc}/pitm-atqc.json", {
+            "$select": "latitude,longitude", "$order": "objectid",
+            "$where": "latitude IS NOT NULL AND (approved_for_sidewalk_seating='yes' OR approved_for_roadway_seating='yes')"})),
+        # MTA subway ridership, summed over the last full year per station complex
+        "riders": _cached_json("riders", lambda: _socrata("https://data.ny.gov/resource/wujg-7c2s.json", {
+            "$select": "station_complex_id,avg(latitude) as lat,avg(longitude) as lon,sum(ridership) as riders",
+            "$where": "transit_timestamp >= '2024-01-01T00:00:00' AND transit_timestamp < '2025-01-01T00:00:00'",
+            "$group": "station_complex_id", "$order": "station_complex_id"})),
     }
 
 
@@ -237,9 +246,16 @@ def length_within(xy: np.ndarray, lines: np.ndarray, r: float = R_NEAR) -> np.nd
 
 # ------------------------------------------------------------------ assembling cells
 HEAT_RES = 10  # ~66 m edge: the resolution of the map's density layer
+# One voice per address: an exact location counts at most this many complaint-days over the two-year window
+# (about one a month). Above it, each of its complaint-days is down-weighted so the address totals the cap.
+REPEAT_CAP = 24
 
 def complaint_cells(raw: pd.DataFrame, start: pd.Timestamp, end: pd.Timestamp):
-    """Complaint-days per res-9 cell (with types, night counts, months) and per res-10 cell for the heat layer."""
+    """Damped complaints per res-9 cell (with types, night counts, months) and per res-10 cell for the heat layer.
+
+    Two steps keep a few callers from defining a block: each exact address counts at most once per day per
+    type ("complaint-days"), then addresses above REPEAT_CAP complaint-days are scaled down to the cap.
+    """
     d = raw[(raw["created"] >= start) & (raw["created"] < end)].dropna(subset=["lat", "lon"])
     d = d[(d["lat"].between(BBOX[0], BBOX[2])) & (d["lon"].between(BBOX[1], BBOX[3]))]
     fine = [h3.latlng_to_cell(a, b, HEAT_RES) for a, b in zip(d["lat"].to_numpy(), d["lon"].to_numpy())]
@@ -250,16 +266,21 @@ def complaint_cells(raw: pd.DataFrame, start: pd.Timestamp, end: pd.Timestamp):
     # Repeat callers: single addresses file thousands of reports (one Bronx building ~200 a day). Count each
     # exact address at most once per day per type ("complaint-days") so a few callers cannot define a block.
     d = d.assign(day=d["created"].dt.normalize()).drop_duplicates(["lat", "lon", "day", "type"])
-    wide = d.pivot_table(index="h3", columns="group", values="lat", aggfunc="size", fill_value=0)
-    wide["complaints"] = wide.sum(axis=1)
+    days = d.groupby("h3").size()
+    per_addr = d.groupby(["lat", "lon"])["day"].transform("size")
+    d = d.assign(w=np.minimum(1.0, REPEAT_CAP / per_addr))
+    wide = d.pivot_table(index="h3", columns="group", values="w", aggfunc="sum", fill_value=0).round().astype(int)
+    wide["complaints"] = d.groupby("h3")["w"].sum().reindex(wide.index).round().astype(int)
+    wide["complaint_days"] = days.reindex(wide.index).fillna(0).astype(int)
     wide["reports"] = reports.reindex(wide.index).fillna(0).astype(int)
+    wide["top_address_share"] = (d.groupby(["h3", "lat", "lon"]).size().groupby("h3").max() / days).reindex(wide.index).round(3)
     is_night = (d["created"].dt.hour >= 22) | (d["created"].dt.hour < 6)
-    night = d[is_night].groupby("h3").size()
-    wide["night"] = night.reindex(wide.index).fillna(0).astype(int)
-    wide["night_share"] = (wide["night"] / wide["complaints"]).round(3)
-    monthly = d.groupby(["h3", "month"]).size().unstack(fill_value=0)
-    wide["monthly"] = monthly.reindex(wide.index).fillna(0).astype(int).values.tolist()
-    heat = pd.DataFrame({"all": d.groupby("h3_fine").size(), "night": d[is_night].groupby("h3_fine").size()}).fillna(0).astype(int)
+    night = d[is_night].groupby("h3")["w"].sum()
+    wide["night"] = night.reindex(wide.index).fillna(0).round().astype(int)
+    wide["night_share"] = (wide["night"] / wide["complaints"].clip(lower=1)).round(3)
+    monthly = d.groupby(["h3", "month"])["w"].sum().unstack(fill_value=0)
+    wide["monthly"] = monthly.reindex(wide.index).fillna(0).round(1).values.tolist()
+    heat = pd.DataFrame({"all": d.groupby("h3_fine")["w"].sum(), "night": d[is_night].groupby("h3_fine")["w"].sum()}).fillna(0).round(2)
     ll = np.array([h3.cell_to_latlng(c) for c in heat.index])
     heat = heat.assign(lat=ll[:, 0].round(5), lon=ll[:, 1].round(5)).reset_index(names="h3")
     return wide.reset_index(), list(monthly.columns), heat
@@ -299,15 +320,25 @@ def line_exposure(at_xy: np.ndarray, lines: np.ndarray) -> np.ndarray:
     return np.where(d <= LINE_MAX_FT, D0_FT / np.maximum(d, DMIN_FT), 0.0)
 
 
-def fine_exposure(lots: pd.DataFrame, values: dict[str, np.ndarray]) -> pd.DataFrame:
-    """Unit-weighted mean exposure of homes per res-10 cell (~66 m): the map's high-resolution layer."""
-    fine = [h3.latlng_to_cell(a, b, HEAT_RES) for a, b in zip(lots["latitude"].to_numpy(), lots["longitude"].to_numpy())]
-    w = lots["unitsres"].to_numpy()
-    df = pd.DataFrame({"h3": fine, "w": w, **{k: v * w for k, v in values.items()}}).groupby("h3").sum()
-    out = df[list(values)].div(df["w"], axis=0).round(3)
-    out["units"] = df["w"].astype(int)
-    ll = np.array([h3.cell_to_latlng(c) for c in out.index])
-    return out.assign(lat=ll[:, 0].round(5), lon=ll[:, 1].round(5)).reset_index()
+def field_exposure(cells: pd.Series, sources: dict) -> pd.DataFrame:
+    """Exposure on a continuous ~66 m grid: every res-10 child of the model's cells, homes or not.
+
+    The map's exposure layer is a field over the city, so an expressway is drawn along its whole length
+    (parks, industrial land, the BQE trench) rather than only where homes happen to sample it.
+    """
+    fine = sorted({c for p in cells for c in h3.cell_to_children(p, HEAT_RES)})
+    ll = np.array([h3.cell_to_latlng(c) for c in fine])
+    gxy = to_ft(ll[:, 0], ll[:, 1])
+    out = pd.DataFrame({"h3": fine, "lat": ll[:, 0].round(5), "lon": ll[:, 1].round(5)})
+    for name, (fn, geoms) in sources.items():
+        out[name] = fn(gxy, geoms).round(3)
+    return out
+
+
+def _latlon_points(rows: list[dict]) -> np.ndarray:
+    df = pd.DataFrame(rows).apply(pd.to_numeric, errors="coerce").dropna()
+    df = df[df["latitude"].between(BBOX[0], BBOX[2]) & df["longitude"].between(BBOX[1], BBOX[3])]
+    return to_ft(df["latitude"], df["longitude"])
 
 
 def homes_mean(lots: pd.DataFrame, values: np.ndarray, cells: pd.DataFrame, fallback: np.ndarray) -> np.ndarray:
@@ -346,12 +377,13 @@ def build_cells(raw: pd.DataFrame, src: dict, end: pd.Timestamp):
     plu = pluto_cells(pluto)
     cells = comp.merge(plu, on="h3", how="outer")
     cells = cells[(cells["units"].fillna(0) > 0) | (cells["complaints"].fillna(0) > 0)].copy()
-    count_cols = [c for c in comp.columns if c not in ("h3", "monthly", "night_share")]  # includes "night"
+    count_cols = [c for c in comp.columns if c not in ("h3", "monthly", "night_share", "top_address_share")]  # includes "night"
     cells[count_cols] = cells[count_cols].fillna(0).astype(int)
     for c in ("units", "retail_area", "commercial_area", "lots"):
         cells[c] = cells[c].fillna(0)
     cells["floors"] = cells["floors"].fillna(0)
     cells["night_share"] = cells["night_share"].fillna(0)
+    cells["top_address_share"] = cells["top_address_share"].fillna(0)
     cells["monthly"] = cells["monthly"].apply(lambda v: v if isinstance(v, list) else [0] * len(months))
     ll = np.array([h3.cell_to_latlng(c) for c in cells["h3"]])
     cells["lat"], cells["lon"] = ll[:, 0], ll[:, 1]
@@ -382,10 +414,12 @@ def build_cells(raw: pd.DataFrame, src: dict, end: pd.Timestamp):
         f[f"{name}_exposure"] = homes_mean(lots, lot_exp[name], f, line_exposure(xy, geoms))
     f["d_highway"] = homes_mean(lots, nearest_distance(lot_xy, highway), f, nearest_distance(xy, highway))
     f["d_elevated_rail"] = homes_mean(lots, nearest_distance(lot_xy, elevated), f, nearest_distance(xy, elevated))
-    f["n_stations"] = count_within(xy, osm_points(pts, lambda t: t.get("railway") == "station" or t.get("station") == "subway"), 2000)
+    rid = pd.DataFrame(src["riders"]).apply(pd.to_numeric, errors="coerce").dropna()
+    f["station_riders"] = count_within(xy, to_ft(rid["lat"], rid["lon"]), R_NEAR, weights=rid["riders"] / 1e6)  # millions a year within 300 m
     # Venues are measured where people live: at every residential lot, averaged over the cell's homes by units.
     venues = {"bar": sla["bars"], "restaurant": sla["restaurants"], "offprem": sla["off_premises"],
-              "venue": np.vstack([sla["venues"], osm_points(pts, lambda t: t.get("amenity") in ("nightclub", "music_venue"))])}
+              "venue": np.vstack([sla["venues"], osm_points(pts, lambda t: t.get("amenity") in ("nightclub", "music_venue"))]),
+              "dining": _latlon_points(src["dining"])}
     for name, vp in venues.items():
         lot_exp[name] = exposure(lot_xy, vp)
         f[f"{name}_exposure"] = homes_mean(lots, lot_exp[name], f, exposure(xy, vp))
@@ -400,7 +434,8 @@ def build_cells(raw: pd.DataFrame, src: dict, end: pd.Timestamp):
     f["d_fire_station"] = nearest_point_distance(xy, osm_points(pts, lambda t: t.get("amenity") == "fire_station"))
     f["d_hospital"] = nearest_point_distance(xy, osm_points(pts, lambda t: t.get("amenity") == "hospital"))
     f["d_park"] = nearest_distance(xy, osm_polygons(src["parks"]["elements"], min_area_ft2=107_639))  # >= 1 hectare
-    exposure_pts = fine_exposure(lots, {k: lot_exp[k] for k in ("highway", "elevated", "bar")})
+    exposure_pts = field_exposure(f["h3"], {"highway": (line_exposure, highway), "elevated": (line_exposure, elevated),
+                                            "bar": (exposure, venues["bar"])})
     return f.reset_index(drop=True), months, heat, exposure_pts
 
 

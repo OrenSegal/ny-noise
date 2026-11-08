@@ -106,3 +106,15 @@ The map's default view is now a flat heatmap built from H3 resolution-10 points 
 Madison Square Garden and Barclays Center are indoor arenas; crowds and traffic are the noise, not the event. Major venues of 1.5 ha or more from OpenStreetMap are split into open-air stadiums and indoor arenas (by name or a covered tag; Forest Hills Stadium stays open-air), with a distance to each.
 
 Time of day matters: 311 has a creation time, so night (22:00 to 06:00) complaint-days are counted per cell. The app filters the heatmap to day or night and the drawer gives a block's night percentile. Separate day and night spatial models are fitted with the same block CV; night is explained slightly better (D² 0.69 vs 0.61 for day), and airport distance and off-premises liquor density matter more at night, commercial floor area more by day.
+
+## 19. One voice per address
+
+Even after counting complaint-days, 1% of exact locations (2,545) filed 26% of them, and a block's colour could come from one person. Each address now counts at most 24 complaint-days over the two-year window (about one a month); above that, each of its days is scaled down so the address totals 24. Timing is kept, so day/night and month views stay consistent. This cut 1.05M complaint-days to 784k. The spatial model got markedly more predictable from the city's fabric (block-CV D² 0.678 to 0.758; gain over housing alone 0.070 to 0.098), which is what removing reporter noise rather than signal should look like. The drawer still shows raw reports, address-days and the top address's share. Rejected: counting distinct addresses only (erases genuinely chronic sources) and per-capita rates (the model already conditions on housing; "observed / expected" is the per-fabric view).
+
+## 20. A field, not points
+
+The exposure layer is computed on every ~65 m grid cell in the modelled area, homes or not, so an expressway is drawn along its whole open-air length out to 500 m, through parks and industrial land. Both heat layers are rasterised in the browser into a ~50 m image with a Gaussian splat (exposure as a weighted mean, complaints as a density on a square-root scale fixed from the whole city) and drawn as one bitmap; the GPU interpolates it at every zoom. deck.gl's HeatmapLayer was dropped: its pixel-radius kernel left a lattice of dots at street zoom and re-scaled colours with every pan.
+
+## 21. Two more sources
+
+Open Restaurants sidewalk and roadway seating (NYC Open Data pitm-atqc, 2020-2023) enters as outdoor-dining exposure at homes, and 2024 MTA subway ridership (data.ny.gov wujg-7c2s, aggregated per station on the server) replaces a plain station count. Both add little after the existing nightlife and density features (importance 0.04 and 0.01), and are kept as measured nulls. Considered next: DOT traffic volume counts to weight roads by vehicles (patchy coverage), permitted street events, DOT street-works permits, and ACS renter share and income as reporting-propensity controls.

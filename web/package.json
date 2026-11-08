@@ -12,6 +12,7 @@
   "dependencies": {
     "@deck.gl/aggregation-layers": "^9.4.1",
     "@deck.gl/geo-layers": "^9.4.1",
+    "@deck.gl/layers": "^9.4.1",
     "@deck.gl/react": "^9.4.1",
     "@observablehq/plot": "^0.6.19",
     "deck.gl": "^9.4.1",

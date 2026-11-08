@@ -119,7 +119,7 @@ export default function App() {
     const ratio = (c.complaints[i] + 1) / (c.oof[i] + 1);
     const d = c.drivers[i][0];
     return `${zipOf(i) ? `Near ZIP ${zipOf(i)}\n` : ""}${classed.title}: ${classed.format(classed.value[i])}\n`
-      + `${fmt(c.complaints[i] / c.years)} complaint-days a year, ${fmt(c.oof[i] / c.years)} expected (${ratio.toFixed(2)}x)`
+      + `${fmt(c.complaints[i] / c.years)} complaints a year, ${fmt(c.oof[i] / c.years)} expected (${ratio.toFixed(2)}x)`
       + (d ? `\nTop association: ${label(d[0])} x${d[1].toFixed(2)}` : "");
   };
   const index = new Map(c.h3.map((h, i) => [h, i]));
@@ -148,14 +148,14 @@ export default function App() {
           <header className="masthead">
             <h1>New York noise, block by block</h1>
             <dl className="keystats">
-              <div><dt>complaint-days</dt><dd>{fmt(totalDays)}</dd></div>
+              <div><dt>complaints, damped</dt><dd>{fmt(totalDays)}</dd></div>
               <div><dt>blocks (~250 m)</dt><dd>{fmt(c.h3.length)}</dd></div>
               <div><dt>deviance explained</dt><dd>{s.spatial_cv.full.d2_poisson.toFixed(2)} <small>vs {s.spatial_cv.units_only.d2_poisson.toFixed(2)} housing only</small></dd></div>
               <div><dt>forecast next week</dt><dd>{fmt(nextWeek)}</dd></div>
             </dl>
             <Search onPick={findAddress} />
             {found && <p className="found">{found}</p>}
-            <p className="fine">311 reports, not decibels. One address counts once per day per type. {c.window[0]} to {c.window[1]}.</p>
+            <p className="fine">311 reports, not decibels. Each address counts once a day per type and at most 24 times in two years, so a few repeat callers cannot paint a block. {c.window[0]} to {c.window[1]}.</p>
           </header>
 
           <aside className="rail" aria-label="Map lens and legend">
@@ -183,13 +183,13 @@ export default function App() {
             )}
             {heat ? (
               <div className="legend">
-                <div className="legend-title">{lens === "exposure" ? `${SOURCES[source]}: measured at homes` : `${classed.title}: density`}</div>
+                <div className="legend-title">{lens === "exposure" ? `${SOURCES[source]}: noise field` : `${classed.title}: density`}</div>
                 <div className="ramp" style={{ background: rampCss() }} />
                 <div className="ends"><span>less</span><span>more</span></div>
                 <div className="legend-foot">{lens === "exposure"
-                  ? source === "bar" ? "Each bar counts (30 m / distance)², summed at every home: a bar 30 m away counts 1, at 60 m a quarter."
-                    : "Each home scores 30 m / distance to the nearest line, so traffic falls off about 3 dB per doubling. Tunnels excluded. From geometry, not complaints: people rarely call 311 about a constant highway."
-                  : "Smoothed complaint-days on ~65 m cells. Switch to Blocks for exact numbers per ~250 m block."}</div>
+                  ? source === "bar" ? "Each bar counts (30 m / distance)², summed at every point: a bar 30 m away counts 1, at 60 m a quarter, nothing past 150 m."
+                    : "Every point scores 30 m / distance to the nearest line, so traffic falls off about 3 dB per doubling, out to 500 m. Tunnels excluded. From geometry, not complaints: people rarely call 311 about a constant highway."
+                  : "Smoothed complaints on ~65 m cells, repeat callers capped. Switch to Blocks for exact numbers per ~250 m block."}</div>
               </div>
             ) : (
             <div className="legend">
@@ -221,7 +221,7 @@ export default function App() {
                     <td className="rank">{r + 1}</td><td>{zipOf(i) ?? "—"}</td><td className="num">{classed.format(classed.value[i])}</td>
                   </tr>))}</tbody>
               </table>
-              <div className="legend-foot">{lens === "anomaly" ? "Blocks expecting 25+ complaint-days a year. " : ""}Select a row to zoom to it.</div>
+              <div className="legend-foot">{lens === "anomaly" ? "Blocks expecting 25+ complaints a year. " : ""}Select a row to zoom to it.</div>
             </aside>
           )}
 
@@ -253,7 +253,7 @@ export default function App() {
         <p>Data: NYC Open Data 311 service requests ({b.manifest.raw_rows.toLocaleString()} noise complaints since {b.manifest.first_week}), NYC DOB after-hours construction variances,
           NY State Liquor Authority active licences, NYC DOT truck routes, NYC PLUTO, OpenStreetMap contributors. Basemap © CARTO, © OpenStreetMap.
           Built weekly from <a href="https://github.com/OrenSegal/ny-noise">github.com/OrenSegal/ny-noise</a>, where the method, tests and decisions live.</p>
-        <p>Use the data: <button className="linkish" onClick={() => downloadCsv(b)}>download every block as CSV</button> (complaint-days, expected, ratio, night share and all 24 factors),
+        <p>Use the data: <button className="linkish" onClick={() => downloadCsv(b)}>download every block as CSV</button> (damped complaints, complaint-days, raw reports, expected, ratio, night share and all 26 features),
           or the <a href="https://github.com/OrenSegal/ny-noise/tree/main/data">source tables on GitHub</a>. Address search uses <a href="https://geosearch.planninglabs.nyc/">NYC Planning GeoSearch</a>.</p>
       </footer>
     </>

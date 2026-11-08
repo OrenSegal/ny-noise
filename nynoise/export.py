@@ -37,11 +37,12 @@ def cells_json(cells: pd.DataFrame, scored: pd.DataFrame, meta: dict) -> dict:
         "features": feats, "types": types,
         "h3": c["h3"].tolist(),
         "complaints": c["complaints"].astype(int).tolist(),
-        "reports": c["reports"].astype(int).tolist() if "reports" in c else c["complaints"].astype(int).tolist(),
+        "reports": c["reports"].astype(int).tolist(),
+        "days": c["complaint_days"].astype(int).tolist(), "top_share": _r(c["top_address_share"], 2),
         "expected": _r(c["expected"], 1), "oof": _r(c["oof_expected"], 1), "base": _r(c["base_expected"], 1),
         "units": c["units"].astype(int).tolist(), "night": _r(c["night_share"], 2),
         "type_counts": [c[t].astype(int).tolist() for t in types],
-        "monthly": [as_list(m) for m in c["monthly"]],
+        "monthly": [[round(v, 1) for v in as_list(m)] for m in c["monthly"]],
         "x": [_r(X[f], 2) for f in feats],
         "drivers": [[[fidx[f], m] for f, m in as_list(d)] for d in c["drivers"]],
         "quieters": [[[fidx[f], m] for f, m in as_list(d)] for d in c["quieters"]],
@@ -49,10 +50,10 @@ def cells_json(cells: pd.DataFrame, scored: pd.DataFrame, meta: dict) -> dict:
 
 
 def heat_json(complaints: pd.DataFrame, exposure: pd.DataFrame) -> dict:
-    """~66 m points for the map's density layers: complaint-days (all, night) and measured exposure at homes."""
-    ex = exposure[exposure[["highway", "elevated", "bar"]].sum(axis=1) > 0]
+    """~66 m points for the map's density layers: damped complaints (all, night) and the exposure field."""
+    ex = exposure[exposure[["highway", "elevated", "bar"]].sum(axis=1) > 0]  # empty grid points draw nothing anyway
     return {"complaints": {"lat": complaints["lat"].tolist(), "lon": complaints["lon"].tolist(),
-                           "all": complaints["all"].astype(int).tolist(), "night": complaints["night"].astype(int).tolist()},
+                           "all": _r(complaints["all"], 2), "night": _r(complaints["night"], 2)},
             "exposure": {"lat": ex["lat"].tolist(), "lon": ex["lon"].tolist(),
                          **{k: _r(ex[k], 3) for k in ("highway", "elevated", "bar")}}}
 
