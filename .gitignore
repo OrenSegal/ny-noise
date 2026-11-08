@@ -18,3 +18,9 @@ model/saved_models/
 # local runtime state from the old Airflow setup
 airflow/
 logs/
+
+# web app
+web/node_modules/
+web/dist/
+.vercel/
+.claude/

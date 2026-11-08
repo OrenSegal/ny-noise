@@ -1,313 +1,157 @@
 {
   "schemaVersion": 2,
   "generatedAt": "2026-11-07T00:00:00Z",
-  "title": "Design System: NYC Noise Forecast",
+  "title": "Design System: NYC Noise",
   "extensions": {
     "colorMeta": {
-      "ink": {
-        "role": "neutral",
-        "displayName": "Navy Ink",
-        "canonical": "#14213D",
-        "tonalRamp": [
-          "#080D18",
-          "#0C1425",
-          "#101A31",
-          "#14213D",
-          "#434D64",
-          "#727A8B",
-          "#A1A6B1",
-          "#D0D3D8"
-        ]
-      },
-      "paper": {
-        "role": "neutral",
-        "displayName": "Map Paper",
-        "canonical": "#EEF1ED",
-        "tonalRamp": [
-          "#5F605F",
-          "#8F918E",
-          "#BEC1BE",
-          "#EEF1ED",
-          "#F1F4F1",
-          "#F5F7F4",
-          "#F8F9F8",
-          "#FCFCFB"
-        ]
-      },
-      "rule": {
-        "role": "neutral",
-        "displayName": "Hairline Sage",
-        "canonical": "#C5CCC2",
-        "tonalRamp": [
-          "#4F524E",
-          "#767A74",
-          "#9EA39B",
-          "#C5CCC2",
-          "#D1D6CE",
-          "#DCE0DA",
-          "#E8EBE7",
-          "#F3F5F3"
-        ]
-      },
-      "muted": {
-        "role": "neutral",
-        "displayName": "Slate Caption",
-        "canonical": "#4A5468",
-        "tonalRamp": [
-          "#1E222A",
-          "#2C323E",
-          "#3B4353",
-          "#4A5468",
-          "#6E7686",
-          "#9298A4",
-          "#B7BBC3",
-          "#DBDDE1"
-        ]
-      },
-      "class-well-below": {
-        "role": "primary",
-        "displayName": "Deep Teal",
-        "canonical": "#1D5F7A",
-        "tonalRamp": [
-          "#0C2631",
-          "#113949",
-          "#174C62",
-          "#1D5F7A",
-          "#4A7F95",
-          "#779FAF",
-          "#A5BFCA",
-          "#D2DFE4"
-        ]
-      },
-      "class-below": {
-        "role": "secondary",
-        "displayName": "Pale Teal",
-        "canonical": "#86B4BC",
-        "tonalRamp": [
-          "#36484B",
-          "#506C71",
-          "#6B9096",
-          "#86B4BC",
-          "#9EC3C9",
-          "#B6D2D7",
-          "#CFE1E4",
-          "#E7F0F2"
-        ]
-      },
-      "class-near-typical": {
-        "role": "neutral",
-        "displayName": "Survey Buff",
-        "canonical": "#D9D5C3",
-        "tonalRamp": [
-          "#57554E",
-          "#828075",
-          "#AEAA9C",
-          "#D9D5C3",
-          "#E1DDCF",
-          "#E8E6DB",
-          "#F0EEE7",
-          "#F7F7F3"
-        ]
-      },
-      "class-above": {
-        "role": "tertiary",
-        "displayName": "Ochre Orange",
-        "canonical": "#E9A15E",
-        "tonalRamp": [
-          "#5D4026",
-          "#8C6138",
-          "#BA814B",
-          "#E9A15E",
-          "#EDB47E",
-          "#F2C79E",
-          "#F6D9BF",
-          "#FBECDF"
-        ]
-      },
-      "class-well-above": {
-        "role": "primary",
-        "displayName": "Vermilion",
-        "canonical": "#B3392B",
-        "tonalRamp": [
-          "#481711",
-          "#6B221A",
-          "#8F2E22",
-          "#B3392B",
-          "#C26155",
-          "#D18880",
-          "#E1B0AA",
-          "#F0D7D5"
-        ]
-      },
-      "surface-plate": {
-        "role": "neutral",
-        "displayName": "Plate Stock",
-        "canonical": "#F7F9F6",
-        "tonalRamp": [
-          "#636462",
-          "#949594",
-          "#C6C7C5",
-          "#F7F9F6",
-          "#F9FAF8",
-          "#FAFBFA",
-          "#FCFDFB",
-          "#FDFEFD"
-        ]
-      },
-      "paper-deep": {
-        "role": "neutral",
-        "displayName": "Sidebar Sage",
-        "canonical": "#E2E7E0",
-        "tonalRamp": [
-          "#5A5C5A",
-          "#888B86",
-          "#B5B9B3",
-          "#E2E7E0",
-          "#E8ECE6",
-          "#EEF1EC",
-          "#F3F5F3",
-          "#F9FAF9"
-        ]
-      },
-      "baseline-grey": {
-        "role": "neutral",
-        "displayName": "Dotted Baseline Grey",
-        "canonical": "#7A8190",
-        "tonalRamp": [
-          "#31343A",
-          "#494D56",
-          "#626773",
-          "#7A8190",
-          "#959AA6",
-          "#AFB3BC",
-          "#CACDD3",
-          "#E4E6E9"
-        ]
-      }
+      "night": { "role": "neutral", "displayName": "Night", "canonical": "#07090F", "tonalRamp": ["#07090F", "#0D1120", "#10152A", "#26304D", "#5B6380", "#7E86A1", "#A9B0C6", "#EEF0F7"] },
+      "night-2": { "role": "neutral", "displayName": "Night 2", "canonical": "#0D1120", "tonalRamp": ["#07090F", "#0D1120", "#10152A", "#26304D", "#5B6380", "#7E86A1", "#A9B0C6", "#EEF0F7"] },
+      "panel": { "role": "neutral", "displayName": "Panel", "canonical": "#10152A", "tonalRamp": ["#07090F", "#0D1120", "#10152A", "#26304D", "#5B6380", "#7E86A1", "#A9B0C6", "#EEF0F7"] },
+      "hair": { "role": "neutral", "displayName": "Hairline", "canonical": "#26304D", "tonalRamp": ["#07090F", "#0D1120", "#10152A", "#26304D", "#5B6380", "#7E86A1", "#A9B0C6", "#EEF0F7"] },
+      "ink": { "role": "neutral", "displayName": "Ink", "canonical": "#EEF0F7", "tonalRamp": ["#07090F", "#0D1120", "#10152A", "#26304D", "#5B6380", "#7E86A1", "#A9B0C6", "#EEF0F7"] },
+      "ink-2": { "role": "neutral", "displayName": "Ink 2", "canonical": "#A9B0C6", "tonalRamp": ["#07090F", "#0D1120", "#10152A", "#26304D", "#5B6380", "#7E86A1", "#A9B0C6", "#EEF0F7"] },
+      "ink-3": { "role": "neutral", "displayName": "Ink 3", "canonical": "#7E86A1", "tonalRamp": ["#07090F", "#0D1120", "#10152A", "#26304D", "#5B6380", "#7E86A1", "#A9B0C6", "#EEF0F7"] },
+      "thermal-indigo": { "role": "primary", "displayName": "Thermal Indigo (ramp stop 1)", "canonical": "rgb(24, 16, 64)", "tonalRamp": ["#181040", "#5B1A8A", "#C2187A", "#F2552C", "#FFB23E", "#FFF4D6"] },
+      "thermal-violet": { "role": "primary", "displayName": "Thermal Violet (ramp stop 2)", "canonical": "rgb(91, 26, 138)", "tonalRamp": ["#181040", "#5B1A8A", "#C2187A", "#F2552C", "#FFB23E", "#FFF4D6"] },
+      "magenta": { "role": "primary", "displayName": "Thermal Magenta (ramp stop 3)", "canonical": "#C2187A", "tonalRamp": ["#181040", "#5B1A8A", "#C2187A", "#F2552C", "#FFB23E", "#FFF4D6"] },
+      "ember": { "role": "primary", "displayName": "Ember (ramp stop 4)", "canonical": "#F2552C", "tonalRamp": ["#181040", "#5B1A8A", "#C2187A", "#F2552C", "#FFB23E", "#FFF4D6"] },
+      "amber": { "role": "primary", "displayName": "Amber (ramp stop 5)", "canonical": "#FFB23E", "tonalRamp": ["#181040", "#5B1A8A", "#C2187A", "#F2552C", "#FFB23E", "#FFF4D6"] },
+      "hot": { "role": "primary", "displayName": "Hot White (ramp stop 6)", "canonical": "#FFF4D6", "tonalRamp": ["#181040", "#5B1A8A", "#C2187A", "#F2552C", "#FFB23E", "#FFF4D6"] },
+      "cold": { "role": "secondary", "displayName": "Cold Cyan", "canonical": "#3FD0E0", "tonalRamp": ["oklch(15% 0.06 205)", "oklch(27% 0.08 205)", "oklch(39% 0.1 205)", "oklch(51% 0.12 205)", "oklch(63% 0.13 205)", "oklch(78% 0.12 205)", "oklch(87% 0.08 205)", "oklch(95% 0.03 205)"] },
+      "data-slate": { "role": "neutral", "displayName": "Data Slate", "canonical": "#5B6380", "tonalRamp": ["#07090F", "#0D1120", "#10152A", "#26304D", "#5B6380", "#7E86A1", "#A9B0C6", "#EEF0F7"] },
+      "data-violet": { "role": "tertiary", "displayName": "Data Violet", "canonical": "#8E5CF7", "tonalRamp": ["oklch(15% 0.08 292)", "oklch(27% 0.12 292)", "oklch(39% 0.16 292)", "oklch(51% 0.19 292)", "oklch(60% 0.21 292)", "oklch(72% 0.15 292)", "oklch(84% 0.08 292)", "oklch(95% 0.03 292)"] }
     },
     "typographyMeta": {
-      "title": {
-        "displayName": "Page Title",
-        "purpose": "The single h1."
-      },
-      "plate-title": {
-        "displayName": "Plate Title",
-        "purpose": "Names each figure or table."
-      },
-      "caption": {
-        "displayName": "Italic Caption",
-        "purpose": "Says how to read the figure above."
-      },
-      "body": {
-        "displayName": "Lede and UI",
-        "purpose": "Sentences, controls and data."
-      },
-      "note": {
-        "displayName": "Note",
-        "purpose": "Muted small print."
-      }
+      "display": { "displayName": "Display", "purpose": "Masthead title only. font-stretch 82%, text-wrap balance." },
+      "headline": { "displayName": "Headline", "purpose": "Analysis section titles, max 18ch. font-stretch 82%." },
+      "title": { "displayName": "Title", "purpose": "Cell drawer heading. font-stretch 85%." },
+      "figure": { "displayName": "Figure", "purpose": "Big numbers in the drawer (2rem), stat grid (1.9rem) and scrubber month (1.35rem, weight 650). font-stretch 85%, tabular figures." },
+      "body": { "displayName": "Body", "purpose": "Default prose and UI text." },
+      "lede": { "displayName": "Lede", "purpose": "Section intros in ink-2, max 64ch, bold terms in ink." },
+      "label": { "displayName": "Label", "purpose": "Rail label, drawer subheads, table headers (0.74 to 0.78rem). Sentence case, ink-3." }
     },
-    "shadows": [],
+    "shadows": [
+      { "name": "drawer-lift", "value": "0 24px 60px -12px rgba(0, 0, 0, .6)", "purpose": "The cell drawer only; it overlays the map." }
+    ],
     "motion": [
-      {
-        "name": "reduced-motion",
-        "value": "animation: none; transition: none",
-        "purpose": "All animation and transitions are disabled under prefers-reduced-motion."
-      },
-      {
-        "name": "replay-tick",
-        "value": "0.9s fragment interval",
-        "purpose": "ZIP replay advances one week per tick when playing."
-      }
+      { "name": "ease", "value": "cubic-bezier(.16, 1, .3, 1)", "purpose": "Shared easing for every CSS transition and the drawer entrance." },
+      { "name": "state", "value": "180ms", "purpose": "Button background/colour changes and the play button's hover scale." },
+      { "name": "drawer-enter", "value": "320ms", "purpose": "Drawer slides 24px in from the right and fades in." },
+      { "name": "field-transition", "value": "450ms", "purpose": "deck.gl elevation and colour transitions when lens or month changes." },
+      { "name": "playback-step", "value": "900ms", "purpose": "One month per step during replay." },
+      { "name": "reduced-motion", "value": "prefers-reduced-motion: reduce", "purpose": "Kills all CSS animation and transitions, freezes rings, disables playback." }
     ],
     "breakpoints": [
-      {
-        "name": "narrow",
-        "value": "640px"
-      }
+      { "name": "mobile", "value": "860px" }
     ]
   },
   "components": [
     {
-      "name": "Band Strip",
-      "kind": "custom",
-      "refersTo": "band-strip",
-      "description": "Stacked five-segment bar of ZIP counts per class; click filters the map and table.",
-      "html": "<div class=\"ds-strip\"><span style=\"background:#1D5F7A;color:#fff;flex:12\">12</span><span style=\"background:#86B4BC;flex:30\">30</span><span style=\"background:#D9D5C3;flex:80\">Near typical 80</span><span style=\"background:#E9A15E;flex:35\">35</span><span style=\"background:#B3392B;color:#fff;flex:20\">20</span></div>",
-      "css": ".ds-strip{display:flex;height:48px;font:11px 'Libre Franklin',Arial,sans-serif;color:#14213D;font-variant-numeric:tabular-nums}.ds-strip span{display:flex;align-items:center;justify-content:center;border:1px solid #14213D;margin-left:-1px}.ds-strip span:hover{opacity:.7}"
-    },
-    {
-      "name": "Plate",
-      "kind": "card",
-      "refersTo": "plate",
-      "description": "Hairline-framed chart or table with serif title and italic caption.",
-      "html": "<div class=\"ds-plate\"><div class=\"ds-plate-title\">Forecast complaints by ZIP, week of Nov 10, 2025</div><div class=\"ds-plate-body\"></div><p class=\"ds-caption\">Bubble area is forecast volume; tint is the class below the map.</p></div>",
-      "css": ".ds-plate-title{font-family:'Source Serif 4',Georgia,serif;font-weight:600;font-size:1.15rem;letter-spacing:-.01em;color:#14213D;margin:0 0 .35rem}.ds-plate-body{height:80px;border:1px solid #C5CCC2;background:#F7F9F6}.ds-caption{font-family:'Source Serif 4',Georgia,serif;font-style:italic;color:#4A5468;font-size:.9rem;line-height:1.45;max-width:70ch;margin:.25rem 0 1rem}"
-    },
-    {
-      "name": "Tab Row",
+      "name": "Segmented Lens Switch",
       "kind": "nav",
-      "refersTo": "tab",
-      "description": "Ink baseline, semibold tabs, vermilion 3px underline on the selected tab.",
-      "html": "<div class=\"ds-tabs\"><a class=\"ds-tab ds-on\" tabindex=\"0\">Outlook</a><a class=\"ds-tab\" tabindex=\"0\">ZIP replay</a><a class=\"ds-tab\" tabindex=\"0\">Compare</a></div>",
-      "css": ".ds-tabs{display:flex;gap:.25rem;border-bottom:1px solid #14213D;font-family:'Libre Franklin',Arial,sans-serif}.ds-tab{font-weight:600;font-size:1rem;padding:.55rem 1.1rem;margin-right:.15rem;color:#4A5468;border-bottom:3px solid transparent;cursor:pointer}.ds-tab.ds-on{color:#14213D;border-bottom-color:#B3392B}.ds-tab:focus-visible{outline:2px solid #B3392B;outline-offset:2px}"
+      "refersTo": "seg-button",
+      "description": "Map lens selector on the stage's left rail; pressed state inverts to ink.",
+      "html": "<div class=\"ds-seg\"><button class=\"ds-seg-btn\" aria-pressed=\"true\">Complaints<small>what people reported</small></button><button class=\"ds-seg-btn\" aria-pressed=\"false\">Expected<small>from the city's fabric</small></button><button class=\"ds-seg-btn\" aria-pressed=\"false\">Surprise<small>louder or quieter than expected</small></button></div>",
+      "css": ".ds-seg { display: grid; width: 260px; background: var(--panel, #10152A); border: 1px solid var(--hair, #26304D); border-radius: 10px; padding: 4px; gap: 2px; font-family: var(--ui, 'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif); } .ds-seg-btn { font: inherit; text-align: left; border: 0; background: transparent; padding: 9px 12px; border-radius: 7px; cursor: pointer; font-size: .92rem; color: var(--ink-2, #A9B0C6); transition: background .18s cubic-bezier(.16,1,.3,1), color .18s cubic-bezier(.16,1,.3,1); } .ds-seg-btn small { display: block; font-size: .75rem; opacity: .75; font-weight: 400; } .ds-seg-btn:hover { background: var(--night-2, #0D1120); color: var(--ink, #EEF0F7); } .ds-seg-btn[aria-pressed=\"true\"] { background: var(--ink, #EEF0F7); color: var(--night, #07090F); font-weight: 600; } .ds-seg-btn:focus-visible { outline: 2px solid var(--amber, #FFB23E); outline-offset: 2px; }"
     },
     {
-      "name": "Readout",
+      "name": "Filter Pill",
+      "kind": "chip",
+      "refersTo": "pill",
+      "description": "Toggle for factors, models and complaint types above figures.",
+      "html": "<div class=\"ds-pills\"><button class=\"ds-pill\" aria-pressed=\"true\">Random forest</button><button class=\"ds-pill\" aria-pressed=\"false\">Last week</button></div>",
+      "css": ".ds-pills { display: flex; flex-wrap: wrap; gap: 6px; font-family: var(--ui, 'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif); } .ds-pill { font: inherit; border: 1px solid var(--hair, #26304D); background: transparent; border-radius: 999px; padding: 6px 12px; cursor: pointer; font-size: .84rem; color: var(--ink-2, #A9B0C6); } .ds-pill[aria-pressed=\"true\"] { background: var(--ink, #EEF0F7); color: var(--night, #07090F); border-color: var(--ink, #EEF0F7); } .ds-pill:focus-visible { outline: 2px solid var(--amber, #FFB23E); outline-offset: 2px; }"
+    },
+    {
+      "name": "Play Button",
+      "kind": "button",
+      "refersTo": "play",
+      "description": "Starts and pauses the month replay in the scrubber.",
+      "html": "<button class=\"ds-play\" aria-label=\"Play two years month by month\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 14 14\" aria-hidden=\"true\"><path d=\"M3 1.5v11l9.5-5.5z\" fill=\"currentColor\"/></svg></button>",
+      "css": ".ds-play { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--hair, #26304D); background: var(--ink, #EEF0F7); color: var(--night, #07090F); display: grid; place-items: center; cursor: pointer; transition: transform .18s cubic-bezier(.16,1,.3,1); } .ds-play:hover { transform: scale(1.06); } .ds-play:focus-visible { outline: 2px solid var(--amber, #FFB23E); outline-offset: 2px; } .ds-play:disabled { opacity: .4; cursor: not-allowed; transform: none; }"
+    },
+    {
+      "name": "Close Button",
+      "kind": "button",
+      "refersTo": "close",
+      "description": "Dismisses the cell drawer.",
+      "html": "<button class=\"ds-close\" aria-label=\"Close\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 14 14\" aria-hidden=\"true\"><path d=\"M2 2l10 10M12 2L2 12\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\"/></svg></button>",
+      "css": ".ds-close { border: 1px solid var(--hair, #26304D); background: transparent; border-radius: 8px; width: 34px; height: 34px; cursor: pointer; color: var(--ink-2, #A9B0C6); display: grid; place-items: center; } .ds-close:hover { color: var(--ink, #EEF0F7); border-color: var(--ink-3, #7E86A1); } .ds-close:focus-visible { outline: 2px solid var(--amber, #FFB23E); outline-offset: 2px; }"
+    },
+    {
+      "name": "Factor Select",
+      "kind": "input",
+      "refersTo": "select",
+      "description": "Picks one factor for the single-factor lens.",
+      "html": "<select class=\"ds-select\" aria-label=\"Factor to show\"><option>Bars within 300 m</option><option>Distance to highway</option></select>",
+      "css": ".ds-select { font-family: var(--ui, 'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif); font-size: 1rem; background: var(--panel, #10152A); color: var(--ink, #EEF0F7); border: 1px solid var(--hair, #26304D); border-radius: 8px; padding: 8px 10px; width: 260px; } .ds-select:focus-visible { outline: 2px solid var(--amber, #FFB23E); outline-offset: 2px; }"
+    },
+    {
+      "name": "Legend Panel",
+      "kind": "card",
+      "refersTo": "panel",
+      "description": "Solid floating panel with the thermal ramp swatch for the active lens.",
+      "html": "<div class=\"ds-legend\">Complaints a year per block<div class=\"ds-ramp\"></div><div class=\"ds-ends\"><span>fewer</span><span>more complaints a year</span></div></div>",
+      "css": ".ds-legend { width: 230px; background: var(--panel, #10152A); border: 1px solid var(--hair, #26304D); border-radius: 10px; padding: 12px 14px; font-family: var(--ui, 'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif); font-size: .8rem; color: var(--ink-2, #A9B0C6); } .ds-ramp { height: 10px; border-radius: 5px; margin: 8px 0 4px; background: linear-gradient(90deg, rgb(24,16,64), rgb(91,26,138), rgb(194,24,122), rgb(242,85,44), rgb(255,178,62), rgb(255,244,214)); } .ds-ends { display: flex; justify-content: space-between; color: var(--ink-3, #7E86A1); font-size: .74rem; }"
+    },
+    {
+      "name": "Cell Drawer",
       "kind": "custom",
-      "refersTo": "readout",
-      "description": "Ink-ruled sentence under a replay with hit or miss in class color.",
-      "html": "<div class=\"ds-readout\">Week of Oct 6: forecast <b>82</b>, actual <b>88</b>, <span class=\"ds-hit\">inside the range</span>.</div>",
-      "css": ".ds-readout{border-top:1px solid #14213D;padding-top:.6rem;font:1rem/1.55 'Libre Franklin',Arial,sans-serif;color:#14213D;max-width:80ch}.ds-hit{color:#1D5F7A;font-weight:650}.ds-miss{color:#B3392B;font-weight:650}"
+      "refersTo": "drawer",
+      "description": "Signature overlay: the clicked block's figures, verdict and driver multipliers.",
+      "html": "<aside class=\"ds-drawer\"><h2>Near ZIP 10002</h2><div class=\"ds-big\"><div><b>412</b><span>complaint-days a year</span></div><div><b>230</b><span>expected from its fabric</span></div></div><p class=\"ds-verdict\">This ~250 m cell is <b>1.8x louder than its surroundings predict</b>.</p><h3>What is associated with its noise</h3><div class=\"ds-mult\"><span>Bars within 300 m</span><b>x1.80</b><span class=\"ds-bar\"><i style=\"width:70%;background:rgb(242,85,44)\"></i></span></div><div class=\"ds-mult\"><span>Distance to park</span><b class=\"ds-ok\">x0.82</b><span class=\"ds-bar\"><i style=\"width:28%;background:#3FD0E0\"></i></span></div></aside>",
+      "css": ".ds-drawer { width: 360px; background: var(--panel, #10152A); color: var(--ink, #EEF0F7); border: 1px solid var(--hair, #26304D); border-radius: 14px; padding: 20px 20px 24px; box-shadow: 0 24px 60px -12px rgba(0,0,0,.6); font-family: var(--ui, 'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif); line-height: 1.5; } .ds-drawer h2 { font-family: var(--display, 'Bricolage Grotesque', 'Arial Narrow', sans-serif); font-stretch: 85%; font-weight: 700; font-size: 1.6rem; line-height: 1.05; letter-spacing: -0.02em; margin: 0; } .ds-big { display: flex; gap: 22px; margin: 16px 0 6px; } .ds-big b { display: block; font-family: var(--display, 'Bricolage Grotesque', 'Arial Narrow', sans-serif); font-stretch: 85%; font-size: 2rem; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; } .ds-big span { font-size: .78rem; color: var(--ink-3, #7E86A1); } .ds-verdict { font-size: .95rem; color: var(--ink-2, #A9B0C6); margin: 10px 0 18px; } .ds-verdict b { color: var(--ink, #EEF0F7); } .ds-drawer h3 { font-size: .78rem; font-weight: 600; color: var(--ink-3, #7E86A1); margin: 20px 0 8px; letter-spacing: .02em; } .ds-mult { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; align-items: center; margin-bottom: 9px; font-size: .9rem; } .ds-mult b { font-weight: 650; font-variant-numeric: tabular-nums; } .ds-bar { grid-column: 1 / -1; height: 6px; border-radius: 3px; background: var(--night-2, #0D1120); overflow: hidden; } .ds-bar i { display: block; height: 100%; border-radius: 3px; } .ds-ok { color: var(--cold, #3FD0E0); }"
+    },
+    {
+      "name": "Stat Grid",
+      "kind": "custom",
+      "refersTo": "figure",
+      "description": "Hairline-ruled headline numbers above an analysis section.",
+      "html": "<div class=\"ds-stats\"><div><b>0.41</b><span>deviance explained, new neighbourhoods</span></div><div><b>0.29</b><span>from residential units alone</span></div><div><b>0.63</b><span>rank correlation in held-out areas</span></div></div>",
+      "css": ".ds-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); border-top: 1px solid var(--hair, #26304D); border-left: 1px solid var(--hair, #26304D); font-family: var(--ui, 'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif); color: var(--ink, #EEF0F7); } .ds-stats div { padding: 16px 18px; border-right: 1px solid var(--hair, #26304D); border-bottom: 1px solid var(--hair, #26304D); } .ds-stats b { display: block; font-family: var(--display, 'Bricolage Grotesque', 'Arial Narrow', sans-serif); font-stretch: 85%; font-size: 1.9rem; font-weight: 700; line-height: 1.05; font-variant-numeric: tabular-nums; } .ds-stats span { font-size: .8rem; color: var(--ink-3, #7E86A1); }"
+    },
+    {
+      "name": "Data Table",
+      "kind": "custom",
+      "refersTo": "table-row-selected",
+      "description": "Hairline table with selectable rows and ok/bad outcome cells.",
+      "html": "<table class=\"ds-tbl\"><thead><tr><th>ZIP</th><th class=\"ds-num\">Forecast</th><th class=\"ds-num\">vs normal</th></tr></thead><tbody><tr class=\"ds-sel\" tabindex=\"0\"><td>10002</td><td class=\"ds-num\">318</td><td class=\"ds-num ds-bad\">+24%</td></tr><tr tabindex=\"0\"><td>11211</td><td class=\"ds-num\">290</td><td class=\"ds-num ds-ok\">-6%</td></tr></tbody></table>",
+      "css": ".ds-tbl { width: 100%; border-collapse: collapse; font-family: var(--ui, 'Schibsted Grotesk', 'Helvetica Neue', Arial, sans-serif); font-size: .88rem; } .ds-tbl th { text-align: left; font-weight: 600; color: var(--ink-3, #7E86A1); font-size: .76rem; padding: 8px 10px; border-bottom: 1px solid var(--hair, #26304D); } .ds-tbl td { padding: 9px 10px; border-bottom: 1px solid var(--hair, #26304D); color: var(--ink-2, #A9B0C6); font-variant-numeric: tabular-nums; } .ds-tbl .ds-num { text-align: right; } .ds-tbl tbody tr { cursor: pointer; } .ds-tbl tbody tr:hover td { color: var(--ink, #EEF0F7); } .ds-tbl tbody tr:focus-visible { outline: 2px solid var(--amber, #FFB23E); outline-offset: 2px; } .ds-tbl tr.ds-sel td { color: var(--ink, #EEF0F7); background: var(--night-2, #0D1120); } .ds-tbl td.ds-ok { color: var(--cold, #3FD0E0); } .ds-tbl td.ds-bad { color: var(--ember, #F2552C); }"
     }
   ],
   "narrative": {
-    "northStar": "The Working Atlas Plate",
-    "overview": "The dashboard is a statistical-atlas plate for next week's noise complaints, in the manner of Walker's 1874 Statistical Atlas but working as an Operate tool. Cool map-paper ground, navy-black ink, hairline rules and five graded class tints running from deep teal through a warm neutral to vermilion.\n\nCharts and tables sit in thin-ruled plates under serif plate titles, each followed by an italic caption that says how to read it. Density is high and flat; there are no cards, shadows or rounded corners.",
+    "northStar": "The Thermal Sound Field",
+    "overview": "The city is drawn as heat and sound, not as a chart. A full-bleed, tilted map of the five boroughs sits on near-black blue; each 250 m H3 cell rises as an extruded column whose height and colour come from one thermal ramp, and stroked rings travel outward from the 64 hottest cells at a speed set by how far above expectation they run. The visitor should sense where the city is loud before reading a number. Everything else (the lens switch, legend, month scrubber, cell drawer) floats over the field as solid ink panels with a single hairline.\n\nBelow the first viewport the map gives way to a reading sheet: condensed Bricolage headlines, a quiet grotesque for prose, Observable Plot figures on the same night ground, hairline stat grids and tables. Density is moderate. The figures carry the colour; the chrome stays in a narrow ladder of blue-greys so that heat is the only warm thing on the screen.\n\nThe world refuses the dot map, the choropleth and the card dashboard: intensity on the map is never a filled dot or a flat-filled region, and the analysis is never a grid of boxed tiles.",
     "keyCharacteristics": [
-      "Five-class tint scale, teal to vermilion, shared by strip, map and outcomes",
-      "Ink-outlined marks on cool paper",
-      "Franklin for data, Source Serif for titles and italic captions",
-      "Hairline-framed plates, no shadows",
-      "Band strip as legend, histogram and filter"
+      "Near-black blue ground (`night`) with a six-stop thermal ramp carrying every intensity.",
+      "One cool cyan (`cold`) reserved for \"quieter than expected\" and for good outcomes.",
+      "Extruded hex terrain plus expanding stroked rings; no filled circles as data marks.",
+      "Solid panels, 1px hairline, no glass, no blur.",
+      "Condensed variable display face (Bricolage Grotesque, 82 to 85% width) against Schibsted Grotesk for UI and prose.",
+      "One shared easing curve; all motion stops under reduced motion."
     ],
     "rules": [
-      {
-        "name": "The Band Strip Rule",
-        "body": "The five-segment strip of ZIP counts is the legend, the histogram and the filter at once. Any new view that shows forecast class takes its colors from the strip and responds to its selection.",
-        "section": "components"
-      },
-      {
-        "name": "The Ink Outline Rule",
-        "body": "Every mark carries an ink outline, so tints separate by line, not only by hue.",
-        "section": "shapes"
-      },
-      {
-        "name": "The Two Voices Rule",
-        "body": "Franklin speaks data and controls; Source Serif speaks titles and captions. They never swap.",
-        "section": "typography"
-      },
-      {
-        "name": "The Flat Plate Rule",
-        "body": "No shadows. Plates are framed by a hairline and sit flat on the paper.",
-        "section": "elevation"
-      }
+      { "name": "The Heat Is Data Rule", "body": "Warm colours mean intensity. Outside the thermal ramp, only `amber` (links, focus) and `ember` (selection, slider) appear as UI colour; chrome is otherwise the blue-grey ladder.", "section": "colors" },
+      { "name": "The One Cold Voice Rule", "body": "`cold` means quieter than expected or better than the target. It never decorates.", "section": "colors" },
+      { "name": "The Narrow Voice Rule", "body": "Display text is always condensed through `font-stretch` (82% for display and headline, 85% for title and figures) with negative tracking. Bricolage at 100% width is not part of the system.", "section": "typography" },
+      { "name": "The Aligned Figures Rule", "body": "Tabular figures only where numbers line up in columns (stat grid, tables, drawer numbers, scrubber, fact lists). Chart text resets to normal figures because tabular figures widen the period and comma in this face.", "section": "typography" },
+      { "name": "The Solid Panel Rule", "body": "Panels are opaque `panel` with a `hair` border. No backdrop blur, no glass, no gradient fills on chrome.", "section": "elevation" }
     ],
     "dos": [
-      "Do classify forecasts into the five bands (well below, below, near typical, above, well above) at -30%, -10%, +10%, +30% against the ZIP's own 52-week mean, and tint every band mark with its class color.",
-      "Do outline every data mark in ink (`#14213D`): 1px on strip segments, 0.8px on bubbles, 0.6px on bars, 1.5px on point markers.",
-      "Do frame every chart and table in a 1px hairline (`#C5CCC2`) on plate stock (`#F7F9F6`) over the paper ground.",
-      "Do set Libre Franklin with tabular numerals for all data, controls and tables; set Source Serif 4 only for the page title, plate titles and italic captions.",
-      "Do put an italic serif caption under each figure that says how to read it, in slate (`#4A5468`).",
-      "Do use vermilion for the selected tab underline, focus ring and 'miss' outcomes, and deep teal for 'hit' outcomes.",
-      "Do keep the model line in ink at 3.2px and the baselines in class teal, vermilion and dotted grey (`#7A8190`) at 2px."
+      "Do carry every intensity through the six-stop thermal ramp, and every \"quieter than expected\" through `cold`.",
+      "Do float controls over the map as opaque `panel` surfaces with a 1px `hair` border.",
+      "Do set headlines and large numbers in Bricolage Grotesque at 82 to 85% width with negative tracking.",
+      "Do keep labels sentence case at 0.74 to 0.78rem in `ink-3`.",
+      "Do use the shared ease `cubic-bezier(.16, 1, .3, 1)` for state changes and stop all animation, ripples and playback under `prefers-reduced-motion`.",
+      "Do pair any colour-coded result with a value or word (`x1.8`, \"yes\", \"+12%\")."
     ],
     "donts": [
-      "Don't use shadows, gradients or rounded corners; depth is hairline frames and ink outlines.",
-      "Don't encode forecast magnitude as a continuous color ramp on the map; the classed five-tint scale is the only forecast encoding (the weekday-hour heatmap is a separate count ramp and stays out of the band system).",
-      "Don't set data, labels or controls in the serif face.",
-      "Don't use more than the five class tints plus ink, muted and baseline grey for series color.",
-      "Don't hide the honest result: the losing quarter and the surge weeks stay visible in the scorecard."
+      "Don't draw map intensity as filled dots or flat-filled regions; use extruded hexes and stroked rings.",
+      "Don't use backdrop blur or translucent glass panels.",
+      "Don't introduce warm colours for chrome beyond `amber` and `ember`.",
+      "Don't add shadows to panels at rest; the drawer is the only lifted surface.",
+      "Don't set Bricolage at full width or use it for running text.",
+      "Don't uppercase labels or add kicker lines above headings."
     ]
   }
 }
