@@ -90,3 +90,19 @@ Raw 311 counts are dominated by a few addresses: one Bronx building filed about 
 ## 15. From Streamlit to React + deck.gl
 
 The owner asked for an immersive, sound-like experience rather than a dashboard of circles. Streamlit could not run a GPU heat terrain with animated rings at frame rate, and its plot selection events proved unreliable. The pipeline now exports compact JSON (about 2.5 MB, 0.7 MB gzipped) and a static React app renders it with deck.gl (H3 hexagons, rings), MapLibre (CARTO dark basemap) and Observable Plot, deployed on Vercel. The Streamlit app was removed. Motion stops under reduced-motion preferences.
+
+## 16. Venues measured as sound at homes, not counts within 300 m
+
+v2 counted bars, restaurants and venues within 300 m of the cell centre. That smeared one bar across a whole neighbourhood and measured from an arbitrary point. A hard 30 m cutoff fails the other way: from a cell centre most homes would read zero. Now each venue's contribution is computed at every residential lot (PLUTO) as (30 m / distance)², the inverse-square fall-off of sound with a 30 m reference, floored at 10 m so a bar in the same building counts 9 rather than infinity, and ignored beyond 150 m. The cell value is the average over its homes weighted by residential units, so the people who can complain set the number. The distance from homes to the nearest bar and the nearest restaurant are added the same way. Roads and rail moved to the same at-home approach later (see 17); permits keep a count.
+
+## 17. Roads and rail measured at homes too, and a ~65 m heat layer
+
+Hicks Street, beside the BQE trench below Brooklyn Heights, did not stand out: a 300 m window around a ~250 m cell centre mixed homes on the expressway with homes two blocks inland. Line sources now use the same at-home approach as venues, with the cylindrical fall-off of a line: each lot scores 30 m / distance to the nearest line (floored at 10 m, zero beyond 500 m), about 3 dB less per doubling of distance. Tunnels and covered sections are excluded. Expressways, arterials, through truck routes, surface rail and elevated rail each get an exposure, and distance to the nearest expressway and elevated line are kept as home averages. Homes on Hicks Street now average 0.37 expressway exposure (95th percentile citywide) against 0.08 two blocks inland.
+
+The map's default view is now a flat heatmap built from H3 resolution-10 points (~65 m): complaint-days (all, day, night) are summed as a density, and exposure is averaged as a level on a fixed scale so dense neighbourhoods do not look louder for having more homes. The ~250 m blocks remain the unit of the model, the legend, the ranking and the drawer. The ranking of a measured factor skips cells with no homes, whose value falls back to the cell centre.
+
+## 18. Arenas are not stadiums; time of day
+
+Madison Square Garden and Barclays Center are indoor arenas; crowds and traffic are the noise, not the event. Major venues of 1.5 ha or more from OpenStreetMap are split into open-air stadiums and indoor arenas (by name or a covered tag; Forest Hills Stadium stays open-air), with a distance to each.
+
+Time of day matters: 311 has a creation time, so night (22:00 to 06:00) complaint-days are counted per cell. The app filters the heatmap to day or night and the drawer gives a block's night percentile. Separate day and night spatial models are fitted with the same block CV; night is explained slightly better (D² 0.69 vs 0.61 for day), and airport distance and off-premises liquor density matter more at night, commercial floor area more by day.

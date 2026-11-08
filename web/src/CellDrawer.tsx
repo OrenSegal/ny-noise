@@ -1,10 +1,10 @@
 import { type Cells, type Spatial, TYPE_COLORS, feet, fmt, pct, thermal } from "./data";
 import PlotFigure, { Plot, plotStyle } from "./Plot";
 
-const KEY_FACTS = ["d_highway", "d_arterial", "d_elevated_rail", "n_bars", "n_restaurants", "n_ahv", "d_heliport", "d_park"];
+const KEY_FACTS = ["highway_exposure", "d_highway", "d_elevated_rail", "bar_exposure", "d_bar", "d_restaurant", "n_ahv", "d_park"];
 
 function factValue(name: string, v: number) {
-  return name.startsWith("d_") ? feet(v) : fmt(v);
+  return name.startsWith("d_") ? feet(v) : name.endsWith("_exposure") ? fmt(v, 2) : fmt(v);
 }
 
 export default function CellDrawer({ i, cells, spatial, zip, onClose }: {
@@ -19,6 +19,15 @@ export default function CellDrawer({ i, cells, spatial, zip, onClose }: {
   const types = cells.types.map((t, k) => ({ t, n: cells.type_counts[k][i] })).filter((d) => d.n > 0);
   const months = cells.months.map((m, k) => ({ month: new Date(`${m}-15`), n: cells.monthly[i][k] }));
   const maxMult = Math.max(2, ...cells.drivers[i].map((d) => d[1]));
+  // Where this block sits among all NYC blocks, overall and at night (22:00 to 06:00).
+  const rankOf = (arr: (j: number) => number) => {
+    const v = arr(i);
+    let below = 0;
+    for (let j = 0; j < cells.complaints.length; j++) if (arr(j) < v) below++;
+    return below / cells.complaints.length;
+  };
+  const pAll = rankOf((j) => cells.complaints[j]);
+  const pNight = rankOf((j) => cells.complaints[j] * cells.night[j]);
   const verdict = ratio > 1.25 ? `${ratio.toFixed(1)}x louder than its surroundings predict` : ratio < 0.8
     ? `${(1 / ratio).toFixed(1)}x quieter than its surroundings predict` : "about as loud as its surroundings predict";
 
@@ -26,6 +35,9 @@ export default function CellDrawer({ i, cells, spatial, zip, onClose }: {
     <aside className="drawer" aria-label="Selected block">
       <div className="drawer-head">
         <h2>{zip ? `Near ZIP ${zip}` : "This block"}</h2>
+        <button className="close" onClick={() => navigator.clipboard?.writeText(window.location.href)} aria-label="Copy a link to this block" title="Copy link">
+          <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M6 8a3 3 0 0 0 4.2 0l2-2a3 3 0 0 0-4.2-4.2l-.6.6M8 6a3 3 0 0 0-4.2 0l-2 2a3 3 0 0 0 4.2 4.2l.6-.6" stroke="currentColor" strokeWidth="1.6" fill="none" strokeLinecap="round" /></svg>
+        </button>
         <button className="close" onClick={onClose} aria-label="Close">
           <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>
         </button>
@@ -35,6 +47,7 @@ export default function CellDrawer({ i, cells, spatial, zip, onClose }: {
         <div><b>{fmt(expected)}</b><span>expected from its fabric</span></div>
         <div><b>{pct(cells.night[i])}</b><span>at night (22 to 06)</span></div>
       </div>
+      <p className="rank-line">More complaint-days than <b>{pct(pAll)}</b> of NYC blocks, and than <b>{pct(pNight)}</b> at night.</p>
       <p className="verdict">This ~250 m cell is <b>{verdict}</b>. The expectation comes from a model that never saw this neighbourhood.
         {cells.reports[i] > cells.complaints[i] * 1.5 && <> Raw reports were {fmt(cells.reports[i] / cells.years)} a year; repeat calls from one address on one day count once here.</>}</p>
 

@@ -29,7 +29,9 @@ from nynoise import data as nd
 RAW = nd.DATA_DIR / "raw" / "factors"
 RES = 9
 WINDOW_WEEKS = 104
-R_NEAR = 1000.0  # feet (~300 m): "within a short walk"
+R_NEAR = 1000.0  # feet (~300 m): "within a short walk", used for roads, rail and permits
+# Venue exposure at homes: inverse-square fall-off of sound with a 30 m reference distance.
+D0_FT, DMIN_FT, DMAX_FT = 98.4, 32.8, 492.1  # 30 m reference, 10 m floor, ignore beyond 150 m
 BBOX = (40.477, -74.259, 40.918, -73.700)  # south, west, north, east
 NYC_COUNTIES = ("New York", "Kings", "Queens", "Bronx", "Richmond")
 TO_FT = Transformer.from_crs("EPSG:4326", "EPSG:2263", always_xy=True)
@@ -140,6 +142,31 @@ def osm_lines(elements: list[dict], keep=lambda tags: True) -> np.ndarray:
     return np.array(out, dtype=object)
 
 
+INDOOR_WORDS = ("garden", "arena", "center", "centre")
+
+
+def major_venues(elements: list[dict], indoor: bool, min_area_m2: float = 15_000) -> np.ndarray:
+    """Large OSM stadium footprints, split into open-air stadiums and indoor arenas.
+
+    OSM tags MSG and Barclays Center as leisure=stadium; they are roofed, so their noise is crowds
+    and traffic at the doors, not the event. Small school fields tagged 'stadium' are dropped by size.
+    """
+    lat, lon = [], []
+    for el in elements:
+        t, b = el.get("tags", {}), el.get("bounds")
+        if t.get("leisure") != "stadium" or not b:
+            continue
+        area = (b["maxlat"] - b["minlat"]) * 111_000 * (b["maxlon"] - b["minlon"]) * 111_000 * 0.76
+        if area < min_area_m2:
+            continue
+        name = (t.get("name") or "").lower()
+        # by name or roof only: Forest Hills Stadium carries building=yes but is an open-air concert venue
+        is_indoor = any(w in name for w in INDOOR_WORDS) or t.get("covered") == "yes"
+        if is_indoor == indoor:
+            lat.append((b["minlat"] + b["maxlat"]) / 2); lon.append((b["minlon"] + b["maxlon"]) / 2)
+    return to_ft(lat, lon) if lat else np.empty((0, 2))
+
+
 def _layer(tags: dict) -> int:
     v = tags.get("layer", "0")
     return int(v) if v.lstrip("-").isdigit() else 0
@@ -209,11 +236,15 @@ def length_within(xy: np.ndarray, lines: np.ndarray, r: float = R_NEAR) -> np.nd
 
 
 # ------------------------------------------------------------------ assembling cells
-def complaint_cells(raw: pd.DataFrame, start: pd.Timestamp, end: pd.Timestamp) -> pd.DataFrame:
+HEAT_RES = 10  # ~66 m edge: the resolution of the map's density layer
+
+def complaint_cells(raw: pd.DataFrame, start: pd.Timestamp, end: pd.Timestamp):
+    """Complaint-days per res-9 cell (with types, night counts, months) and per res-10 cell for the heat layer."""
     d = raw[(raw["created"] >= start) & (raw["created"] < end)].dropna(subset=["lat", "lon"])
     d = d[(d["lat"].between(BBOX[0], BBOX[2])) & (d["lon"].between(BBOX[1], BBOX[3]))]
-    cell = [h3.latlng_to_cell(a, b, RES) for a, b in zip(d["lat"].to_numpy(), d["lon"].to_numpy())]
-    d = d.assign(h3=cell, group=d["type"].map(TYPE_GROUPS).fillna("other"),
+    fine = [h3.latlng_to_cell(a, b, HEAT_RES) for a, b in zip(d["lat"].to_numpy(), d["lon"].to_numpy())]
+    parent = {c: h3.cell_to_parent(c, RES) for c in set(fine)}
+    d = d.assign(h3=[parent[c] for c in fine], h3_fine=fine, group=d["type"].map(TYPE_GROUPS).fillna("other"),
                  month=d["created"].dt.to_period("M").astype(str))
     reports = d.groupby("h3").size()
     # Repeat callers: single addresses file thousands of reports (one Bronx building ~200 a day). Count each
@@ -222,19 +253,69 @@ def complaint_cells(raw: pd.DataFrame, start: pd.Timestamp, end: pd.Timestamp) -
     wide = d.pivot_table(index="h3", columns="group", values="lat", aggfunc="size", fill_value=0)
     wide["complaints"] = wide.sum(axis=1)
     wide["reports"] = reports.reindex(wide.index).fillna(0).astype(int)
-    night = d[(d["created"].dt.hour >= 22) | (d["created"].dt.hour < 6)].groupby("h3").size()
-    wide["night_share"] = (night.reindex(wide.index).fillna(0) / wide["complaints"]).round(3)
+    is_night = (d["created"].dt.hour >= 22) | (d["created"].dt.hour < 6)
+    night = d[is_night].groupby("h3").size()
+    wide["night"] = night.reindex(wide.index).fillna(0).astype(int)
+    wide["night_share"] = (wide["night"] / wide["complaints"]).round(3)
     monthly = d.groupby(["h3", "month"]).size().unstack(fill_value=0)
     wide["monthly"] = monthly.reindex(wide.index).fillna(0).astype(int).values.tolist()
-    return wide.reset_index(), list(monthly.columns)
+    heat = pd.DataFrame({"all": d.groupby("h3_fine").size(), "night": d[is_night].groupby("h3_fine").size()}).fillna(0).astype(int)
+    ll = np.array([h3.cell_to_latlng(c) for c in heat.index])
+    heat = heat.assign(lat=ll[:, 0].round(5), lon=ll[:, 1].round(5)).reset_index(names="h3")
+    return wide.reset_index(), list(monthly.columns), heat
 
 
-def pluto_cells(rows: list[dict]) -> pd.DataFrame:
+def pluto_frame(rows: list[dict]) -> pd.DataFrame:
     p = pd.DataFrame(rows).apply(pd.to_numeric, errors="coerce").dropna(subset=["latitude", "longitude"])
     p["h3"] = [h3.latlng_to_cell(a, b, RES) for a, b in zip(p["latitude"], p["longitude"])]
+    return p
+
+
+def pluto_cells(p: pd.DataFrame) -> pd.DataFrame:
     g = p.groupby("h3").agg(units=("unitsres", "sum"), retail_area=("retailarea", "sum"),
                             commercial_area=("comarea", "sum"), floors=("numfloors", "mean"), lots=("unitsres", "size"))
     return g.reset_index()
+
+
+def exposure(at_xy: np.ndarray, pts: np.ndarray) -> np.ndarray:
+    """Sum over venues of (30 m / distance)^2 within 150 m, distance floored at 10 m.
+
+    A venue 30 m away counts 1, at 60 m 0.25, at 150 m 0.04: the inverse-square fall-off of sound.
+    """
+    if len(pts) == 0 or len(at_xy) == 0:
+        return np.zeros(len(at_xy))
+    # nudge venues so one sharing a lot's exact coordinate still registers (sparse matrices drop zero distances)
+    m = cKDTree(at_xy).sparse_distance_matrix(cKDTree(pts + [0.5, 0.0]), DMAX_FT, output_type="coo_matrix")
+    w = (D0_FT / np.maximum(m.data, DMIN_FT)) ** 2
+    return np.bincount(m.row, weights=w, minlength=len(at_xy))
+
+
+LINE_MAX_FT = 1640.0  # line sources ignored beyond 500 m
+
+
+def line_exposure(at_xy: np.ndarray, lines: np.ndarray) -> np.ndarray:
+    """(30 m / distance) to the nearest line, floored at 10 m, zero beyond 500 m: a line source's 1/d fall-off."""
+    d = nearest_distance(at_xy, lines, cap=LINE_MAX_FT * 2)
+    return np.where(d <= LINE_MAX_FT, D0_FT / np.maximum(d, DMIN_FT), 0.0)
+
+
+def fine_exposure(lots: pd.DataFrame, values: dict[str, np.ndarray]) -> pd.DataFrame:
+    """Unit-weighted mean exposure of homes per res-10 cell (~66 m): the map's high-resolution layer."""
+    fine = [h3.latlng_to_cell(a, b, HEAT_RES) for a, b in zip(lots["latitude"].to_numpy(), lots["longitude"].to_numpy())]
+    w = lots["unitsres"].to_numpy()
+    df = pd.DataFrame({"h3": fine, "w": w, **{k: v * w for k, v in values.items()}}).groupby("h3").sum()
+    out = df[list(values)].div(df["w"], axis=0).round(3)
+    out["units"] = df["w"].astype(int)
+    ll = np.array([h3.cell_to_latlng(c) for c in out.index])
+    return out.assign(lat=ll[:, 0].round(5), lon=ll[:, 1].round(5)).reset_index()
+
+
+def homes_mean(lots: pd.DataFrame, values: np.ndarray, cells: pd.DataFrame, fallback: np.ndarray) -> np.ndarray:
+    """Average a per-lot value over each cell's homes, weighted by residential units; cells without homes use `fallback`."""
+    w = lots["unitsres"].to_numpy()
+    g = pd.DataFrame({"h3": lots["h3"].to_numpy(), "wv": w * values, "w": w}).groupby("h3")[["wv", "w"]].sum()
+    mean = (g["wv"] / g["w"]).reindex(cells["h3"]).to_numpy()
+    return np.where(np.isnan(mean), fallback, mean)
 
 
 def sla_points(rows: list[dict]) -> dict[str, np.ndarray]:
@@ -258,13 +339,14 @@ def truck_lines(rows: list[dict], kind: str) -> np.ndarray:
     return np.array(lines, dtype=object)
 
 
-def build_cells(raw: pd.DataFrame, src: dict, end: pd.Timestamp) -> tuple[pd.DataFrame, list[str]]:
+def build_cells(raw: pd.DataFrame, src: dict, end: pd.Timestamp):
     start = end - pd.Timedelta(weeks=WINDOW_WEEKS)
-    comp, months = complaint_cells(raw, start, end)
-    plu = pluto_cells(src["pluto"])
+    comp, months, heat = complaint_cells(raw, start, end)
+    pluto = pluto_frame(src["pluto"])
+    plu = pluto_cells(pluto)
     cells = comp.merge(plu, on="h3", how="outer")
     cells = cells[(cells["units"].fillna(0) > 0) | (cells["complaints"].fillna(0) > 0)].copy()
-    count_cols = [c for c in comp.columns if c not in ("h3", "monthly", "night_share")]
+    count_cols = [c for c in comp.columns if c not in ("h3", "monthly", "night_share")]  # includes "night"
     cells[count_cols] = cells[count_cols].fillna(0).astype(int)
     for c in ("units", "retail_area", "commercial_area", "lots"):
         cells[c] = cells[c].fillna(0)
@@ -276,8 +358,9 @@ def build_cells(raw: pd.DataFrame, src: dict, end: pd.Timestamp) -> tuple[pd.Dat
     xy = to_ft(cells["lat"], cells["lon"])
 
     roads = src["roads"]["elements"]
-    highway = osm_lines(roads, lambda t: t.get("highway") in ("motorway", "trunk"))
-    arterial = osm_lines(roads, lambda t: t.get("highway") in ("primary", "secondary"))
+    open_air = lambda t: t.get("tunnel") not in ("yes", "building_passage", "covered")  # tunnels are not heard on the street
+    highway = osm_lines(roads, lambda t: t.get("highway") in ("motorway", "trunk") and open_air(t))
+    arterial = osm_lines(roads, lambda t: t.get("highway") in ("primary", "secondary") and open_air(t))
     rail = src["rail"]["elements"]
     surface_rail = osm_lines(rail, lambda t: t.get("tunnel") not in ("yes", "building_passage") and _layer(t) >= 0)
     elevated = osm_lines(rail, lambda t: t.get("bridge") == "yes" or _layer(t) > 0)
@@ -287,27 +370,38 @@ def build_cells(raw: pd.DataFrame, src: dict, end: pd.Timestamp) -> tuple[pd.Dat
     ahv_xy = to_ft(pd.to_numeric(ahv["latitude"]), pd.to_numeric(ahv["longitude"]))
 
     f = cells
-    f["d_highway"] = nearest_distance(xy, highway)
-    f["len_highway"] = length_within(xy, highway)
-    f["d_arterial"] = nearest_distance(xy, arterial)
-    f["len_arterial"] = length_within(xy, arterial)
-    f["len_truck_through"] = length_within(xy, truck_lines(src["truck"], "through"))
-    f["len_truck_local"] = length_within(xy, truck_lines(src["truck"], "local"))
-    f["d_surface_rail"] = nearest_distance(xy, surface_rail)
-    f["d_elevated_rail"] = nearest_distance(xy, elevated)
+    # Line sources (roads, rail, truck routes) are measured at every home with 1/distance fall-off
+    # (about 3 dB per doubling), then averaged over the cell's homes by residential units.
+    lots = pluto[pluto["unitsres"] > 0]
+    lot_xy = to_ft(lots["latitude"], lots["longitude"])
+    lines = {"highway": highway, "arterial": arterial, "truck": truck_lines(src["truck"], "through"),
+             "rail": surface_rail, "elevated": elevated}
+    lot_exp = {}
+    for name, geoms in lines.items():
+        lot_exp[name] = line_exposure(lot_xy, geoms)
+        f[f"{name}_exposure"] = homes_mean(lots, lot_exp[name], f, line_exposure(xy, geoms))
+    f["d_highway"] = homes_mean(lots, nearest_distance(lot_xy, highway), f, nearest_distance(xy, highway))
+    f["d_elevated_rail"] = homes_mean(lots, nearest_distance(lot_xy, elevated), f, nearest_distance(xy, elevated))
     f["n_stations"] = count_within(xy, osm_points(pts, lambda t: t.get("railway") == "station" or t.get("station") == "subway"), 2000)
-    f["n_bars"] = count_within(xy, sla["bars"])
-    f["n_restaurants"] = count_within(xy, sla["restaurants"])
-    f["n_off_premises"] = count_within(xy, sla["off_premises"])
-    f["n_venues"] = count_within(xy, np.vstack([sla["venues"], osm_points(pts, lambda t: t.get("amenity") in ("nightclub", "music_venue"))]))
+    # Venues are measured where people live: at every residential lot, averaged over the cell's homes by units.
+    venues = {"bar": sla["bars"], "restaurant": sla["restaurants"], "offprem": sla["off_premises"],
+              "venue": np.vstack([sla["venues"], osm_points(pts, lambda t: t.get("amenity") in ("nightclub", "music_venue"))])}
+    for name, vp in venues.items():
+        lot_exp[name] = exposure(lot_xy, vp)
+        f[f"{name}_exposure"] = homes_mean(lots, lot_exp[name], f, exposure(xy, vp))
+    for name in ("bar", "restaurant"):
+        f[f"d_{name}"] = homes_mean(lots, nearest_point_distance(lot_xy, venues[name], cap=5000),
+                                    f, nearest_point_distance(xy, venues[name], cap=5000))
     f["n_ahv"] = count_within(xy, ahv_xy, weights=pd.to_numeric(ahv["n"]).to_numpy())
-    f["d_stadium"] = nearest_point_distance(xy, osm_points(pts, lambda t: t.get("leisure") == "stadium"))
+    f["d_stadium"] = nearest_point_distance(xy, major_venues(pts, indoor=False))
+    f["d_arena"] = nearest_point_distance(xy, major_venues(pts, indoor=True))
     f["d_heliport"] = nearest_point_distance(xy, osm_points(pts, lambda t: t.get("aeroway") == "heliport"))
     f["d_airport"] = np.min([np.hypot(*(xy - to_ft([a], [b])[0]).T) for a, b in AIRPORTS.values()], axis=0)
     f["d_fire_station"] = nearest_point_distance(xy, osm_points(pts, lambda t: t.get("amenity") == "fire_station"))
     f["d_hospital"] = nearest_point_distance(xy, osm_points(pts, lambda t: t.get("amenity") == "hospital"))
     f["d_park"] = nearest_distance(xy, osm_polygons(src["parks"]["elements"], min_area_ft2=107_639))  # >= 1 hectare
-    return f.reset_index(drop=True), months
+    exposure_pts = fine_exposure(lots, {k: lot_exp[k] for k in ("highway", "elevated", "bar")})
+    return f.reset_index(drop=True), months, heat, exposure_pts
 
 
 def build(out_dir: Path = nd.DATA_DIR) -> pd.DataFrame:
@@ -316,7 +410,9 @@ def build(out_dir: Path = nd.DATA_DIR) -> pd.DataFrame:
     since = (end - pd.Timedelta(weeks=WINDOW_WEEKS)).strftime("%Y-%m-%d")
     raw = _read_raw(out_dir / "raw")
     src = fetch_all(since)
-    cells, months = build_cells(raw, src, end)
+    cells, months, heat, exposure_pts = build_cells(raw, src, end)
+    heat.to_csv(out_dir / "heat_points.csv.gz", index=False)
+    exposure_pts.to_csv(out_dir / "exposure_points.csv.gz", index=False)
     validate_cells(cells)
     cells.to_csv(out_dir / "cells.csv.gz", index=False)
     (out_dir / "cells_meta.json").write_text(json.dumps({

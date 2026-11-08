@@ -34,23 +34,25 @@ FEATURES = {
     "floors": ("Average building height", "Built form", "floors"),
     "log_retail": ("Retail floor area in cell", "Business", "log sq ft"),
     "log_commercial": ("Commercial floor area in cell", "Business", "log sq ft"),
-    "n_bars": ("Bars and clubs within 300 m", "Nightlife", "licences"),
-    "n_restaurants": ("Restaurants within 300 m", "Nightlife", "licences"),
-    "n_venues": ("Theatres, venues and nightclubs within 300 m", "Nightlife", "places"),
-    "n_off_premises": ("Bodegas and liquor stores within 300 m", "Business", "licences"),
-    "d_highway": ("Distance to expressway or parkway", "Roads", "ft"),
-    "len_highway": ("Expressway length within 300 m", "Roads", "ft"),
-    "d_arterial": ("Distance to major avenue", "Roads", "ft"),
-    "len_arterial": ("Major-avenue length within 300 m", "Roads", "ft"),
-    "len_truck_through": ("Through truck route length within 300 m", "Roads", "ft"),
-    "len_truck_local": ("Local truck route length within 300 m", "Roads", "ft"),
-    "d_surface_rail": ("Distance to above-ground rail", "Rail and air", "ft"),
-    "d_elevated_rail": ("Distance to elevated rail", "Rail and air", "ft"),
+    "bar_exposure": ("Bars and clubs heard from homes", "Nightlife", "bar-equivalents at 30 m"),
+    "d_bar": ("Distance from homes to the nearest bar", "Nightlife", "ft"),
+    "restaurant_exposure": ("Restaurants heard from homes", "Nightlife", "equivalents at 30 m"),
+    "d_restaurant": ("Distance from homes to the nearest restaurant", "Nightlife", "ft"),
+    "venue_exposure": ("Theatres, venues and nightclubs heard from homes", "Nightlife", "equivalents at 30 m"),
+    "offprem_exposure": ("Bodegas and liquor stores near homes", "Business", "equivalents at 30 m"),
+    "highway_exposure": ("Expressway traffic heard from homes", "Roads", "line-equivalents at 30 m"),
+    "d_highway": ("Distance from homes to an open-air expressway", "Roads", "ft"),
+    "arterial_exposure": ("Major-avenue traffic heard from homes", "Roads", "line-equivalents at 30 m"),
+    "truck_exposure": ("Through truck routes heard from homes", "Roads", "line-equivalents at 30 m"),
+    "rail_exposure": ("Above-ground rail heard from homes", "Rail and air", "line-equivalents at 30 m"),
+    "elevated_exposure": ("Elevated rail heard from homes", "Rail and air", "line-equivalents at 30 m"),
+    "d_elevated_rail": ("Distance from homes to elevated rail", "Rail and air", "ft"),
     "n_stations": ("Rail and subway stations within 600 m", "Rail and air", "stations"),
     "d_airport": ("Distance to LGA, JFK or EWR", "Rail and air", "ft"),
     "d_heliport": ("Distance to a heliport", "Rail and air", "ft"),
     "n_ahv": ("After-hours construction permits within 300 m", "Construction", "permits / 2 yrs"),
-    "d_stadium": ("Distance to a stadium", "Nightlife", "ft"),
+    "d_stadium": ("Distance to an open-air stadium", "Nightlife", "ft"),
+    "d_arena": ("Distance to an indoor arena (MSG, Barclays)", "Nightlife", "ft"),
     "d_fire_station": ("Distance to a fire station", "Sirens", "ft"),
     "d_hospital": ("Distance to a hospital", "Sirens", "ft"),
     "d_park": ("Distance to a park of 1 ha or more", "Green space", "ft"),
@@ -58,8 +60,8 @@ FEATURES = {
 PARAMS = dict(loss="poisson", max_iter=400, learning_rate=0.05, max_leaf_nodes=31,
               min_samples_leaf=40, l2_regularization=1.0, random_state=0)
 CHECKS = [  # (complaint type, feature, expected sign): does each type line up with its obvious driver?
-    ("helicopter", "d_heliport", -1), ("commercial", "n_bars", 1), ("vehicle", "len_truck_through", 1),
-    ("street", "n_bars", 1), ("residential", "log_units", 1)]
+    ("helicopter", "d_heliport", -1), ("commercial", "bar_exposure", 1), ("vehicle", "truck_exposure", 1),
+    ("street", "bar_exposure", 1), ("residential", "log_units", 1)]
 
 
 def design(cells: pd.DataFrame) -> pd.DataFrame:
@@ -130,8 +132,18 @@ def fit(cells: pd.DataFrame) -> dict:
                       for i in range(len(X))]
     out["quieters"] = [[[cols[j], round(float(np.exp(contrib.iat[i, j])), 3)] for j in order[i, ::-1][:2] if contrib.iat[i, j] < 0]
                        for i in range(len(X))]
+    # Day (06-22) and night (22-06) fitted separately: which factors matter after dark?
+    by_time = {}
+    if "night" in X:
+        for name, yt in {"day": (X["complaints"] - X["night"]).to_numpy(float), "night": X["night"].to_numpy(float)}.items():
+            mt = HistGradientBoostingRegressor(**PARAMS).fit(X[cols], yt)
+            st = pd.DataFrame(shap.TreeExplainer(mt).shap_values(X[cols]), columns=cols).abs().mean().sort_values(ascending=False)
+            by_time[name] = {"spatial_cv": _score(yt, oof_predict(X, yt, cols, blocked, groups)),
+                             "importance": {k: round(float(v), 4) for k, v in st.items()}}
+
     metrics = {
         "target": "noise complaints per hex cell over 104 weeks",
+        "by_time": by_time,
         "cells": int(len(X)), "cv": "GroupKFold(5) on H3 resolution-6 parents",
         "spatial_cv": {"full": _score(y, oof_full), "units_only": _score(y, oof_base)},
         "random_cv_full": _score(y, oof_random),

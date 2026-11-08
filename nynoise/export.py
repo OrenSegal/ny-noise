@@ -48,6 +48,15 @@ def cells_json(cells: pd.DataFrame, scored: pd.DataFrame, meta: dict) -> dict:
     }
 
 
+def heat_json(complaints: pd.DataFrame, exposure: pd.DataFrame) -> dict:
+    """~66 m points for the map's density layers: complaint-days (all, night) and measured exposure at homes."""
+    ex = exposure[exposure[["highway", "elevated", "bar"]].sum(axis=1) > 0]
+    return {"complaints": {"lat": complaints["lat"].tolist(), "lon": complaints["lon"].tolist(),
+                           "all": complaints["all"].astype(int).tolist(), "night": complaints["night"].astype(int).tolist()},
+            "exposure": {"lat": ex["lat"].tolist(), "lon": ex["lon"].tolist(),
+                         **{k: _r(ex[k], 3) for k in ("highway", "elevated", "bar")}}}
+
+
 def forecast_json(fc: pd.DataFrame, zips: pd.DataFrame, panel: pd.DataFrame, bt: pd.DataFrame) -> dict:
     f = fc.merge(zips, on="zip")
     weeks = sorted(panel["week"].unique())[-HISTORY_WEEKS:]
@@ -92,6 +101,7 @@ def main(data_dir: Path = DATA_DIR, out: Path = WEB) -> None:
         "forecast.json": forecast_json(fc, zips, panel, bt),
         "scorecard.json": scorecard_json(metrics, race, an.interval_hits(bt), an.surge_weeks(panel)),
         "hourly.json": pd.read_csv(data_dir / "hourly.csv").to_dict(orient="list"),
+        "heat.json": heat_json(pd.read_csv(data_dir / "heat_points.csv.gz"), pd.read_csv(data_dir / "exposure_points.csv.gz")),
         "manifest.json": json.loads((data_dir / "manifest.json").read_text()),
     }
     for name, obj in files.items():
