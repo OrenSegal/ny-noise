@@ -100,3 +100,30 @@ def test_fetch_month_pages_until_short_page(monkeypatch):
 
     df = data.fetch_month(S(), "2024-01-01", "2024-02-01")
     assert calls == [0, data.PAGE] and len(df) == data.PAGE + 5
+
+
+def test_dashboard_baselines_match_model_baselines_and_running_error_ends_at_wape():
+    from nynoise import analysis
+
+    panel = synthetic_panel()
+    out = model.train(panel)
+    race = analysis.race_frame(panel, out["backtest"])
+    # each baseline in the dashboard equals the one the model was scored against
+    feats = model.make_features(panel)
+    base = model.baselines(feats)
+    for key in ("last_week", "mean_4_weeks", "same_week_last_year"):
+        ref = feats.assign(p=base[key])[["zip", "target_week", "p"]]
+        got = race[race["model"] == key].merge(ref, on=["zip", "target_week"])
+        assert np.allclose(got["pred"], got["p"])
+    # the last point of the cumulative curve is the headline WAPE
+    run = analysis.running_error(race)
+    final = run[run["model"] == "random_forest"]["cum_wape"].iloc[-1]
+    assert final == pytest.approx(out["metrics"]["holdout"]["random_forest"]["wape"]) or \
+           final == pytest.approx(out["metrics"]["holdout"][out["metrics"]["best_model"]]["wape"])
+
+
+def test_band_edges():
+    from nynoise import analysis
+
+    s = pd.Series([-0.5, -0.2, 0.0, 0.2, 0.5])
+    assert analysis.band(s).tolist() == analysis.BANDS

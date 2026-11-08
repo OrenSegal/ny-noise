@@ -37,6 +37,18 @@ Intervals: 80% nominal, **79.8%** empirical coverage on the holdout. By ZIP, med
 
 311 complaints measure how often people report noise, not how loud it is. Differences between ZIPs reflect population, reporting habits and enforcement as much as sound. The project forecasts reporting volume and says so on the dashboard's first screen.
 
+## The dashboard
+
+Five linked views over the committed tables, no network at runtime:
+
+- **Outlook**: a classed map of next week's forecast against each ZIP's own 52-week norm. The band strip above it is the legend, a histogram of ZIPs per class, and a filter. Select a table row to pin a ZIP (up to three); every other tab follows the pins.
+- **ZIP replay**: scrub or auto-play through the 52 holdout weeks and watch each forecast, its 80% range and what actually happened, with a plain-language readout and that ZIP's hit rate.
+- **Compare**: pinned ZIPs indexed to their own averages, forecast ranges at the right edge.
+- **Scorecard**: the baseline race (cumulative error for the model and three naive forecasts, toggleable, all ZIPs or pinned), error by quarter, weekly interval coverage with surge weeks shaded, and the full holdout table.
+- **When**: weekday-by-hour heatmap by complaint type.
+
+Design notes live in `PRODUCT.md` and `DESIGN.md`. Fonts (Libre Franklin, Source Serif 4, SIL OFL) are self-hosted in `static/`.
+
 ## Pipeline
 
 ```mermaid
@@ -57,7 +69,7 @@ The app reads committed tables only, so deployment needs no secrets or network. 
 ```bash
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements-dev.txt
-pytest -q                          # 8 tests, about a minute
+pytest -q                          # 10 tests, about a minute
 streamlit run streamlit_app.py     # uses the committed tables in data/
 ```
 
