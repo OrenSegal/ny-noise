@@ -31,7 +31,7 @@ export type Hourly = { type: string[]; dow: number[]; hour: number[]; n: number[
 export type Manifest = { built_at: string; raw_rows: number; zips: number; first_week: string; last_week: string };
 export type Heat = {
   complaints: { lat: number[]; lon: number[]; all: number[]; night: number[] };
-  exposure: { lat: number[]; lon: number[]; highway: number[]; elevated: number[]; bar: number[] };
+  exposure: { lat: number[]; lon: number[]; traffic: number[]; highway: number[]; elevated: number[]; bar: number[] };
 };
 export type Bundle = { cells: Cells; spatial: Spatial; forecast: Forecast; score: Scorecard; hourly: Hourly; manifest: Manifest; heat: Heat };
 
@@ -69,5 +69,9 @@ export const TYPE_COLORS: Record<string, string> = {
 };
 export const fmt = (n: number, d = 0) => n.toLocaleString("en-US", { maximumFractionDigits: d, minimumFractionDigits: d });
 export const pct = (n: number, d = 0) => `${(n * 100).toFixed(d)}%`;
+/** Display a feature value in its natural unit (distances in ft/mi, shares as %, log income as dollars). */
+export const factFmt = (name: string, v: number) =>
+  name.startsWith("d_") ? feet(v) : name === "renter_share" ? pct(v) : name === "log_income" ? "$" + fmt(Math.exp(v) / 1000) + "k"
+  : name === "traffic_db" ? fmt(v) + " dB" : name.endsWith("_exposure") ? fmt(v, 2) : fmt(v);
 export const feet = (ft: number) => (ft >= 5280 ? `${(ft / 5280).toFixed(1)} mi` : `${Math.round(ft / 10) * 10} ft`);
 export const reducedMotion = () => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;

@@ -30,7 +30,8 @@ def cells_json(cells: pd.DataFrame, scored: pd.DataFrame, meta: dict) -> dict:
     years = meta["weeks"] / 52
     types = [t for t in ("residential", "street", "vehicle", "commercial", "helicopter", "park", "other") if t in c]
     X = c.assign(log_units=np.log1p(c["units"]), log_retail=np.log1p(c["retail_area"]),
-                 log_commercial=np.log1p(c["commercial_area"]))
+                 log_commercial=np.log1p(c["commercial_area"]),
+                 log_income=np.log(c["median_income"].clip(lower=1)) if "median_income" in c else 0.0)
     as_list = lambda s: s if isinstance(s, list) else json.loads(s)
     return {
         "months": meta["months"], "window": [meta["window_start"], meta["window_end"]], "years": years,
@@ -51,11 +52,11 @@ def cells_json(cells: pd.DataFrame, scored: pd.DataFrame, meta: dict) -> dict:
 
 def heat_json(complaints: pd.DataFrame, exposure: pd.DataFrame) -> dict:
     """~66 m points for the map's density layers: damped complaints (all, night) and the exposure field."""
-    ex = exposure[exposure[["highway", "elevated", "bar"]].sum(axis=1) > 0]  # empty grid points draw nothing anyway
+    ex = exposure[exposure[["highway", "elevated", "bar", "traffic"]].sum(axis=1) > 0]  # empty grid points draw nothing anyway
     return {"complaints": {"lat": complaints["lat"].tolist(), "lon": complaints["lon"].tolist(),
                            "all": _r(complaints["all"], 2), "night": _r(complaints["night"], 2)},
             "exposure": {"lat": ex["lat"].tolist(), "lon": ex["lon"].tolist(),
-                         **{k: _r(ex[k], 3) for k in ("highway", "elevated", "bar")}}}
+                         **{k: _r(ex[k], 3) for k in ("highway", "elevated", "bar")}, "traffic": _r(ex["traffic"], 1)}}
 
 
 def forecast_json(fc: pd.DataFrame, zips: pd.DataFrame, panel: pd.DataFrame, bt: pd.DataFrame) -> dict:

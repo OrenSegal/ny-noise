@@ -43,6 +43,7 @@ FEATURES = {
     "offprem_exposure": ("Bodegas and liquor stores near homes", "Business", "equivalents at 30 m"),
     "highway_exposure": ("Expressway traffic heard from homes", "Roads", "line-equivalents at 30 m"),
     "d_highway": ("Distance from homes to an open-air expressway", "Roads", "ft"),
+    "traffic_db": ("Estimated road-traffic noise at homes", "Roads", "relative dB"),
     "arterial_exposure": ("Major-avenue traffic heard from homes", "Roads", "line-equivalents at 30 m"),
     "truck_exposure": ("Through truck routes heard from homes", "Roads", "line-equivalents at 30 m"),
     "rail_exposure": ("Above-ground rail heard from homes", "Rail and air", "line-equivalents at 30 m"),
@@ -57,6 +58,8 @@ FEATURES = {
     "d_fire_station": ("Distance to a fire station", "Sirens", "ft"),
     "d_hospital": ("Distance to a hospital", "Sirens", "ft"),
     "d_park": ("Distance to a park of 1 ha or more", "Green space", "ft"),
+    "renter_share": ("Share of households renting (census tract)", "Who reports", "share"),
+    "log_income": ("Median household income (census tract)", "Who reports", "log $"),
 }
 PARAMS = dict(loss="poisson", max_iter=400, learning_rate=0.05, max_leaf_nodes=31,
               min_samples_leaf=40, l2_regularization=1.0, random_state=0)
@@ -70,6 +73,8 @@ def design(cells: pd.DataFrame) -> pd.DataFrame:
     X["log_units"] = np.log1p(X["units"])
     X["log_retail"] = np.log1p(X["retail_area"])
     X["log_commercial"] = np.log1p(X["commercial_area"])
+    if "median_income" in X:
+        X["log_income"] = np.log(X["median_income"].clip(lower=1))
     return X
 
 

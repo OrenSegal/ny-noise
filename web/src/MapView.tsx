@@ -18,7 +18,7 @@ export type View = { longitude: number; latitude: number; zoom: number; pitch: n
 export const HOME: View = { longitude: -73.94, latitude: 40.70, zoom: 10.1, pitch: 0, bearing: 0 };
 
 /** `level` points are a regular grid of an intensive value (exposure), averaged; others are counts, smoothed as a density. */
-export type HeatPoints = { lat: number[]; lon: number[]; w: ArrayLike<number>; level?: boolean } | null;
+export type HeatPoints = { lat: number[]; lon: number[]; w: ArrayLike<number>; level?: "ratio" | "db" } | null;
 
 /** Flat classed hex map. Colour is the class; a picked class dims the rest so its blocks stand out. */
 export default function MapView({ cells, classed, activeClass, selected, onSelect, view, setView, tooltip, heat }: {
@@ -41,7 +41,7 @@ export default function MapView({ cells, classed, activeClass, selected, onSelec
     updateTriggers: { getFillColor: [classed, activeClass, heat], getLineColor: [heat] },
   });
   // Heat is rasterised once per layer to a smoothed ~50 m image; the GPU interpolates it at any zoom.
-  const raster = useMemo(() => (heat ? rasterize(heat.lat, heat.lon, heat.w, heat.level ? "level" : "density") : null), [heat]);
+  const raster = useMemo(() => (heat ? rasterize(heat.lat, heat.lon, heat.w, heat.level ?? "density") : null), [heat]);
   const field = raster ? [new BitmapLayer({ id: "field", image: raster.image, bounds: raster.bounds })] : [];
   const sel = selected === null ? [] : [new H3HexagonLayer<number>({
     id: "selected", data: [selected], getHexagon: (i) => cells.h3[i], filled: false, stroked: true,

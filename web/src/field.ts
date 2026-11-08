@@ -2,16 +2,17 @@
 import { thermal } from "./data";
 
 const PX_LAT = 0.00045, PX_LON = 0.0006; // ~50 m pixels at NYC's latitude
-const LEVEL = { lo: 0.05, hi: 3 }; // exposure: 30 m / d at 600 m and at the 10 m floor
+const LEVEL = { ratio: { lo: 0.05, hi: 3 }, db: { lo: 28, hi: 50 } }; // 30 m / d at 600 m and at the 10 m floor; relative dB
 
 export type Field = { image: HTMLCanvasElement; bounds: [number, number, number, number] };
 
 /**
  * "level": a weighted mean of nearby grid values (exposure is a level, so dense areas are not hotter for having more points).
  * "density": a kernel-smoothed count (complaints), on a scale fixed from the whole city so panning never re-colours it.
- * Levels are coloured on a log scale, as loudness is heard; densities on a square-root scale so hotspots stand out.
+ * dB is already logarithmic and is mapped linearly. Other levels are coloured on a log scale, as loudness is heard; densities on a square-root scale so hotspots stand out.
  */
-export function rasterize(lat: number[], lon: number[], w: ArrayLike<number>, mode: "level" | "density"): Field {
+export function rasterize(lat: number[], lon: number[], w: ArrayLike<number>, kind: "ratio" | "db" | "density"): Field {
+  const mode = kind === "density" ? "density" : "level";
   const R = mode === "level" ? 2 : 3, SIGMA = mode === "level" ? 1.2 : 1.6; // pixels (~60 / ~80 m)
   let s = Infinity, n = -Infinity, west = Infinity, e = -Infinity;
   for (let i = 0; i < lat.length; i++) {
@@ -35,7 +36,7 @@ export function rasterize(lat: number[], lon: number[], w: ArrayLike<number>, mo
   }
   const val = new Float32Array(W * H);
   for (let p = 0; p < W * H; p++) val[p] = mode === "level" ? (wt[p] >= 0.05 ? sum[p] / wt[p] : 0) : sum[p] / ksum;
-  let { lo, hi } = LEVEL;
+  let { lo, hi } = kind === "density" ? LEVEL.ratio : LEVEL[kind];
   if (mode === "density") {
     const nz = Array.from(val.filter((v) => v > 0.01)).sort((a, b) => a - b);
     hi = nz[Math.floor(nz.length * 0.995)] ?? 1;
@@ -45,7 +46,7 @@ export function rasterize(lat: number[], lon: number[], w: ArrayLike<number>, mo
   const ctx = canvas.getContext("2d")!;
   const img = ctx.createImageData(W, H);
   for (let p = 0; p < W * H; p++) {
-    const t = !(val[p] > 0) ? -1 : mode === "level" ? Math.log(val[p] / lo) / Math.log(hi / lo) : Math.sqrt(val[p] / hi) - 0.08;
+    const t = !(val[p] > 0) ? -1 : kind === "db" ? (val[p] - lo) / (hi - lo) : mode === "level" ? Math.log(val[p] / lo) / Math.log(hi / lo) : Math.sqrt(val[p] / hi) - 0.08;
     if (t <= -0.3) continue;
     const u = Math.max(0, Math.min(1, t));
     const c = thermal(0.1 + u * 0.9);

@@ -132,7 +132,29 @@ def fetch_all(since: str) -> dict:
             "$select": "station_complex_id,avg(latitude) as lat,avg(longitude) as lon,sum(ridership) as riders",
             "$where": "transit_timestamp >= '2024-01-01T00:00:00' AND transit_timestamp < '2025-01-01T00:00:00'",
             "$group": "station_complex_id", "$order": "station_complex_id"})),
+        # DOT automated traffic counts, every year: summed per counted segment and direction on the server
+        "traffic": _cached_json("traffic", lambda: _socrata(f"https://{nyc}/7ym2-wayt.json", {
+            "$select": "segmentid,wktgeom,direction,sum(vol) as v,count(*) as n",
+            "$group": "segmentid,wktgeom,direction", "$order": "segmentid,direction"})),
+        # 2020 census tracts (geometry) and ACS 5-year tenure and income per tract via Census Reporter
+        # (the Census Bureau API now requires a key; Census Reporter republishes the same tables)
+        "tracts": _cached_json("tracts", lambda: _socrata(f"https://{nyc}/63ge-mke6.json", {
+            "$select": "geoid,the_geom", "$order": "geoid"})),
+        "acs": _cached_json("acs", lambda: [_census_reporter(c) for c in ("005", "047", "061", "081", "085")]),
     }
+
+
+def _census_reporter(county: str) -> dict:
+    import requests
+
+    for i in range(5):
+        r = requests.get("https://api.censusreporter.org/1.0/data/show/latest", timeout=120,
+                         params={"table_ids": "B25003,B19013", "geo_ids": f"140|05000US36{county}"},
+                         headers={"User-Agent": "ny-noise-research"})
+        if r.status_code == 200:
+            return r.json()
+        time.sleep(5 * 2 ** i)
+    r.raise_for_status()
 
 
 # ------------------------------------------------------------------ geometry helpers
@@ -341,6 +363,59 @@ def _latlon_points(rows: list[dict]) -> np.ndarray:
     return to_ft(df["latitude"], df["longitude"])
 
 
+def acs_frame(payloads: list[dict]) -> pd.DataFrame:
+    """Renter share and median household income per tract; tracts with under 50 households get no renter share."""
+    rows = []
+    for d in payloads:
+        for geo, v in d["data"].items():
+            ten, inc = v["B25003"]["estimate"], v["B19013"]["estimate"]
+            tot = ten.get("B25003001") or 0
+            rows.append({"geoid": geo.split("US")[-1], "renter_share": ten["B25003003"] / tot if tot >= 50 else np.nan,
+                         "median_income": inc.get("B19013001")})
+    return pd.DataFrame(rows).astype({"renter_share": float, "median_income": float})
+
+
+def tract_of(xy: np.ndarray, tracts: list[dict]) -> np.ndarray:
+    """2020 tract GEOID containing each point ('' if none: water, the airports' edges)."""
+    polys, ids = [], []
+    for r in tracts:
+        g = r.get("the_geom") or {}
+        for poly in g.get("coordinates", []) if g.get("type") == "MultiPolygon" else []:
+            ring = np.array(poly[0])
+            polys.append(shapely.Polygon(to_ft(ring[:, 1], ring[:, 0]))); ids.append(r["geoid"])
+    pi, gi = shapely.STRtree(np.array(polys, dtype=object)).query(shapely.points(xy), predicate="intersects")
+    out = np.full(len(xy), "", dtype=object)
+    out[pi] = np.array(ids, dtype=object)[gi]
+    return out
+
+
+ROAD_CLASSES = ("motorway", "trunk", "primary", "secondary")
+
+
+def class_volumes(rows: list[dict], lines: dict[str, np.ndarray]) -> dict[str, float]:
+    """Median daily vehicles per OSM road class, from DOT counts snapped to a road of that class within 60 ft.
+
+    DOT has counted ~3,400 segments since 2009, too few to measure most streets directly, but enough to
+    say how much traffic a typical expressway, trunk road or avenue carries.
+    """
+    c = pd.DataFrame(rows)
+    c[["v", "n"]] = c[["v", "n"]].apply(pd.to_numeric)
+    c = c.assign(daily=c["v"] / c["n"] * 96).groupby(["segmentid", "wktgeom"])["daily"].sum().reset_index()  # 15-min bins, both directions
+    xy = np.array([[float(a) for a in w[w.index("(") + 1:-1].split()] for w in c["wktgeom"]])  # already EPSG:2263 feet
+    d = np.column_stack([nearest_distance(xy, lines[k], cap=1e6) for k in ROAD_CLASSES])
+    cls = np.where(d.min(axis=1) <= 60, d.argmin(axis=1), -1)
+    return {k: float(c["daily"][cls == i].median()) for i, k in enumerate(ROAD_CLASSES) if (cls == i).sum() >= 5}
+
+
+def traffic_level(at_xy: np.ndarray, lines: dict[str, np.ndarray], volumes: dict[str, float]) -> np.ndarray:
+    """Estimated road-traffic noise in relative dB: 10 log10(1 + sum over classes of daily vehicles x 30 m / distance).
+
+    Sound energy from a road scales with its traffic and falls off as 1/d; energies from several roads add.
+    """
+    e = sum(v * line_exposure(at_xy, lines[k]) for k, v in volumes.items())
+    return 10 * np.log10(1 + e)
+
+
 def homes_mean(lots: pd.DataFrame, values: np.ndarray, cells: pd.DataFrame, fallback: np.ndarray) -> np.ndarray:
     """Average a per-lot value over each cell's homes, weighted by residential units; cells without homes use `fallback`."""
     w = lots["unitsres"].to_numpy()
@@ -434,8 +509,21 @@ def build_cells(raw: pd.DataFrame, src: dict, end: pd.Timestamp):
     f["d_fire_station"] = nearest_point_distance(xy, osm_points(pts, lambda t: t.get("amenity") == "fire_station"))
     f["d_hospital"] = nearest_point_distance(xy, osm_points(pts, lambda t: t.get("amenity") == "hospital"))
     f["d_park"] = nearest_distance(xy, osm_polygons(src["parks"]["elements"], min_area_ft2=107_639))  # >= 1 hectare
+    # Road traffic: every major road weighted by the measured daily volume of its class.
+    road_lines = {k: osm_lines(roads, lambda t, k=k: t.get("highway") == k and open_air(t)) for k in ROAD_CLASSES}
+    volumes = class_volumes(src["traffic"], road_lines)
+    print("median daily vehicles by road class:", {k: round(v) for k, v in volumes.items()})
+    traffic = lambda at, _=None: traffic_level(at, road_lines, volumes)
+    f["traffic_db"] = homes_mean(lots, traffic(lot_xy), f, traffic(xy))
+    # Who reports: renter share and income of the census tract each home sits in (reporting propensity, not sound).
+    acs = acs_frame(src["acs"]).set_index("geoid")
+    lot_tract, cell_tract = tract_of(lot_xy, src["tracts"]), tract_of(xy, src["tracts"])
+    for col in ("renter_share", "median_income"):
+        lv, cv = acs[col].reindex(lot_tract).to_numpy(), acs[col].reindex(cell_tract).to_numpy()
+        ok = np.isfinite(lv)
+        f[col] = homes_mean(lots[ok], lv[ok], f, np.where(np.isfinite(cv), cv, np.nanmedian(lv)))
     exposure_pts = field_exposure(f["h3"], {"highway": (line_exposure, highway), "elevated": (line_exposure, elevated),
-                                            "bar": (exposure, venues["bar"])})
+                                            "bar": (exposure, venues["bar"]), "traffic": (traffic, None)})
     return f.reset_index(drop=True), months, heat, exposure_pts
 
 

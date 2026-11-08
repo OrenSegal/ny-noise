@@ -16,7 +16,7 @@ const LENSES: { id: Lens; label: string }[] = [
   { id: "factor", label: "One factor" },
 ];
 const TOP_N = 10;
-const SOURCES = { highway: "Expressways", elevated: "Elevated rail", bar: "Bars and clubs" } as const;
+const SOURCES = { traffic: "All roads", highway: "Expressways", elevated: "El trains", bar: "Bars" } as const;
 type Source = keyof typeof SOURCES;
 const TODS: { id: TimeOfDay; label: string }[] = [{ id: "all", label: "All day" }, { id: "day", label: "Day 06-22" }, { id: "night", label: "Night 22-06" }];
 
@@ -28,7 +28,7 @@ export default function App() {
   const [found, setFound] = useState<string | null>(null);
   const [tod, setTod] = useState<TimeOfDay>((["all", "day", "night"].includes(hash.get("time") ?? "") ? hash.get("time") : "all") as TimeOfDay);
   const [display, setDisplay] = useState<"heat" | "blocks">(hash.get("view") === "blocks" ? "blocks" : "heat");
-  const [source, setSource] = useState<Source>((hash.get("source") ?? "highway") in SOURCES ? (hash.get("source") as Source) : "highway");
+  const [source, setSource] = useState<Source>((hash.get("source") ?? "traffic") in SOURCES ? (hash.get("source") as Source) : "traffic");
   const [factor, setFactor] = useState(0);
   const [month, setMonth] = useState(-1); // -1 = the whole two-year window
   const [playing, setPlaying] = useState(false);
@@ -71,12 +71,12 @@ export default function App() {
   const timeLens = lens === "complaints" && display === "blocks";
   // Exposure is drawn as fine heat; its block-level twin feature drives the legend, tooltip and ranking.
   const blockLens: Lens = lens === "exposure" ? "factor" : lens;
-  const blockFactor = lens === "exposure" && b ? Math.max(0, b.cells.features.indexOf(`${source}_exposure`)) : factor;
+  const blockFactor = lens === "exposure" && b ? Math.max(0, b.cells.features.indexOf(source === "traffic" ? "traffic_db" : `${source}_exposure`)) : factor;
   const classed = useMemo(() => (b ? classify(b.cells, b.spatial, blockLens, timeLens ? month : -1, blockFactor, tod) : null),
     [b, blockLens, month, blockFactor, timeLens, tod]);
   const heat: HeatPoints = useMemo(() => {
     if (!b) return null;
-    if (lens === "exposure") return { lat: b.heat.exposure.lat, lon: b.heat.exposure.lon, w: b.heat.exposure[source], level: true };
+    if (lens === "exposure") return { lat: b.heat.exposure.lat, lon: b.heat.exposure.lon, w: b.heat.exposure[source], level: source === "traffic" ? "db" : "ratio" };
     if (lens !== "complaints" || display !== "heat") return null;
     const h = b.heat.complaints;
     return { lat: h.lat, lon: h.lon, w: tod === "night" ? h.night : tod === "day" ? h.all.map((v, i) => v - h.night[i]) : h.all };
@@ -172,7 +172,7 @@ export default function App() {
               </div>
             </>}
             {lens === "exposure" && (
-              <div className="seg seg3" role="group" aria-label="Exposure source">
+              <div className="seg seg4" role="group" aria-label="Exposure source">
                 {(Object.keys(SOURCES) as Source[]).map((k) => <button key={k} aria-pressed={source === k} onClick={() => setSource(k)}>{SOURCES[k]}</button>)}
               </div>
             )}
@@ -187,7 +187,8 @@ export default function App() {
                 <div className="ramp" style={{ background: rampCss() }} />
                 <div className="ends"><span>less</span><span>more</span></div>
                 <div className="legend-foot">{lens === "exposure"
-                  ? source === "bar" ? "Each bar counts (30 m / distance)², summed at every point: a bar 30 m away counts 1, at 60 m a quarter, nothing past 150 m."
+                  ? source === "traffic" ? "Every expressway and avenue, weighted by the daily traffic DOT counts measured on roads of its class (about 45,000 vehicles on an expressway, 8,000 on a secondary avenue), falling off as 1/distance and adding up across roads. Relative dB, from geometry, not complaints."
+                    : source === "bar" ? "Each bar counts (30 m / distance)², summed at every point: a bar 30 m away counts 1, at 60 m a quarter, nothing past 150 m."
                     : "Every point scores 30 m / distance to the nearest line, so traffic falls off about 3 dB per doubling, out to 500 m. Tunnels excluded. From geometry, not complaints: people rarely call 311 about a constant highway."
                   : "Smoothed complaints on ~65 m cells, repeat callers capped. Switch to Blocks for exact numbers per ~250 m block."}</div>
               </div>
