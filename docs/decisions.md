@@ -65,3 +65,9 @@ The first holdout quarter has citywide weekly totals jumping from about 14,000 t
 ## 11. Map without a basemap
 
 The first version used a tiled map. It could not be verified in the preview environment and added a dependency on a tile service and WebGL. The final version is a plain longitude/latitude scatter with a corrected aspect ratio: it renders identically everywhere, and the NYC outline is recognizable from the 177 ZIP positions.
+
+## 12. Dashboard: evidence first, everything linked
+
+The dashboard follows a statistical-atlas world (classed tints, framed plates, italic captions under figures) because the job is reading data, not browsing. Two choices matter beyond looks. The map's legend is a histogram of ZIPs per class that doubles as the filter, so the distribution and the control are one object. Error is shown as a race with the baselines on the same axes, with the surge weeks shaded, so the weak quarter cannot be missed. Every figure on the Scorecard is computed from the same backtest table the headline reads, and a test asserts the end of the cumulative curve equals the reported WAPE.
+
+Tried and removed: a click-on-bubble pin on the map (selection events did not register in the preview environment and could not be verified, so ZIPs are pinned from the table or the picker); a tiled basemap (see 11).

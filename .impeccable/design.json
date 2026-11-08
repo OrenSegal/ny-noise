@@ -1,0 +1,313 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-07T00:00:00Z",
+  "title": "Design System: NYC Noise Forecast",
+  "extensions": {
+    "colorMeta": {
+      "ink": {
+        "role": "neutral",
+        "displayName": "Navy Ink",
+        "canonical": "#14213D",
+        "tonalRamp": [
+          "#080D18",
+          "#0C1425",
+          "#101A31",
+          "#14213D",
+          "#434D64",
+          "#727A8B",
+          "#A1A6B1",
+          "#D0D3D8"
+        ]
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Map Paper",
+        "canonical": "#EEF1ED",
+        "tonalRamp": [
+          "#5F605F",
+          "#8F918E",
+          "#BEC1BE",
+          "#EEF1ED",
+          "#F1F4F1",
+          "#F5F7F4",
+          "#F8F9F8",
+          "#FCFCFB"
+        ]
+      },
+      "rule": {
+        "role": "neutral",
+        "displayName": "Hairline Sage",
+        "canonical": "#C5CCC2",
+        "tonalRamp": [
+          "#4F524E",
+          "#767A74",
+          "#9EA39B",
+          "#C5CCC2",
+          "#D1D6CE",
+          "#DCE0DA",
+          "#E8EBE7",
+          "#F3F5F3"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Slate Caption",
+        "canonical": "#4A5468",
+        "tonalRamp": [
+          "#1E222A",
+          "#2C323E",
+          "#3B4353",
+          "#4A5468",
+          "#6E7686",
+          "#9298A4",
+          "#B7BBC3",
+          "#DBDDE1"
+        ]
+      },
+      "class-well-below": {
+        "role": "primary",
+        "displayName": "Deep Teal",
+        "canonical": "#1D5F7A",
+        "tonalRamp": [
+          "#0C2631",
+          "#113949",
+          "#174C62",
+          "#1D5F7A",
+          "#4A7F95",
+          "#779FAF",
+          "#A5BFCA",
+          "#D2DFE4"
+        ]
+      },
+      "class-below": {
+        "role": "secondary",
+        "displayName": "Pale Teal",
+        "canonical": "#86B4BC",
+        "tonalRamp": [
+          "#36484B",
+          "#506C71",
+          "#6B9096",
+          "#86B4BC",
+          "#9EC3C9",
+          "#B6D2D7",
+          "#CFE1E4",
+          "#E7F0F2"
+        ]
+      },
+      "class-near-typical": {
+        "role": "neutral",
+        "displayName": "Survey Buff",
+        "canonical": "#D9D5C3",
+        "tonalRamp": [
+          "#57554E",
+          "#828075",
+          "#AEAA9C",
+          "#D9D5C3",
+          "#E1DDCF",
+          "#E8E6DB",
+          "#F0EEE7",
+          "#F7F7F3"
+        ]
+      },
+      "class-above": {
+        "role": "tertiary",
+        "displayName": "Ochre Orange",
+        "canonical": "#E9A15E",
+        "tonalRamp": [
+          "#5D4026",
+          "#8C6138",
+          "#BA814B",
+          "#E9A15E",
+          "#EDB47E",
+          "#F2C79E",
+          "#F6D9BF",
+          "#FBECDF"
+        ]
+      },
+      "class-well-above": {
+        "role": "primary",
+        "displayName": "Vermilion",
+        "canonical": "#B3392B",
+        "tonalRamp": [
+          "#481711",
+          "#6B221A",
+          "#8F2E22",
+          "#B3392B",
+          "#C26155",
+          "#D18880",
+          "#E1B0AA",
+          "#F0D7D5"
+        ]
+      },
+      "surface-plate": {
+        "role": "neutral",
+        "displayName": "Plate Stock",
+        "canonical": "#F7F9F6",
+        "tonalRamp": [
+          "#636462",
+          "#949594",
+          "#C6C7C5",
+          "#F7F9F6",
+          "#F9FAF8",
+          "#FAFBFA",
+          "#FCFDFB",
+          "#FDFEFD"
+        ]
+      },
+      "paper-deep": {
+        "role": "neutral",
+        "displayName": "Sidebar Sage",
+        "canonical": "#E2E7E0",
+        "tonalRamp": [
+          "#5A5C5A",
+          "#888B86",
+          "#B5B9B3",
+          "#E2E7E0",
+          "#E8ECE6",
+          "#EEF1EC",
+          "#F3F5F3",
+          "#F9FAF9"
+        ]
+      },
+      "baseline-grey": {
+        "role": "neutral",
+        "displayName": "Dotted Baseline Grey",
+        "canonical": "#7A8190",
+        "tonalRamp": [
+          "#31343A",
+          "#494D56",
+          "#626773",
+          "#7A8190",
+          "#959AA6",
+          "#AFB3BC",
+          "#CACDD3",
+          "#E4E6E9"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "title": {
+        "displayName": "Page Title",
+        "purpose": "The single h1."
+      },
+      "plate-title": {
+        "displayName": "Plate Title",
+        "purpose": "Names each figure or table."
+      },
+      "caption": {
+        "displayName": "Italic Caption",
+        "purpose": "Says how to read the figure above."
+      },
+      "body": {
+        "displayName": "Lede and UI",
+        "purpose": "Sentences, controls and data."
+      },
+      "note": {
+        "displayName": "Note",
+        "purpose": "Muted small print."
+      }
+    },
+    "shadows": [],
+    "motion": [
+      {
+        "name": "reduced-motion",
+        "value": "animation: none; transition: none",
+        "purpose": "All animation and transitions are disabled under prefers-reduced-motion."
+      },
+      {
+        "name": "replay-tick",
+        "value": "0.9s fragment interval",
+        "purpose": "ZIP replay advances one week per tick when playing."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "narrow",
+        "value": "640px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Band Strip",
+      "kind": "custom",
+      "refersTo": "band-strip",
+      "description": "Stacked five-segment bar of ZIP counts per class; click filters the map and table.",
+      "html": "<div class=\"ds-strip\"><span style=\"background:#1D5F7A;color:#fff;flex:12\">12</span><span style=\"background:#86B4BC;flex:30\">30</span><span style=\"background:#D9D5C3;flex:80\">Near typical 80</span><span style=\"background:#E9A15E;flex:35\">35</span><span style=\"background:#B3392B;color:#fff;flex:20\">20</span></div>",
+      "css": ".ds-strip{display:flex;height:48px;font:11px 'Libre Franklin',Arial,sans-serif;color:#14213D;font-variant-numeric:tabular-nums}.ds-strip span{display:flex;align-items:center;justify-content:center;border:1px solid #14213D;margin-left:-1px}.ds-strip span:hover{opacity:.7}"
+    },
+    {
+      "name": "Plate",
+      "kind": "card",
+      "refersTo": "plate",
+      "description": "Hairline-framed chart or table with serif title and italic caption.",
+      "html": "<div class=\"ds-plate\"><div class=\"ds-plate-title\">Forecast complaints by ZIP, week of Nov 10, 2025</div><div class=\"ds-plate-body\"></div><p class=\"ds-caption\">Bubble area is forecast volume; tint is the class below the map.</p></div>",
+      "css": ".ds-plate-title{font-family:'Source Serif 4',Georgia,serif;font-weight:600;font-size:1.15rem;letter-spacing:-.01em;color:#14213D;margin:0 0 .35rem}.ds-plate-body{height:80px;border:1px solid #C5CCC2;background:#F7F9F6}.ds-caption{font-family:'Source Serif 4',Georgia,serif;font-style:italic;color:#4A5468;font-size:.9rem;line-height:1.45;max-width:70ch;margin:.25rem 0 1rem}"
+    },
+    {
+      "name": "Tab Row",
+      "kind": "nav",
+      "refersTo": "tab",
+      "description": "Ink baseline, semibold tabs, vermilion 3px underline on the selected tab.",
+      "html": "<div class=\"ds-tabs\"><a class=\"ds-tab ds-on\" tabindex=\"0\">Outlook</a><a class=\"ds-tab\" tabindex=\"0\">ZIP replay</a><a class=\"ds-tab\" tabindex=\"0\">Compare</a></div>",
+      "css": ".ds-tabs{display:flex;gap:.25rem;border-bottom:1px solid #14213D;font-family:'Libre Franklin',Arial,sans-serif}.ds-tab{font-weight:600;font-size:1rem;padding:.55rem 1.1rem;margin-right:.15rem;color:#4A5468;border-bottom:3px solid transparent;cursor:pointer}.ds-tab.ds-on{color:#14213D;border-bottom-color:#B3392B}.ds-tab:focus-visible{outline:2px solid #B3392B;outline-offset:2px}"
+    },
+    {
+      "name": "Readout",
+      "kind": "custom",
+      "refersTo": "readout",
+      "description": "Ink-ruled sentence under a replay with hit or miss in class color.",
+      "html": "<div class=\"ds-readout\">Week of Oct 6: forecast <b>82</b>, actual <b>88</b>, <span class=\"ds-hit\">inside the range</span>.</div>",
+      "css": ".ds-readout{border-top:1px solid #14213D;padding-top:.6rem;font:1rem/1.55 'Libre Franklin',Arial,sans-serif;color:#14213D;max-width:80ch}.ds-hit{color:#1D5F7A;font-weight:650}.ds-miss{color:#B3392B;font-weight:650}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Working Atlas Plate",
+    "overview": "The dashboard is a statistical-atlas plate for next week's noise complaints, in the manner of Walker's 1874 Statistical Atlas but working as an Operate tool. Cool map-paper ground, navy-black ink, hairline rules and five graded class tints running from deep teal through a warm neutral to vermilion.\n\nCharts and tables sit in thin-ruled plates under serif plate titles, each followed by an italic caption that says how to read it. Density is high and flat; there are no cards, shadows or rounded corners.",
+    "keyCharacteristics": [
+      "Five-class tint scale, teal to vermilion, shared by strip, map and outcomes",
+      "Ink-outlined marks on cool paper",
+      "Franklin for data, Source Serif for titles and italic captions",
+      "Hairline-framed plates, no shadows",
+      "Band strip as legend, histogram and filter"
+    ],
+    "rules": [
+      {
+        "name": "The Band Strip Rule",
+        "body": "The five-segment strip of ZIP counts is the legend, the histogram and the filter at once. Any new view that shows forecast class takes its colors from the strip and responds to its selection.",
+        "section": "components"
+      },
+      {
+        "name": "The Ink Outline Rule",
+        "body": "Every mark carries an ink outline, so tints separate by line, not only by hue.",
+        "section": "shapes"
+      },
+      {
+        "name": "The Two Voices Rule",
+        "body": "Franklin speaks data and controls; Source Serif speaks titles and captions. They never swap.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat Plate Rule",
+        "body": "No shadows. Plates are framed by a hairline and sit flat on the paper.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do classify forecasts into the five bands (well below, below, near typical, above, well above) at -30%, -10%, +10%, +30% against the ZIP's own 52-week mean, and tint every band mark with its class color.",
+      "Do outline every data mark in ink (`#14213D`): 1px on strip segments, 0.8px on bubbles, 0.6px on bars, 1.5px on point markers.",
+      "Do frame every chart and table in a 1px hairline (`#C5CCC2`) on plate stock (`#F7F9F6`) over the paper ground.",
+      "Do set Libre Franklin with tabular numerals for all data, controls and tables; set Source Serif 4 only for the page title, plate titles and italic captions.",
+      "Do put an italic serif caption under each figure that says how to read it, in slate (`#4A5468`).",
+      "Do use vermilion for the selected tab underline, focus ring and 'miss' outcomes, and deep teal for 'hit' outcomes.",
+      "Do keep the model line in ink at 3.2px and the baselines in class teal, vermilion and dotted grey (`#7A8190`) at 2px."
+    ],
+    "donts": [
+      "Don't use shadows, gradients or rounded corners; depth is hairline frames and ink outlines.",
+      "Don't encode forecast magnitude as a continuous color ramp on the map; the classed five-tint scale is the only forecast encoding (the weekday-hour heatmap is a separate count ramp and stays out of the band system).",
+      "Don't set data, labels or controls in the serif face.",
+      "Don't use more than the five class tints plus ink, muted and baseline grey for series color.",
+      "Don't hide the honest result: the losing quarter and the surge weeks stay visible in the scorecard."
+    ]
+  }
+}
