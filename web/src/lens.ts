@@ -1,5 +1,5 @@
 // Turn a lens into a classed map: per-cell values, 7 bins with readable breaks, colours and counts.
-import { type Cells, type Spatial, feet, fmt, thermal } from "./data";
+import { type Cells, type Spatial, factFmt, fmt, thermal } from "./data";
 
 export type Lens = "complaints" | "exposure" | "expected" | "anomaly" | "factor";
 export type TimeOfDay = "all" | "day" | "night";
@@ -58,7 +58,7 @@ export function classify(cells: Cells, spatial: Spatial, lens: Lens, month: numb
     format = (v) => `${v.toFixed(v < 1 ? 2 : 1)}x`;
   } else if (lens === "factor") {
     breaks = quantileBreaks(value, [1 / 7, 2 / 7, 3 / 7, 4 / 7, 5 / 7, 6 / 7], false);
-    format = isDist ? feet : (v) => (fname.endsWith("_exposure") ? fmt(v, 2) : fmt(v));
+    format = (v) => factFmt(fname, v);
   } else {
     const base = new Float64Array(n);
     for (let i = 0; i < n; i++) base[i] = rawValue(cells, lens, -1, factor, i, month >= 0 ? "all" : tod);

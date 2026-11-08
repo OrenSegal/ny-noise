@@ -6,7 +6,7 @@ Where New York is loud, what goes with it block by block, and next week's 311 no
 
 Two models, kept apart on purpose:
 
-1. **A spatial model** that explains where complaints concentrate on a ~250 m hex grid, from 27 measured features of the surroundings, against complaints with repeat callers capped (below). Sound sources are measured where people live: each home is scored for expressways, arterials, through truck routes, surface and elevated rail (line fall-off) and bars, restaurants, outdoor dining, venues and liquor stores (inverse-square, within 150 m), then averaged over the block's homes. Also subway ridership at nearby stations, airports, heliports, open-air stadiums, indoor arenas, after-hours construction permits, fire stations, hospitals, parks, and the built form. It explains; it does not forecast, and its effects are associations, not causes.
+1. **A spatial model** that explains where complaints concentrate on a ~250 m hex grid, from 30 measured features of the surroundings, against complaints with repeat callers capped (below). Sound sources are measured where people live: each home is scored for expressways, arterials, through truck routes, surface and elevated rail (line fall-off) and bars, restaurants, outdoor dining, venues and liquor stores (inverse-square, within 150 m), then averaged over the block's homes. An estimated road-traffic level in relative dB weights every expressway and avenue by the daily volume DOT counts measured on roads of its class. Census renter share and median income (ACS 2020-2024, by tract) control for who reports. Also subway ridership at nearby stations, airports, heliports, open-air stadiums, indoor arenas, after-hours construction permits, fire stations, hospitals, parks, and the built form. It explains; it does not forecast, and its effects are associations, not causes.
 2. **A forecast** of next week's complaints for each of 177 ZIP codes, with calibrated 80% ranges, scored against naive baselines.
 
 ## Who it is for
@@ -28,13 +28,13 @@ What it cannot tell you: how loud a place is in decibels (311 records reports), 
 
 | Model (spatial CV) | Poisson deviance explained | Rank correlation | MAE per cell |
 |---|---|---|---|
-| **Full: 27 features** | **0.758** | **0.87** | **52** |
+| **Full: 30 features** | **0.769** | **0.88** | **50** |
 | Residential units only (exposure) | 0.660 | 0.81 | 65 |
-| Full, random folds (leaky) | 0.824 | 0.90 | 44 |
-| Day only (06 to 22) | 0.708 | 0.86 | 29 |
-| Night only (22 to 06) | 0.743 | 0.86 | 26 |
+| Full, random folds (leaky) | 0.831 | 0.90 | 43 |
+| Day only (06 to 22) | 0.722 | 0.86 | 28 |
+| Night only (22 to 06) | 0.767 | 0.86 | 25 |
 
-Urban factors add 0.098 of deviance over exposure alone. Random folds would overstate fit by about the same amount, which is why they are not the headline. Per-type checks all point the expected way: helicopter complaints rise near heliports (Spearman -0.33 with distance), commercial and street complaints with bar exposure at homes (0.56, 0.45), vehicle complaints with through truck exposure (0.09, weak), residential with housing units (0.83).
+Urban and census factors add 0.109 of deviance over exposure alone. Renter share is the strongest after housing: a block in a tract with 78% renters runs about 1.5x the complaints of one with 11%, everything else equal. That is reporting propensity as much as sound, and it is why the observed / expected lens is the fairer comparison between neighbourhoods. Measured traffic volume adds little; people rarely call 311 about steady traffic. Random folds would overstate fit by about the same amount, which is why they are not the headline. Per-type checks all point the expected way: helicopter complaints rise near heliports (Spearman -0.33 with distance), commercial and street complaints with bar exposure at homes (0.56, 0.45), vehicle complaints with through truck exposure (0.09, weak), residential with housing units (0.83).
 
 Strongest associations after exposure: liquor-store and bodega exposure, commercial floor area, building height, elevated rail, and distance to parks. Night is explained better than day; liquor stores and airports matter more at night, commercial floor area by day. Distances to the few airports and stadiums rank high partly because they encode location itself; read them as geography.
 
@@ -54,7 +54,7 @@ A modest edge: 4% lower weighted error than persistence, ahead in 3 of 4 rolling
 
 ## The app
 
-- **Heatmap** (default): a smooth ~50 m raster of complaints (repeat callers capped), filterable to day or night, or a continuous noise field for expressways, elevated rail, or bars and clubs, computed on a grid over the whole city so each road glows along its full open-air length. Hicks Street's BQE frontage reads as a hot ribbon against Brooklyn Heights behind it.
+- **Heatmap** (default): a smooth ~50 m raster of complaints (repeat callers capped), filterable to day or night, or a continuous noise field for all roads (volume-weighted, in relative dB), expressways, elevated rail, or bars, computed on a grid over the whole city so each road glows along its full open-air length. Hicks Street's BQE frontage reads as a hot ribbon against Brooklyn Heights behind it.
 - **Block map**: a flat map of ~250 m hex blocks in seven classed bins with printed break values; the legend is a histogram of blocks per class and filters the map. Lenses: complaints, expected from the city's fabric, observed against expected, or any single factor. A ranked list shows the top blocks for the current lens; a month scrubber replays two years on fixed breaks.
 - **Find an address** (NYC Planning GeoSearch) to jump to its block.
 - **Click any block**: its percentile among NYC blocks overall and at night, complaints against expectation, raw reports and how much of them one address filed, night share, the factors most associated with its noise as multipliers, complaint types, and a month-by-month trace.
@@ -69,7 +69,7 @@ flowchart LR
     A[311 API] -->|monthly, cached| B[data/raw]
     S[DOB permits, SLA licences, DOT truck routes, PLUTO, OpenStreetMap] -->|cached| B
     B --> C[weekly ZIP panel]
-    B --> H[hex cells + 27 features]
+    B --> H[hex cells + 30 features]
     C --> D[forecast model<br/>time holdout, CQR intervals]
     H --> E[spatial model<br/>block CV, SHAP]
     D --> J[web/public/data/*.json]
@@ -87,7 +87,7 @@ pytest -q
 ```bash
 python -m nynoise.data      # 311 ingest -> weekly ZIP panel
 python -m nynoise.model     # forecast, backtest, metrics
-python -m nynoise.factors   # hex grid + 27 features (downloads ~150 MB of sources once)
+python -m nynoise.factors   # hex grid + 30 features (downloads ~150 MB of sources once)
 python -m nynoise.spatial   # spatial model, block CV, SHAP drivers
 python -m nynoise.export    # JSON for the web app
 ```
@@ -102,7 +102,8 @@ Training is seeded; rerunning on the committed tables reproduces the metrics. Se
 
 - 311 measures reporting, not sound. A dense, engaged block complains more than an equally loud quiet one.
 - Repeat callers dominate raw counts (one Bronx address filed ~150,000 reports in two years; 1% of addresses file 26% of complaint-days). The map and spatial model count each address at most once per day per type and at most 24 times in two years; the ZIP forecast still models raw volume.
-- Open Restaurants records cover the 2020-2023 temporary programme; ridership is 2024.
+- Open Restaurants records cover the 2020-2023 temporary programme; ridership is 2024; traffic volumes are class medians from DOT counts since 2009, not per-street measurements.
+- Census values come from ACS 2020-2024 via Census Reporter (the Census Bureau API now requires a key).
 - Factor snapshots are current (2026 licences, permits, roads) against two years of complaints.
 - Associations, not causes; distances to rare features partly encode location.
 - No weather or event data; abrupt citywide shifts are not predictable from history.

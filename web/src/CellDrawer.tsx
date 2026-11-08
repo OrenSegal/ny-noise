@@ -1,11 +1,8 @@
-import { type Cells, type Spatial, TYPE_COLORS, feet, fmt, pct, thermal } from "./data";
+import { type Cells, type Spatial, TYPE_COLORS, factFmt, fmt, pct, thermal } from "./data";
 import PlotFigure, { Plot, plotStyle } from "./Plot";
 
-const KEY_FACTS = ["highway_exposure", "d_highway", "d_elevated_rail", "bar_exposure", "d_bar", "dining_exposure", "station_riders", "n_ahv", "d_park"];
+const KEY_FACTS = ["traffic_db", "highway_exposure", "d_highway", "d_elevated_rail", "bar_exposure", "d_bar", "dining_exposure", "station_riders", "n_ahv", "d_park", "renter_share", "log_income"];
 
-function factValue(name: string, v: number) {
-  return name.startsWith("d_") ? feet(v) : name.endsWith("_exposure") ? fmt(v, 2) : fmt(v);
-}
 
 export default function CellDrawer({ i, cells, spatial, zip, onClose }: {
   i: number; cells: Cells; spatial: Spatial; zip: string | null; onClose: () => void;
@@ -83,7 +80,7 @@ export default function CellDrawer({ i, cells, spatial, zip, onClose }: {
       <div className="facts">
         {KEY_FACTS.map((f) => {
           const k = cells.features.indexOf(f);
-          return k < 0 ? null : [<span key={`${f}l`}>{meta[f]?.label}</span>, <span key={`${f}v`}>{factValue(f, cells.x[k][i])}</span>];
+          return k < 0 ? null : [<span key={`${f}l`}>{meta[f]?.label}</span>, <span key={`${f}v`}>{factFmt(f, cells.x[k][i])}</span>];
         })}
         <span>Residential units in cell</span><span>{fmt(cells.units[i])}</span>
       </div>

@@ -168,5 +168,6 @@ figure svg text { font-variant-numeric: normal; } /* Plot sets tabular figures, 
 .linkish { border: 0; background: none; padding: 0; color: var(--amber); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; font: inherit; }
 
 .seg3 { grid-template-columns: repeat(3, 1fr); }
+.seg4 { grid-template-columns: repeat(4, 1fr); }
 .legend .ramp { height: 10px; border-radius: 5px; margin: 6px 0 4px; }
 .legend .ends { display: flex; justify-content: space-between; color: var(--ink-3); font-size: .74rem; }
