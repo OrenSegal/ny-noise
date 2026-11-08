@@ -1,0 +1,213 @@
+"""Forecast next week's noise complaints per ZIP.
+
+Run `python -m nynoise.model` after `python -m nynoise.data`. It writes, under data/:
+  metrics.json      holdout metrics vs. naive baselines, CV scores, permutation importance
+  backtest.csv.gz   holdout predictions with 80% intervals (what the dashboard plots)
+  forecast.csv      next-week forecast per ZIP
+
+Design choices that matter:
+  * Row at week t uses only weeks <= t; the target is the count in week t+1.
+  * Time-based holdout (last 52 target weeks) and week-blocked CV; never a random split.
+  * Target is scaled by each ZIP's 52-week mean so one model serves busy and quiet ZIPs.
+  * A rolling-origin check refits before each quarter of the holdout to show stability.
+  * Intervals are quantile GBMs widened by split-conformal calibration (CQR), then
+    checked for coverage on the untouched holdout.
+"""
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+from sklearn.base import clone
+from sklearn.ensemble import HistGradientBoostingRegressor, RandomForestRegressor
+from sklearn.inspection import permutation_importance
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+from sklearn.model_selection import GridSearchCV, TimeSeriesSplit
+
+DATA_DIR = Path(__file__).resolve().parent.parent / "data"
+HOLDOUT_WEEKS = 52
+CALIB_WEEKS = 26
+COVERAGE = 0.8
+FEATURES = ["lag0", "lag1", "lag3", "mean4", "last_year", "log_scale", "woy_sin", "woy_cos"]
+
+
+def make_features(panel: pd.DataFrame) -> pd.DataFrame:
+    """One row per (zip, week t). `y` is week t+1's count (NaN for the latest week)."""
+    p = panel.sort_values(["zip", "week"]).copy()
+    g = p.groupby("zip")["n"]
+    p["target_week"] = p["week"] + pd.Timedelta(weeks=1)
+    p["y"] = g.shift(-1)
+    p["scale"] = g.transform(lambda s: s.rolling(52).mean()) + 1  # mean of weeks t-51..t
+    p["lag0"] = p["n"] / p["scale"]
+    p["lag1"] = g.shift(1) / p["scale"]
+    p["lag3"] = g.shift(3) / p["scale"]
+    p["mean4"] = g.transform(lambda s: s.rolling(4).mean()) / p["scale"]
+    p["last_year"] = g.shift(51) / p["scale"]  # same ISO week one year before the target week
+    p["log_scale"] = np.log(p["scale"])
+    woy = p["target_week"].dt.isocalendar().week.astype(float)
+    p["woy_sin"] = np.sin(2 * np.pi * woy / 52)
+    p["woy_cos"] = np.cos(2 * np.pi * woy / 52)
+    return p.dropna(subset=FEATURES).reset_index(drop=True)
+
+
+def baselines(df: pd.DataFrame) -> dict[str, np.ndarray]:
+    s = df["scale"].to_numpy()
+    return {
+        "last_week": df["lag0"].to_numpy() * s,
+        "mean_4_weeks": df["mean4"].to_numpy() * s,
+        "same_week_last_year": df["last_year"].to_numpy() * s,
+    }
+
+
+def score(y: np.ndarray, pred: np.ndarray, mase_scale: float | None = None) -> dict[str, float]:
+    denom = np.abs(y) + np.abs(pred)
+    out = {
+        "mae": float(mean_absolute_error(y, pred)),
+        "rmse": float(np.sqrt(mean_squared_error(y, pred))),
+        "r2": float(r2_score(y, pred)),
+        "wape": float(np.abs(y - pred).sum() / y.sum()),  # weighted % error, robust to ZIP size
+        "smape": float(np.mean(np.where(denom == 0, 0, 2 * np.abs(y - pred) / np.where(denom == 0, 1, denom)))),
+    }
+    if mase_scale:  # <1 means better than seasonal-naive did in-sample on the training years
+        out["mase"] = float(mean_absolute_error(y, pred) / mase_scale)
+    return out
+
+
+def week_blocked_splits(weeks: pd.Series, n_splits: int = 4):
+    """Expanding-window CV split on whole weeks so no week straddles train/validation."""
+    u = np.sort(weeks.unique())
+    for tr, va in TimeSeriesSplit(n_splits).split(u):
+        yield np.flatnonzero(weeks.isin(u[tr])), np.flatnonzero(weeks.isin(u[va]))
+
+
+def _rel(df: pd.DataFrame) -> np.ndarray:
+    return (df["y"] / df["scale"]).to_numpy()
+
+
+def _quantile_model(q: float) -> HistGradientBoostingRegressor:
+    return HistGradientBoostingRegressor(loss="quantile", quantile=q, max_iter=200,
+                                         learning_rate=0.05, random_state=0)
+
+
+def train(panel: pd.DataFrame) -> dict:
+    df = make_features(panel)
+    labeled = df.dropna(subset=["y"]).sort_values("week").reset_index(drop=True)
+    weeks = np.sort(labeled["target_week"].unique())
+    if len(weeks) < HOLDOUT_WEEKS + CALIB_WEEKS + 30:
+        raise ValueError("not enough history to train: build a longer panel")
+    test_start = weeks[-HOLDOUT_WEEKS]
+    train_df = labeled[labeled["target_week"] < test_start].reset_index(drop=True)
+    test_df = labeled[labeled["target_week"] >= test_start].reset_index(drop=True)
+
+    candidates = {
+        "random_forest": (RandomForestRegressor(random_state=0, n_jobs=-1),
+                          {"n_estimators": [200], "max_depth": [8, 14], "min_samples_leaf": [5, 20]}),
+        "hist_gradient_boosting": (HistGradientBoostingRegressor(random_state=0),
+                                   {"max_iter": [150, 300], "learning_rate": [0.03, 0.1],
+                                    "max_depth": [3, 6]}),
+    }
+    cv = list(week_blocked_splits(train_df["week"]))
+    fitted, cv_scores = {}, {}
+    for name, (est, grid) in candidates.items():
+        gs = GridSearchCV(est, grid, cv=cv, scoring="neg_mean_absolute_error", n_jobs=-1)
+        gs.fit(train_df[FEATURES], _rel(train_df))
+        fitted[name], cv_scores[name] = gs.best_estimator_, {
+            "cv_mae_relative": float(-gs.best_score_), "params": gs.best_params_}
+    best = min(cv_scores, key=lambda k: cv_scores[k]["cv_mae_relative"])
+
+    y_true = test_df["y"].to_numpy()
+    s_test = test_df["scale"].to_numpy()
+    preds = {k: np.clip(m.predict(test_df[FEATURES]), 0, None) * s_test for k, m in fitted.items()}
+    train_naive = baselines(train_df)["same_week_last_year"]
+    mase_scale = float(np.abs(train_df["y"].to_numpy() - train_naive).mean())
+    holdout = {k: score(y_true, v, mase_scale) for k, v in {**baselines(test_df), **preds}.items()}
+    best_base = min(baselines(test_df), key=lambda k: holdout[k]["wape"])
+    skill = 1 - holdout[best]["wape"] / holdout[best_base]["wape"]
+
+    # Intervals: quantile models fit before the calibration weeks, conformal-widened on them.
+    calib_start = np.sort(train_df["target_week"].unique())[-CALIB_WEEKS]
+    fit_df = train_df[train_df["target_week"] < calib_start]
+    cal_df = train_df[train_df["target_week"] >= calib_start]
+    lo_m = _quantile_model((1 - COVERAGE) / 2).fit(fit_df[FEATURES], _rel(fit_df))
+    hi_m = _quantile_model(1 - (1 - COVERAGE) / 2).fit(fit_df[FEATURES], _rel(fit_df))
+    cal_lo, cal_hi = lo_m.predict(cal_df[FEATURES]), hi_m.predict(cal_df[FEATURES])
+    r = _rel(cal_df)
+    nonconf = np.maximum(cal_lo - r, r - cal_hi)
+    q = float(np.quantile(nonconf, min(1, COVERAGE * (1 + 1 / len(nonconf)))))
+
+    def interval(frame: pd.DataFrame) -> tuple[np.ndarray, np.ndarray]:
+        s = frame["scale"].to_numpy()
+        lo = np.clip(lo_m.predict(frame[FEATURES]) - q, 0, None) * s
+        hi = (hi_m.predict(frame[FEATURES]) + q) * s
+        return lo, hi
+
+    lo, hi = interval(test_df)
+    point = preds[best]
+    lo, hi = np.minimum(lo, point), np.maximum(hi, point)
+    coverage = float(((y_true >= lo) & (y_true <= hi)).mean())
+
+    imp = permutation_importance(fitted[best], test_df[FEATURES], _rel(test_df),
+                                 scoring="neg_mean_absolute_error", n_repeats=5, random_state=0)
+    importance = dict(sorted(zip(FEATURES, imp.importances_mean.round(5).tolist()),
+                             key=lambda kv: -kv[1]))
+
+    per_zip = (pd.DataFrame({"zip": test_df["zip"], "hit": (y_true >= lo) & (y_true <= hi)})
+               .groupby("zip")["hit"].mean())
+    zip_coverage = {"min": float(per_zip.min()), "p10": float(per_zip.quantile(0.1)),
+                    "median": float(per_zip.median()), "share_below_60pct": float((per_zip < 0.6).mean())}
+
+    # Rolling origin: refit before each quarter of the holdout, score that quarter vs. baselines.
+    rolling = []
+    for q_weeks in np.array_split(np.sort(test_df["target_week"].unique()), 4):
+        q_df = test_df[test_df["target_week"].isin(q_weeks)]
+        fit = labeled[labeled["target_week"] < q_weeks[0]]
+        est = clone(fitted[best]).fit(fit[FEATURES], _rel(fit))
+        qp = np.clip(est.predict(q_df[FEATURES]), 0, None) * q_df["scale"].to_numpy()
+        qy = q_df["y"].to_numpy()
+        row = {"start": f"{pd.Timestamp(q_weeks[0]):%Y-%m-%d}", "end": f"{pd.Timestamp(q_weeks[-1]):%Y-%m-%d}",
+               "model": score(qy, qp, mase_scale)}
+        row.update({k: score(qy, v, mase_scale) for k, v in baselines(q_df).items()})
+        rolling.append(row)
+
+    backtest = pd.DataFrame({"zip": test_df["zip"], "target_week": test_df["target_week"],
+                             "actual": y_true, "pred": point, "lo": lo, "hi": hi})
+
+    # Forecast: refit the winner on every labeled row, predict the unlabeled latest week.
+    final = fitted[best].fit(labeled[FEATURES], _rel(labeled))
+    latest = df[df["week"] == df["week"].max()]
+    fpoint = np.clip(final.predict(latest[FEATURES]), 0, None) * latest["scale"].to_numpy()
+    flo, fhi = interval(latest)
+    forecast = pd.DataFrame({"zip": latest["zip"].to_numpy(), "target_week": latest["target_week"].to_numpy(),
+                             "pred": fpoint, "lo": np.minimum(flo, fpoint), "hi": np.maximum(fhi, fpoint),
+                             "last_week": latest["n"].to_numpy(), "typical": latest["scale"].to_numpy() - 1})
+
+    metrics = {
+        "best_model": best,
+        "best_baseline": best_base,
+        "wape_skill_vs_best_baseline": float(skill),
+        "holdout": holdout,
+        "cv": cv_scores,
+        "interval": {"nominal": COVERAGE, "empirical_coverage": coverage,
+                     "conformal_widening_relative": q},
+        "interval_by_zip": zip_coverage,
+        "rolling_origin": rolling,
+        "permutation_importance": importance,
+        "holdout_weeks": [f"{pd.Timestamp(test_start):%Y-%m-%d}", f"{test_df['target_week'].max():%Y-%m-%d}"],
+        "train_rows": int(len(train_df)), "holdout_rows": int(len(test_df)),
+    }
+    return {"metrics": metrics, "backtest": backtest, "forecast": forecast}
+
+
+def main(data_dir: Path = DATA_DIR) -> dict:
+    out = train(pd.read_csv(data_dir / "weekly_panel.csv.gz", dtype={"zip": str}, parse_dates=["week"]))
+    out["backtest"].to_csv(data_dir / "backtest.csv.gz", index=False)
+    out["forecast"].to_csv(data_dir / "forecast.csv", index=False)
+    (data_dir / "metrics.json").write_text(json.dumps(out["metrics"], indent=2))
+    print(json.dumps(out["metrics"], indent=2))
+    return out["metrics"]
+
+
+if __name__ == "__main__":
+    main()
