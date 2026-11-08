@@ -64,6 +64,7 @@ export function Drivers({ b }: { b: Bundle }) {
           <figcaption>Average multiplier at each twelfth of the factor's range, holding the rest of the cell as it is. Above the dashed line means more complaints than the city baseline.</figcaption>
         </figure>
       </div>
+      {s.by_time && <DayNight s={s} />}
       <h3 style={{ marginTop: 40 }}>Sanity checks: does each complaint type follow its obvious source?</h3>
       <table className="tbl"><thead><tr><th>Complaint type</th><th>Factor</th><th className="num">Rank correlation</th><th>As expected</th></tr></thead>
         <tbody>{s.checks.map((c) => <tr key={c.type + c.feature}><td>{c.type}</td><td>{s.features[c.feature].label}</td>
@@ -183,3 +184,23 @@ export function When({ b }: { b: Bundle }) {
 export const TypeLegend = () => (
   <div className="types-key">{Object.entries(TYPE_COLORS).map(([t, c]) => <span key={t}><i style={{ background: c }} />{t}</span>)}</div>
 );
+
+function DayNight({ s }: { s: Bundle["spatial"] }) {
+  const bt = s.by_time!;
+  const feats = Array.from(new Set([...Object.keys(bt.night.importance).slice(0, 8), ...Object.keys(bt.day.importance).slice(0, 8)]))
+    .filter((f) => f !== "log_units");
+  const rows = feats.flatMap((f) => (["day", "night"] as const).map((t) => ({ label: s.features[f].label, when: t === "day" ? "Day 06-22" : "Night 22-06", v: bt[t].importance[f] ?? 0 })));
+  const order = feats.slice().sort((a, b) => (bt.night.importance[b] ?? 0) - (bt.night.importance[a] ?? 0)).map((f) => s.features[f].label);
+  return (
+    <figure className="figure" style={{ marginTop: 40 }}>
+      <h3>Day against night: which factors matter after dark</h3>
+      <PlotFigure label="Factor importance by time of day" deps={[]} make={(w) => Plot.plot({
+        width: w, height: 40 + order.length * 26, style: plotStyle, marginLeft: Math.min(320, w * 0.5), x: { label: "average effect on log complaint rate", grid: true },
+        y: { label: null, domain: order }, color: { domain: ["Day 06-22", "Night 22-06"], range: ["#FFB23E", "#8E5CF7"], legend: true },
+        marks: [Plot.ruleY(order, { stroke: "#26304D" }), Plot.dot(rows, { y: "label", x: "v", fill: "when", r: 5, tip: true })],
+      })} />
+      <figcaption>Two more models, fitted on day and on night complaint-days separately (spatial CV deviance explained: day {bt.day.spatial_cv.d2_poisson.toFixed(2)},
+        night {bt.night.spatial_cv.d2_poisson.toFixed(2)}). A factor whose purple dot sits right of its amber one matters more at night. Residential units are left out to keep the scale readable.</figcaption>
+    </figure>
+  );
+}

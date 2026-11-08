@@ -16,19 +16,20 @@ def test_complaints_aggregate_to_the_right_hex_and_month():
         "zip": ["10036", "10036", "11216"], "lat": [a[0], a[0] + 1e-5, b[0]], "lon": [a[1], a[1], b[1]],
         "type": ["Noise - Residential", "Noise - Street/Sidewalk", "Noise - Residential"],
         "created": pd.to_datetime(["2025-01-03 23:00", "2025-02-10 12:00", "2025-02-11 01:00"])})
-    cells, months = factors.complaint_cells(raw, pd.Timestamp("2025-01-01"), pd.Timestamp("2025-03-01"))
+    cells, months, heat = factors.complaint_cells(raw, pd.Timestamp("2025-01-01"), pd.Timestamp("2025-03-01"))
     ca = h3.latlng_to_cell(*a, factors.RES)
     row = cells.set_index("h3").loc[ca]
     assert row["complaints"] == 2 and row["residential"] == 1 and row["street"] == 1
     assert months == ["2025-01", "2025-02"] and row["monthly"] == [1, 1]
-    assert row["night_share"] == 0.5
+    assert row["night_share"] == 0.5 and row["night"] == 1
+    assert heat["all"].sum() == 3 and heat["night"].sum() == 2  # the fine layer keeps every complaint-day
 
 
 def test_repeat_caller_counts_once_per_day():
     raw = pd.DataFrame({"zip": ["10025"] * 4, "lat": [40.79] * 4, "lon": [-73.97] * 4,
                         "type": ["Noise - Helicopter"] * 3 + ["Noise - Residential"],
                         "created": pd.to_datetime(["2025-01-03 09:00", "2025-01-03 10:00", "2025-01-04 09:00", "2025-01-03 11:00"])})
-    cells, _ = factors.complaint_cells(raw, pd.Timestamp("2025-01-01"), pd.Timestamp("2025-02-01"))
+    cells, _, _ = factors.complaint_cells(raw, pd.Timestamp("2025-01-01"), pd.Timestamp("2025-02-01"))
     row = cells.iloc[0]
     assert row["reports"] == 4 and row["complaints"] == 3 and row["helicopter"] == 2
 
@@ -43,6 +44,15 @@ def test_distance_and_length_on_known_geometry():
     assert factors.count_within(pts, np.array([[1.0, 1.0], [100.0, 100.0]]), r=5).tolist() == [1, 0]
 
 
+def test_exposure_is_inverse_square_with_30m_reference():
+    home = np.array([[0.0, 0.0]])
+    one_at = lambda d: factors.exposure(home, np.array([[d, 0.0]]))[0]
+    assert one_at(factors.D0_FT) == pytest.approx(1, rel=0.02)          # 30 m away counts one
+    assert one_at(2 * factors.D0_FT) == pytest.approx(0.25, rel=0.02)   # twice as far, a quarter
+    assert one_at(0.0) == pytest.approx((factors.D0_FT / factors.DMIN_FT) ** 2)  # same lot: floored, not infinite
+    assert one_at(factors.DMAX_FT + 10) == 0                            # beyond 150 m ignored
+
+
 def synthetic_cells(n_side=22, seed=0):
     rng = np.random.default_rng(seed)
     center = h3.latlng_to_cell(40.73, -73.95, factors.RES)
@@ -55,8 +65,9 @@ def synthetic_cells(n_side=22, seed=0):
     for f in spatial.FEATURES:
         if f not in ("log_units", "log_retail", "log_commercial", "floors"):
             df[f] = rng.uniform(0, 5000, len(df)) if f.startswith(("d_", "len_")) else rng.poisson(5, len(df))
-    rate = np.exp(0.6 * np.log1p(df["units"]) + 0.08 * df["n_bars"] - 2)
+    rate = np.exp(0.6 * np.log1p(df["units"]) + 0.25 * df["bar_exposure"] - 2)
     df["complaints"] = rng.poisson(rate)
+    df["night"] = rng.binomial(df["complaints"], 0.3)
     for t in ("residential", "street", "commercial", "vehicle", "helicopter"):
         df[t] = rng.poisson(rate / 5)
     return df
@@ -75,10 +86,21 @@ def test_model_finds_signal_beyond_exposure_and_exports_consistent_json(monkeypa
     res = spatial.fit(cells)
     m = res["metrics"]
     assert m["skill_d2_over_units_only"] > 0  # bars carry real signal in the synthetic world
-    assert list(m["importance"])[:2] == ["log_units", "n_bars"] or "n_bars" in list(m["importance"])[:3]
+    assert "bar_exposure" in list(m["importance"])[:3]
+    assert set(m["by_time"]) == {"day", "night"}
     cells["monthly"] = [[0, 1]] * len(cells)
     cells["night_share"] = 0.1
     out = export.cells_json(cells, res["scored"], {"months": ["2025-01", "2025-02"], "window_start": "a", "window_end": "b", "weeks": 104})
     n = len(out["h3"])
     assert n == len(cells) and all(len(col) == n for col in out["x"])
     assert len(out["drivers"]) == n and all(0 <= k < len(out["features"]) for d in out["drivers"] for k, _ in d)
+
+
+def test_arenas_and_stadiums_are_split_and_small_fields_dropped():
+    def el(name, size_deg, **tags):
+        return {"type": "way", "tags": {"leisure": "stadium", "name": name, **tags},
+                "bounds": {"minlat": 40.7, "maxlat": 40.7 + size_deg, "minlon": -73.9, "maxlon": -73.9 + size_deg}}
+    els = [el("Madison Square Garden", 0.002, building="yes"), el("Barclays Center", 0.002, building="civic"),
+           el("Yankee Stadium", 0.003), el("Forest Hills Stadium", 0.0015, building="yes"), el("PS 12 field", 0.0003)]
+    assert len(factors.major_venues(els, indoor=True)) == 2
+    assert len(factors.major_venues(els, indoor=False)) == 2  # Yankee + Forest Hills; the school field is too small

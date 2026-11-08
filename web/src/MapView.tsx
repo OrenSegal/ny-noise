@@ -1,119 +1,74 @@
 import DeckGL from "@deck.gl/react";
 import { H3HexagonLayer } from "@deck.gl/geo-layers";
-import { ScatterplotLayer } from "@deck.gl/layers";
-import { cellToLatLng } from "h3-js";
+import { HeatmapLayer } from "@deck.gl/aggregation-layers";
 import { Map } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { setWorkerUrl } from "maplibre-gl";
 // MapLibre 6 loads its worker by URL; let Vite bundle it so the built site serves a real script.
 import workerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { type Cells, diverging, reducedMotion, thermal } from "./data";
+import { useEffect, useMemo } from "react";
+import { type Cells, THERMAL } from "./data";
+import type { Classed } from "./lens";
 
 setWorkerUrl(workerUrl);
 
-export type Lens = "complaints" | "expected" | "anomaly" | "factor";
 const STYLE = "https://basemaps.cartocdn.com/gl/dark-matter-nolabels-gl-style/style.json";
-const VIEW = { longitude: -73.935, latitude: 40.705, zoom: 10.25, pitch: 50, bearing: -17 };
-const HOTSPOTS = 64;
-const elevation = (t: number) => Math.pow(t, 2.2) * 2600 + 6;
+export type View = { longitude: number; latitude: number; zoom: number; pitch: number; bearing: number };
+export const HOME: View = { longitude: -73.94, latitude: 40.70, zoom: 10.1, pitch: 0, bearing: 0 };
 
-/** Per-cell value for the active lens, plus a 0..1 intensity used for colour, height and ripples. */
-export function lensValues(cells: Cells, lens: Lens, month: number, factor: number) {
-  const n = cells.h3.length;
-  const value = new Float64Array(n);
-  for (let i = 0; i < n; i++) {
-    if (lens === "complaints") value[i] = month >= 0 ? cells.monthly[i][month] * 12 : cells.complaints[i] / cells.years;
-    else if (lens === "expected") value[i] = cells.oof[i] / cells.years;
-    else if (lens === "anomaly") value[i] = Math.log2((cells.complaints[i] + 1) / (cells.oof[i] + 1));
-    else {
-      const v = cells.x[factor][i];
-      value[i] = cells.features[factor].startsWith("d_") ? -Math.log1p(v) : Math.log1p(Math.max(v, 0));
-    }
-  }
-  const sorted = Array.from(value).sort((a, b) => a - b);
-  const lo = sorted[Math.floor(n * 0.02)], hi = sorted[Math.floor(n * 0.995)];
-  const intensity = new Float64Array(n);
-  for (let i = 0; i < n; i++) {
-    // Counts: log scale anchored between the 2nd and 99.5th percentile, so only true hotspots run white-hot.
-    intensity[i] = lens === "complaints" || lens === "expected"
-      ? (Math.log1p(Math.max(value[i], 0)) - Math.log1p(Math.max(lo, 0))) / (Math.log1p(Math.max(hi, 1)) - Math.log1p(Math.max(lo, 0)) || 1)
-      : (value[i] - lo) / (hi - lo || 1);
-    intensity[i] = Math.max(0, Math.min(1, intensity[i]));
-  }
-  return { value, intensity };
-}
+/** Flat classed hex map. Colour is the class; a picked class dims the rest so its blocks stand out. */
+/** `level` points carry an intensive value (exposure), averaged and drawn on a fixed scale; others are counts, summed. */
+export type HeatPoints = { lat: number[]; lon: number[]; w: ArrayLike<number>; level?: boolean } | null;
 
-export default function MapView({ cells, lens, month, factor, selected, onSelect }: {
-  cells: Cells; lens: Lens; month: number; factor: number; selected: number | null; onSelect: (i: number | null) => void;
+/** Kernel radius ~120 m (about two ~66 m point spacings so neighbours merge), 10-90 px. */
+const radiusPx = (zoom: number, lat: number) => Math.min(90, Math.max(10, 120 / ((156543 * Math.cos((lat * Math.PI) / 180)) / 2 ** zoom)));
+
+export default function MapView({ cells, classed, activeClass, selected, onSelect, view, setView, tooltip, heat }: {
+  cells: Cells; classed: Classed; activeClass: number | null; selected: number | null; onSelect: (i: number | null) => void;
+  view: View; setView: (v: View) => void; tooltip: (i: number) => string; heat: HeatPoints;
 }) {
-  const { value, intensity } = useMemo(() => lensValues(cells, lens, month, factor), [cells, lens, month, factor]);
-  const centers = useMemo(() => cells.h3.map((h) => cellToLatLng(h)), [cells]);
+  // On the stacked mobile layout the canvases can initialise at 300x150 before the stage has its height; re-measure.
+  useEffect(() => { const t = setTimeout(() => window.dispatchEvent(new Event("resize")), 300); return () => clearTimeout(t); }, []);
+  const heatIdx = useMemo(() => (heat ? heat.lat.map((_, i) => i) : []), [heat]);
   const idx = useMemo(() => cells.h3.map((_, i) => i), [cells]);
-  const hot = useMemo(() => {
-    const order = idx.slice().sort((a, b) => value[b] - value[a]).slice(0, HOTSPOTS);
-    return order.map((i, k) => {
-      const ratio = Math.log2((cells.complaints[i] + 1) / (cells.oof[i] + 1));
-      return { i, phase: (k * 0.618) % 1, speed: 0.22 + Math.max(0, Math.min(ratio, 2)) * 0.18, strength: intensity[i] };
-    });
-  }, [idx, value, intensity, cells]);
-
-  // One clock drives every ring; it stops entirely under reduced motion or a hidden tab.
-  const [t, setT] = useState(0.35);
-  const raf = useRef(0);
-  useEffect(() => {
-    if (reducedMotion()) return;
-    const start = performance.now();
-    const tick = (now: number) => {
-      if (!document.hidden) setT((now - start) / 1000);
-      raf.current = requestAnimationFrame(tick);
-    };
-    raf.current = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf.current);
-  }, []);
-
-  const isMobile = typeof window !== "undefined" && window.innerWidth < 860;
-  const trigger = `${lens}-${month}-${factor}`;
-  const hex = useMemo(() => new H3HexagonLayer<number>({
-    id: "field", data: idx, getHexagon: (i) => cells.h3[i], extruded: true, coverage: 0.9, pickable: true,
-    elevationScale: 1, getElevation: (i) => elevation(intensity[i]),
-    getFillColor: (i) => lens === "anomaly" ? diverging(value[i], 235) : thermal(Math.pow(intensity[i], 1.35), 60 + intensity[i] * 195),
-    material: { ambient: 0.55, diffuse: 0.6, shininess: 24, specularColor: [255, 210, 160] },
-    updateTriggers: { getElevation: trigger, getFillColor: trigger },
-    transitions: reducedMotion() ? undefined : { getElevation: { duration: 450 }, getFillColor: { duration: 450 } },
-  }), [idx, cells, intensity, value, lens, trigger]);
-
-  const rings = [0, 0.5].map((offset) => new ScatterplotLayer<(typeof hot)[number]>({
-    id: `ring-${offset}`, data: hot, stroked: true, filled: false, radiusUnits: "meters", lineWidthUnits: "pixels",
-    getPosition: (d) => [centers[d.i][1], centers[d.i][0], elevation(intensity[d.i]) + 30], // float on top of the column
-    getRadius: (d) => (((t * d.speed + d.phase + offset) % 1) * (500 + d.strength * 900)) + 40,
-    getLineWidth: (d) => 1.6 + d.strength * 2.6,
-    getLineColor: (d) => {
-      const p = (t * d.speed + d.phase + offset) % 1;
-      const c = lens === "anomaly" ? diverging(2, 255) : thermal(0.55 + d.strength * 0.45);
-      return [c[0], c[1], c[2], Math.round(230 * Math.pow(1 - p, 1.7) * (0.45 + d.strength * 0.55))];
+  const hex = new H3HexagonLayer<number>({
+    id: "cells", data: idx, getHexagon: (i) => cells.h3[i], extruded: false, coverage: 1, pickable: true,
+    stroked: true, lineWidthUnits: "pixels", getLineWidth: 0.6,
+    getFillColor: (i) => {
+      if (heat) return [0, 0, 0, 0]; // heat mode: blocks stay clickable but invisible
+      const c = classed.cls[i];
+      const [r, g, b] = classed.colors[c];
+      return [r, g, b, activeClass === null || activeClass === c ? 235 : 28];
     },
-    updateTriggers: { getRadius: t, getLineColor: [t, lens] }, pickable: false,
-  }));
-
+    getLineColor: heat ? [0, 0, 0, 0] : [7, 9, 15, 200],
+    updateTriggers: { getFillColor: [classed, activeClass, heat], getLineColor: [heat] },
+  });
+  const density = heat ? [new HeatmapLayer<number>({
+    id: "density", data: heatIdx, getPosition: (i) => [heat.lon[i], heat.lat[i]], getWeight: (i) => heat.w[i],
+    radiusPixels: radiusPx(view.zoom, view.latitude), intensity: 1, threshold: 0.02, aggregation: heat.level ? "MEAN" : "SUM",
+    ...(heat.level ? { colorDomain: [0.02, 0.8] as [number, number] } : {}),
+    colorRange: THERMAL.map((c) => [...c, 255] as [number, number, number, number]),
+    updateTriggers: { getWeight: [heat.w] },
+  })] : [];
   const sel = selected === null ? [] : [new H3HexagonLayer<number>({
-    id: "selected", data: [selected], getHexagon: (i) => cells.h3[i], extruded: false, filled: false, stroked: true,
+    id: "selected", data: [selected], getHexagon: (i) => cells.h3[i], filled: false, stroked: true,
     getLineColor: [255, 244, 214, 255], lineWidthUnits: "pixels", getLineWidth: 3,
   })];
 
   return (
     <DeckGL
-      initialViewState={isMobile ? { ...VIEW, zoom: 9.4, pitch: 40 } : VIEW}
-      controller={{ dragRotate: true, touchRotate: true }}
-      layers={[hex, ...rings, ...sel]}
+      viewState={view}
+      onViewStateChange={({ viewState }) => setView(viewState as View)}
+      controller={{ dragRotate: false, touchRotate: false, keyboard: true }}
+      layers={[...density, hex, ...sel]}
       onClick={(info) => onSelect(info.object === undefined || info.object === null ? null : (info.object as number))}
       getCursor={({ isHovering }) => (isHovering ? "pointer" : "grab")}
       getTooltip={({ object }) => object === undefined || object === null ? null : {
-        text: `${Math.round(cells.complaints[object as number] / cells.years)} complaints a year\nexpected ${Math.round(cells.oof[object as number] / cells.years)} from its surroundings\nclick for drivers`,
-        style: { background: "#10152A", color: "#EEF0F7", border: "1px solid #26304D", borderRadius: "8px", fontFamily: "Schibsted Grotesk, sans-serif", fontSize: "12px", padding: "8px 10px" },
+        text: tooltip(object as number),
+        style: { background: "#10152A", color: "#EEF0F7", border: "1px solid #26304D", borderRadius: "8px", fontFamily: "Schibsted Grotesk, sans-serif", fontSize: "12px", padding: "8px 10px", lineHeight: "1.45" },
       }}
     >
-      <Map mapStyle={STYLE} reuseMaps attributionControl={{ compact: true }} />
+      <Map mapStyle={STYLE} reuseMaps attributionControl={{ compact: true }} onLoad={(e) => e.target.resize()} />
     </DeckGL>
   );
 }

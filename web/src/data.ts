@@ -11,6 +11,7 @@ export type Score = { d2_poisson: number; spearman: number; mae: number };
 export type Spatial = {
   cells: number; cv: string; spatial_cv: { full: Score; units_only: Score }; random_cv_full: Score;
   skill_d2_over_units_only: number; importance: Record<string, number>;
+  by_time?: Record<"day" | "night", { spatial_cv: Score; importance: Record<string, number> }>;
   curves: Record<string, { x: number[]; effect: number[] }>;
   checks: { type: string; feature: string; expected_sign: number; spearman: number; agrees: boolean; decile_mean: number[]; decile_x: number[] }[];
   features: Record<string, FeatureMeta>;
@@ -28,13 +29,17 @@ export type Scorecard = {
 };
 export type Hourly = { type: string[]; dow: number[]; hour: number[]; n: number[] };
 export type Manifest = { built_at: string; raw_rows: number; zips: number; first_week: string; last_week: string };
-export type Bundle = { cells: Cells; spatial: Spatial; forecast: Forecast; score: Scorecard; hourly: Hourly; manifest: Manifest };
+export type Heat = {
+  complaints: { lat: number[]; lon: number[]; all: number[]; night: number[] };
+  exposure: { lat: number[]; lon: number[]; highway: number[]; elevated: number[]; bar: number[] };
+};
+export type Bundle = { cells: Cells; spatial: Spatial; forecast: Forecast; score: Scorecard; hourly: Hourly; manifest: Manifest; heat: Heat };
 
 export async function loadAll(): Promise<Bundle> {
   const get = (f: string) => fetch(`/data/${f}`).then((r) => { if (!r.ok) throw new Error(`${f}: ${r.status}`); return r.json(); });
-  const [cells, spatial, forecast, score, hourly, manifest] = await Promise.all(
-    ["cells.json", "spatial.json", "forecast.json", "scorecard.json", "hourly.json", "manifest.json"].map(get));
-  return { cells, spatial, forecast, score, hourly, manifest };
+  const [cells, spatial, forecast, score, hourly, manifest, heat] = await Promise.all(
+    ["cells.json", "spatial.json", "forecast.json", "scorecard.json", "hourly.json", "manifest.json", "heat.json"].map(get));
+  return { cells, spatial, forecast, score, hourly, manifest, heat };
 }
 
 // Thermal ramp: cold indigo -> magenta -> ember -> amber -> white hot.
