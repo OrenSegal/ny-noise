@@ -1,6 +1,6 @@
 {
-  "window_start": "2024-11-04",
-  "window_end": "2026-11-01",
+  "window_start": "2024-11-11",
+  "window_end": "2026-11-08",
   "weeks": 104,
   "months": [
     "2024-11",
@@ -30,16 +30,16 @@
     "2026-11"
   ],
   "h3_resolution": 9,
-  "cells": 6530,
+  "cells": 6532,
   "sources": {
-    "ahv": 6903,
-    "sla": 24684,
+    "ahv": 6853,
+    "sla": 24691,
     "truck": 32939,
     "pluto": 857347,
-    "roads": 34829,
+    "roads": 34798,
     "rail": 13540,
     "points": 1441,
-    "parks": 2811,
+    "parks": 2812,
     "dining": 12797,
     "riders": 428,
     "traffic": 4276,
