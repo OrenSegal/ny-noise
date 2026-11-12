@@ -6,7 +6,7 @@ const GROUP_COLORS: Record<string, string> = {
   People: "#7E86A1", "Built form": "#5B6380", Business: "#8E5CF7", Nightlife: "#C2187A", Roads: "#F2552C",
   "Rail and air": "#FFB23E", Construction: "#E8D44D", Sirens: "#FF7A7A", "Green space": "#3FD0E0",
 };
-const MODEL_COLORS: Record<string, string> = { random_forest: "#FFF4D6", last_week: "#F2552C", mean_4_weeks: "#C2187A", same_week_last_year: "#5B6380" };
+const MODEL_COLORS: Record<string, string> = { model: "#FFF4D6", last_week: "#F2552C", mean_4_weeks: "#C2187A", same_week_last_year: "#5B6380" };
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const d = (s: string) => new Date(`${s}T12:00:00`);
 const dateFmt = (v: Date) => v.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
@@ -138,7 +138,7 @@ export function Honesty({ b }: { b: Bundle }) {
             width: w, height: 320, style: plotStyle, marginLeft: 44, marginRight: 50, x: { type: "utc", label: null }, y: { grid: true, label: "cumulative WAPE", tickFormat: "%" },
             color: { domain: models.map((m) => s.model_labels[m]), range: models.map((m) => MODEL_COLORS[m]) },
             marks: [Plot.rectX(surges, { x1: "x1", x2: "x2", fill: "#F2552C", fillOpacity: 0.16 }),
-                    Plot.lineY(race, { x: "week", y: "wape", stroke: "model", strokeWidth: (r) => (r.key === "random_forest" ? 3 : 1.6), tip: { format: { x: dateFmt, y: (v: number) => pct(v, 1) } } }),
+                    Plot.lineY(race, { x: "week", y: "wape", stroke: "model", strokeWidth: (r) => (r.key === "model" ? 3 : 1.6), tip: { format: { x: dateFmt, y: (v: number) => pct(v, 1) } } }),
                     Plot.text(endLabels(race), { x: "week", y: "y", text: (r) => pct(r.wape, 1), dx: 6, textAnchor: "start", fill: "model" })],
           })} />
           <figcaption>Lower is better; the end of each line is the year's error. Shaded weeks are citywide surges, 25% or more above the previous four weeks.</figcaption>

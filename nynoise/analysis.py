@@ -4,8 +4,10 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
-MODELS = {"random_forest": "Random forest", "last_week": "Last week",
+# "model" is whichever candidate the run selected; export labels it from metrics["best_model"]
+MODELS = {"model": "Selected model", "last_week": "Last week",
           "mean_4_weeks": "4-week mean", "same_week_last_year": "Same week last year"}
+MODEL_NAMES = {"random_forest": "Random forest", "hist_gradient_boosting": "Histogram gradient boosting"}
 BANDS = ["Well below", "Below", "Near typical", "Above", "Well above"]
 EDGES = [-np.inf, -0.30, -0.10, 0.10, 0.30, np.inf]
 
@@ -27,7 +29,7 @@ def race_frame(panel: pd.DataFrame, backtest: pd.DataFrame) -> pd.DataFrame:
     p["mean_4_weeks"] = g.transform(lambda s: s.rolling(4).mean())
     p["same_week_last_year"] = g.shift(51)
     wide = backtest.merge(p[["zip", "target_week", "last_week", "mean_4_weeks", "same_week_last_year"]],
-                          on=["zip", "target_week"], how="left").rename(columns={"pred": "random_forest"})
+                          on=["zip", "target_week"], how="left").rename(columns={"pred": "model"})
     long = wide.melt(id_vars=["zip", "target_week", "actual"], value_vars=list(MODELS),
                      var_name="model", value_name="pred")
     return long.dropna(subset=["pred"])
@@ -73,7 +75,7 @@ def zip_summary(race: pd.DataFrame, hits: pd.DataFrame) -> pd.DataFrame:
         r = race[race["model"] == m].assign(err=lambda d: (d["actual"] - d["pred"]).abs())
         g = r.groupby("zip")[["err", "actual"]].sum()
         return g["err"] / g["actual"]
-    mae = (race[race["model"] == "random_forest"].assign(err=lambda d: (d["actual"] - d["pred"]).abs())
+    mae = (race[race["model"] == "model"].assign(err=lambda d: (d["actual"] - d["pred"]).abs())
            .groupby("zip")["err"].mean())
-    return pd.DataFrame({"mae": mae, "wape": wape("random_forest"), "wape_last_week": wape("last_week"),
+    return pd.DataFrame({"mae": mae, "wape": wape("model"), "wape_last_week": wape("last_week"),
                          "coverage": hits.groupby("zip")["hit"].mean()})

@@ -117,9 +117,20 @@ def test_dashboard_baselines_match_model_baselines_and_running_error_ends_at_wap
         assert np.allclose(got["pred"], got["p"])
     # the last point of the cumulative curve is the headline WAPE
     run = analysis.running_error(race)
-    final = run[run["model"] == "random_forest"]["cum_wape"].iloc[-1]
-    assert final == pytest.approx(out["metrics"]["holdout"]["random_forest"]["wape"]) or \
-           final == pytest.approx(out["metrics"]["holdout"][out["metrics"]["best_model"]]["wape"])
+    final = run[run["model"] == "model"]["cum_wape"].iloc[-1]
+    assert final == pytest.approx(out["metrics"]["holdout"][out["metrics"]["best_model"]]["wape"])
+
+
+@pytest.mark.parametrize("best", ["random_forest", "hist_gradient_boosting"])
+def test_scorecard_labels_the_selected_model(best):
+    from nynoise import analysis, export
+
+    weeks = pd.date_range("2024-01-01", periods=3, freq="7D")
+    bt = pd.DataFrame({"zip": "10001", "target_week": weeks, "actual": [10, 12, 9], "pred": [9.0, 11.0, 10.0], "lo": 5.0, "hi": 15.0})
+    panel = pd.DataFrame({"zip": "10001", "week": pd.date_range("2022-12-05", periods=60, freq="7D"), "n": 10})
+    card = export.scorecard_json({"best_model": best}, analysis.race_frame(panel, bt), analysis.interval_hits(bt), [])
+    assert card["model_labels"]["model"] == analysis.MODEL_NAMES[best]
+    assert "random_forest" not in card["race"] and card["race"]["model"][-1] is not None
 
 
 def test_band_edges():

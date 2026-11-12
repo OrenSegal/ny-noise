@@ -84,7 +84,7 @@ def scorecard_json(metrics: dict, race: pd.DataFrame, hits: pd.DataFrame, surges
                                 **{m: _r(run[run["model"] == m].set_index("target_week")["cum_wape"].reindex(weeks), 4) for m in an.MODELS}},
             "weekly_coverage": _r(cov, 3),
             "surges": [f"{w:%Y-%m-%d}" for w in surges if w >= weeks[0] - pd.Timedelta(weeks=1)],
-            "model_labels": an.MODELS}
+            "model_labels": {**an.MODELS, "model": an.MODEL_NAMES[metrics["best_model"]]}}
 
 
 def main(data_dir: Path = DATA_DIR, out: Path = WEB) -> None:
