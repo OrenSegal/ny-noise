@@ -9,6 +9,7 @@ Design choices that matter:
   * Row at week t uses only weeks <= t; the target is the count in week t+1.
   * Time-based holdout (last 52 target weeks) and week-blocked CV; never a random split.
   * Target is scaled by each ZIP's 52-week mean so one model serves busy and quiet ZIPs.
+  * The published model changes only when a challenger's CV gain exceeds its standard error (choose_model).
   * A rolling-origin check refits before each quarter of the holdout to show stability.
   * Intervals are quantile GBMs widened by split-conformal calibration (CQR), then
     checked for coverage on the untouched holdout.
@@ -106,7 +107,21 @@ def _quantile_model(q: float) -> HistGradientBoostingRegressor:
                                          learning_rate=0.05, random_state=0)
 
 
-def train(panel: pd.DataFrame) -> dict:
+def choose_model(fold_mae: dict[str, np.ndarray], incumbent: str | None = None) -> dict:
+    """Pick the model to publish. The lowest mean CV error is the challenger; an incumbent (last run's model) is
+    replaced only when the challenger's mean gain over it, fold by fold, exceeds the standard error of that gain."""
+    challenger = min(fold_mae, key=lambda k: fold_mae[k].mean())
+    out = {"incumbent": incumbent, "challenger": challenger, "selected": challenger,
+           "fold_mae": {k: [float(x) for x in v] for k, v in fold_mae.items()}}
+    if incumbent in fold_mae and incumbent != challenger:
+        d = fold_mae[incumbent] - fold_mae[challenger]
+        out["cv_gain"], out["cv_gain_se"] = float(d.mean()), float(d.std(ddof=1) / np.sqrt(len(d)))
+        if out["cv_gain"] <= out["cv_gain_se"]:
+            out["selected"] = incumbent
+    return out
+
+
+def train(panel: pd.DataFrame, incumbent: str | None = None) -> dict:
     df = make_features(panel)
     labeled = df.dropna(subset=["y"]).sort_values("week").reset_index(drop=True)
     weeks = np.sort(labeled["target_week"].unique())
@@ -124,13 +139,15 @@ def train(panel: pd.DataFrame) -> dict:
                                     "max_depth": [3, 6]}),
     }
     cv = list(week_blocked_splits(train_df["week"]))
-    fitted, cv_scores = {}, {}
+    fitted, cv_scores, fold_mae = {}, {}, {}
     for name, (est, grid) in candidates.items():
         gs = GridSearchCV(est, grid, cv=cv, scoring="neg_mean_absolute_error", n_jobs=-1)
         gs.fit(train_df[FEATURES], _rel(train_df))
         fitted[name], cv_scores[name] = gs.best_estimator_, {
             "cv_mae_relative": float(-gs.best_score_), "params": gs.best_params_}
-    best = min(cv_scores, key=lambda k: cv_scores[k]["cv_mae_relative"])
+        fold_mae[name] = -np.array([gs.cv_results_[f"split{i}_test_score"][gs.best_index_] for i in range(len(cv))])
+    selection = choose_model(fold_mae, incumbent)
+    best = selection["selected"]
 
     y_true = test_df["y"].to_numpy()
     s_test = test_df["scale"].to_numpy()
@@ -213,6 +230,7 @@ def train(panel: pd.DataFrame) -> dict:
                   for k in dict.fromkeys([best_base, "last_week"])},
         "holdout": holdout,
         "cv": cv_scores,
+        "selection": selection,
         "interval": {"nominal": COVERAGE, "empirical_coverage": coverage,
                      "conformal_widening_relative": q},
         "interval_by_zip": zip_coverage,
@@ -226,7 +244,9 @@ def train(panel: pd.DataFrame) -> dict:
 
 
 def main(data_dir: Path = DATA_DIR) -> dict:
-    out = train(pd.read_csv(data_dir / "weekly_panel.csv.gz", dtype={"zip": str}, parse_dates=["week"]))
+    previous = data_dir / "metrics.json"  # last run's published model is the incumbent
+    incumbent = json.loads(previous.read_text()).get("best_model") if previous.exists() else None
+    out = train(pd.read_csv(data_dir / "weekly_panel.csv.gz", dtype={"zip": str}, parse_dates=["week"]), incumbent)
     out["backtest"].to_csv(data_dir / "backtest.csv.gz", index=False)
     out["forecast"].to_csv(data_dir / "forecast.csv", index=False)
     (data_dir / "metrics.json").write_text(json.dumps(out["metrics"], indent=2))

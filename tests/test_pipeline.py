@@ -74,6 +74,7 @@ def test_train_beats_naive_baselines_on_seasonal_data_and_intervals_cover():
     assert m["wape_skill_vs_best_baseline"] > 0
     assert 0.6 <= m["interval"]["empirical_coverage"] <= 1.0
     assert out["backtest"]["target_week"].nunique() == model.HOLDOUT_WEEKS
+    assert m["selection"]["selected"] == m["best_model"] and set(m["selection"]["fold_mae"]) == set(m["cv"])
     assert {"exp_smoothing", "blend_last_week_mean_4"} <= set(m["holdout"]) and m["best_baseline"] in m["skill"]
     sk = m["skill"]["last_week"]
     assert sk["ci"][0] <= sk["skill"] <= sk["ci"][1] and sk["weeks"] == model.HOLDOUT_WEEKS
@@ -167,3 +168,15 @@ def test_skill_interval_resamples_weeks():
     y = np.full(150, 100.0)
     out = model.skill_interval(weeks, y, y + 8, y + 10)
     assert out["skill"] == pytest.approx(0.2) and out["ci"] == pytest.approx([0.2, 0.2]) and out["weeks_won"] == 30
+
+
+def test_incumbent_is_kept_unless_the_cv_gain_exceeds_its_standard_error():
+    a = np.array([0.30, 0.31, 0.29, 0.30])
+    noise = a + np.array([-0.002, 0.003, -0.003, 0.001])  # mean gain 0.00025, se 0.0014: noise
+    clear = a - np.array([0.010, 0.012, 0.009, 0.011])     # mean gain 0.0105, se 0.0006: real
+    assert model.choose_model({"rf": a, "gb": noise})["selected"] == "gb"  # no incumbent: lowest error
+    kept = model.choose_model({"rf": a, "gb": noise}, incumbent="rf")
+    assert (kept["challenger"], kept["selected"]) == ("gb", "rf") and kept["cv_gain"] < kept["cv_gain_se"]
+    assert model.choose_model({"rf": a, "gb": clear}, incumbent="rf")["selected"] == "gb"
+    assert model.choose_model({"rf": a, "gb": clear}, incumbent="gb")["selected"] == "gb"
+    assert model.choose_model({"rf": a, "gb": noise}, incumbent="retired_model")["selected"] == "gb"
