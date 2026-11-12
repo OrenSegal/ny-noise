@@ -7,7 +7,7 @@ Where New York is loud, what goes with it block by block, and next week's 311 no
 Two models, kept apart on purpose:
 
 1. **A spatial model** that explains where complaints concentrate on a ~250 m hex grid, from 30 measured features of the surroundings, against complaints with repeat callers capped (below). Sound sources are measured where people live: each home is scored for expressways, arterials, through truck routes, surface and elevated rail (line fall-off) and bars, restaurants, outdoor dining, venues and liquor stores (inverse-square, within 150 m), then averaged over the block's homes. An estimated road-traffic level in relative dB weights every expressway and avenue by the daily volume DOT counts measured on roads of its class. Census renter share and median income (ACS 2020-2024, by tract) control for who reports. Also subway ridership at nearby stations, airports, heliports, open-air stadiums, indoor arenas, after-hours construction permits, fire stations, hospitals, parks, and the built form. It explains; it does not forecast, and its effects are associations, not causes.
-2. **A forecast** of next week's complaints for each of 177 ZIP codes, with calibrated 80% ranges, scored against naive baselines.
+2. **A forecast** of next week's complaints for each of 177 ZIP codes, with calibrated 80% ranges, scored against naive baselines. It beats repeating last week; it does not clearly beat simple exponential smoothing.
 
 ## Who it is for
 
@@ -49,16 +49,20 @@ Scored on the most recent 52 weeks (2025-11-10 to 2026-11-02, 9,204 ZIP-weeks), 
 
 | Forecast | MAE | WAPE | sMAPE | MASE | R² |
 |---|---|---|---|---|---|
-| **Histogram gradient boosting (selected)** | **22.38** | **26.2%** | **28.6%** | **0.64** | **0.56** |
-| Random forest | 22.90 | 26.8% | 28.3% | 0.66 | 0.36 |
-| Last week (persistence) | 23.97 | 28.0% | 33.3% | 0.69 | 0.58 |
-| Mean of last 4 weeks | 24.30 | 28.4% | 29.6% | 0.70 | 0.20 |
-| Same week last year | 40.33 | 47.1% | 40.6% | 1.16 | -2.18 |
+| **Histogram gradient boosting (selected)** | **22.37** | **26.2%** | **28.6%** | **0.90** | **0.57** |
+| Exponential smoothing | 22.78 | 26.6% | 29.2% | 0.91 | 0.45 |
+| Random forest | 22.90 | 26.8% | 28.3% | 0.92 | 0.36 |
+| Blend of last week and 4-week mean | 22.94 | 26.8% | 29.7% | 0.92 | 0.49 |
+| Last week (persistence) | 23.97 | 28.0% | 33.3% | 0.96 | 0.58 |
+| Mean of last 4 weeks | 24.30 | 28.4% | 29.6% | 0.97 | 0.20 |
+| Same week last year | 40.33 | 47.1% | 40.6% | 1.62 | -2.18 |
 
-6.7% lower weighted error than last week (persistence), the best naive baseline; ahead of last week in 3 of 4 rolling-origin quarters; behind on RMSE (157 against 156). 80% intervals covered 79.7% of the holdout; median ZIP 81%.
+Skill is the reduction in weighted error (WAPE); intervals resample whole weeks. Against exponential smoothing, the best baseline on this holdout: +1.8% (95% interval -4.4% to +8.1%, ahead in 21 of 52 weeks); the interval includes zero, so the edge over that baseline is not established. Against last week: +6.7% (95% interval +0.7% to +11.9%, ahead in 37 of 52 weeks). Rolling origin: ahead of that quarter's best baseline in 1 of 4 quarters, ahead of last week in 3; behind last week on RMSE (157 against 156). MASE is scaled by the in-sample error of repeating last week. Exponential smoothing uses the weight (0.5) that did best on the training weeks.
+
+80% intervals covered 79.8% of the holdout; median ZIP 81%; by volume: low-volume ZIPs 77.2%; mid-volume ZIPs 80.4%; high-volume ZIPs 81.8%.
 <!-- /results:forecast -->
 
-A modest edge. The model lags big jumps in the busiest ZIPs, and the first holdout quarter holds an unexplained citywide surge (Nov 24 to Dec 8, 2025) that no forecast here anticipated.
+The model lags big jumps in the busiest ZIPs, and the first holdout quarter holds an unexplained citywide surge (Nov 24 to Dec 8, 2025) that no forecast here anticipated.
 
 ## The app
 

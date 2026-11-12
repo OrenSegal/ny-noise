@@ -74,6 +74,12 @@ def test_train_beats_naive_baselines_on_seasonal_data_and_intervals_cover():
     assert m["wape_skill_vs_best_baseline"] > 0
     assert 0.6 <= m["interval"]["empirical_coverage"] <= 1.0
     assert out["backtest"]["target_week"].nunique() == model.HOLDOUT_WEEKS
+    assert {"exp_smoothing", "blend_last_week_mean_4"} <= set(m["holdout"]) and m["best_baseline"] in m["skill"]
+    sk = m["skill"]["last_week"]
+    assert sk["ci"][0] <= sk["skill"] <= sk["ci"][1] and sk["weeks"] == model.HOLDOUT_WEEKS
+    assert sk["skill"] == pytest.approx(1 - m["holdout"][m["best_model"]]["wape"] / m["holdout"]["last_week"]["wape"])
+    assert [v["tercile"] for v in m["interval_by_volume"]] == ["low", "mid", "high"] and sum(v["zips"] for v in m["interval_by_volume"]) == 12
+    assert all(q["best_baseline"] in q for q in m["rolling_origin"])
     assert (out["forecast"]["lo"] <= out["forecast"]["pred"]).all()
     assert (out["forecast"]["pred"] <= out["forecast"]["hi"]).all()
 
@@ -138,3 +144,26 @@ def test_band_edges():
 
     s = pd.Series([-0.5, -0.2, 0.0, 0.2, 0.5])
     assert analysis.band(s).tolist() == analysis.BANDS
+
+
+def test_baselines_hand_computed_and_mase_is_scaled_by_last_week():
+    panel = synthetic_panel(weeks=60, zips=1)
+    f = model.make_features(panel)
+    n = panel["n"].to_numpy()
+    i = 55  # week index of one feature row
+    row = f[f["week"] == panel["week"].iloc[i]].index[0]
+    b = model.baselines(f, 5)
+    ses = n[0]
+    for v in n[1:i + 1]:
+        ses = 0.5 * v + 0.5 * ses
+    assert b["exp_smoothing"][row] == pytest.approx(ses)
+    assert b["blend_last_week_mean_4"][row] == pytest.approx((n[i] + n[i - 3:i + 1].mean()) / 2)
+    y = np.array([10.0, 20.0])
+    assert model.score(y, y + 2, mase_scale=4.0)["mase"] == pytest.approx(0.5)
+
+
+def test_skill_interval_resamples_weeks():
+    weeks = np.repeat(np.arange(30), 5)
+    y = np.full(150, 100.0)
+    out = model.skill_interval(weeks, y, y + 8, y + 10)
+    assert out["skill"] == pytest.approx(0.2) and out["ci"] == pytest.approx([0.2, 0.2]) and out["weeks_won"] == 30
