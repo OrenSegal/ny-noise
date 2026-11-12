@@ -94,7 +94,7 @@ flowchart LR
 
 ```bash
 python -m venv .venv && source .venv/bin/activate
-pip install -r requirements-dev.txt
+pip install -r requirements.lock   # pinned; requirements-dev.txt holds the loose ranges it was compiled from
 pytest -q
 ```
 
@@ -111,7 +111,7 @@ python -m nynoise.readme    # rewrite the results tables above from data/*.json
 cd web && npm install && npm run dev
 ```
 
-Training is seeded; rerunning on the committed tables reproduces the metrics. Set `SOCRATA_APP_TOKEN` to avoid NYC Open Data throttling.
+Training is seeded. With the pinned versions, rerunning `python -m nynoise.model` on the committed panel selects the same model and matches the committed holdout metrics to within 0.1% (largest relative difference measured: 6e-4, macOS arm64 against the Linux refresh job), not bit for bit. Licence: MIT. Set `SOCRATA_APP_TOKEN` to avoid NYC Open Data throttling.
 
 ## Limitations
 
