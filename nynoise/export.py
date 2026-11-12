@@ -95,7 +95,7 @@ def main(data_dir: Path = DATA_DIR, out: Path = WEB) -> None:
     fc = pd.read_csv(data_dir / "forecast.csv", parse_dates=["target_week"], **z)
     zips = pd.read_csv(data_dir / "zips.csv", **z)
     metrics = json.loads((data_dir / "metrics.json").read_text())
-    race = an.race_frame(panel, bt)
+    race = an.race_frame(panel, bt, round(metrics["exp_smoothing_alpha"] * 10))
     files = {
         "cells.json": cells_json(pd.read_csv(data_dir / "cells.csv.gz"), pd.read_csv(data_dir / "cells_scored.csv.gz"),
                                  json.loads((data_dir / "cells_meta.json").read_text())),
