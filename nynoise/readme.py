@@ -18,7 +18,8 @@ from nynoise.model import HOLDOUT_WEEKS
 
 README = DATA_DIR.parent / "Readme.md"
 LABELS = {**MODEL_NAMES, "last_week": "Last week (persistence)", "mean_4_weeks": "Mean of last 4 weeks",
-          "same_week_last_year": "Same week last year"}
+          "same_week_last_year": "Same week last year", "exp_smoothing": "Exponential smoothing",
+          "blend_last_week_mean_4": "Blend of last week and 4-week mean"}
 
 
 def forecast_block(m: dict) -> str:
@@ -30,6 +31,11 @@ def forecast_block(m: dict) -> str:
         rows.append("| " + " | ".join(f"**{c}**" if k == best else c for c in [name] + cells) + " |")
     quarters = m["rolling_origin"]
     ahead = sum(q["model"]["wape"] < q["last_week"]["wape"] for q in quarters)
+    ahead_best = sum(q["model"]["wape"] < q[q["best_baseline"]]["wape"] for q in quarters)
+    sk, lw = m["skill"][base], m["skill"]["last_week"]
+    edge = lambda d: f"{d['skill']:+.1%} (95% interval {d['ci'][0]:+.1%} to {d['ci'][1]:+.1%}, ahead in {d['weeks_won']} of {d['weeks']} weeks)"
+    verdict = "excludes zero" if sk["ci"][0] > 0 or sk["ci"][1] < 0 else "includes zero, so the edge over that baseline is not established"
+    vol = "; ".join(f"{v['tercile']}-volume ZIPs {v['coverage']:.1%}" for v in m["interval_by_volume"])
     rmse = "behind" if h[best]["rmse"] > h["last_week"]["rmse"] else "ahead"
     return "\n".join([
         f"Scored on the most recent {HOLDOUT_WEEKS} weeks ({m['holdout_weeks'][0]} to {m['holdout_weeks'][1]}, "
@@ -37,10 +43,15 @@ def forecast_block(m: dict) -> str:
         "every week, so the holdout slides forward a week at a time and consecutive scorecards share all but one week. "
         "This block is rewritten from `data/metrics.json` by `python -m nynoise.readme`.",
         "", "| Forecast | MAE | WAPE | sMAPE | MASE | R² |", "|---|---|---|---|---|---|", *rows, "",
-        f"{m['wape_skill_vs_best_baseline']:.1%} lower weighted error than {LABELS.get(base, base).lower()}, the best naive baseline; "
-        f"ahead of last week in {ahead} of {len(quarters)} rolling-origin quarters; {rmse} on RMSE "
-        f"({h[best]['rmse']:.0f} against {h['last_week']['rmse']:.0f}). 80% intervals covered "
-        f"{m['interval']['empirical_coverage']:.1%} of the holdout; median ZIP {m['interval_by_zip']['median']:.0%}.",
+        f"Skill is the reduction in weighted error (WAPE); intervals resample whole weeks. Against {LABELS.get(base, base).lower()}, "
+        f"the best baseline on this holdout: {edge(sk)}; the interval {verdict}. Against last week: {edge(lw)}. "
+        f"Rolling origin: ahead of that quarter's best baseline in {ahead_best} of {len(quarters)} quarters, ahead of last week in "
+        f"{ahead}; {rmse} last week on RMSE ({h[best]['rmse']:.0f} against {h['last_week']['rmse']:.0f}). "
+        "MASE is scaled by the in-sample error of repeating last week. Exponential smoothing uses the weight "
+        f"({m['exp_smoothing_alpha']:.1f}) that did best on the training weeks.",
+        "",
+        f"80% intervals covered {m['interval']['empirical_coverage']:.1%} of the holdout; median ZIP "
+        f"{m['interval_by_zip']['median']:.0%}; by volume: {vol}.",
     ])
 
 
