@@ -4,9 +4,12 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
+from nynoise import model
+
 # "model" is whichever candidate the run selected; export labels it from metrics["best_model"]
 MODELS = {"model": "Selected model", "last_week": "Last week",
-          "mean_4_weeks": "4-week mean", "same_week_last_year": "Same week last year"}
+          "mean_4_weeks": "4-week mean", "same_week_last_year": "Same week last year",
+          "exp_smoothing": "Exponential smoothing", "blend_last_week_mean_4": "Last week / 4-week blend"}
 MODEL_NAMES = {"random_forest": "Random forest", "hist_gradient_boosting": "Histogram gradient boosting"}
 BANDS = ["Well below", "Below", "Near typical", "Above", "Well above"]
 EDGES = [-np.inf, -0.30, -0.10, 0.10, 0.30, np.inf]
@@ -17,18 +20,10 @@ def band(vs_typical: pd.Series) -> pd.Series:
     return pd.cut(vs_typical, EDGES, labels=BANDS)
 
 
-def race_frame(panel: pd.DataFrame, backtest: pd.DataFrame) -> pd.DataFrame:
-    """Long table [zip, target_week, actual, model, pred]: the selected model and the three naive baselines.
-
-    Baselines use only weeks <= t for the forecast of week t+1, matching nynoise.model.baselines.
-    """
-    p = panel.sort_values(["zip", "week"]).copy()
-    g = p.groupby("zip")["n"]
-    p["target_week"] = p["week"] + pd.Timedelta(weeks=1)
-    p["last_week"] = p["n"]
-    p["mean_4_weeks"] = g.transform(lambda s: s.rolling(4).mean())
-    p["same_week_last_year"] = g.shift(51)
-    wide = backtest.merge(p[["zip", "target_week", "last_week", "mean_4_weeks", "same_week_last_year"]],
+def race_frame(panel: pd.DataFrame, backtest: pd.DataFrame, ses_tenths: int = 5) -> pd.DataFrame:
+    """Long table [zip, target_week, actual, model, pred]: the selected model and the baselines it was scored against."""
+    f = model.make_features(panel)
+    wide = backtest.merge(f[["zip", "target_week"]].assign(**model.baselines(f, ses_tenths)),
                           on=["zip", "target_week"], how="left").rename(columns={"pred": "model"})
     long = wide.melt(id_vars=["zip", "target_week", "actual"], value_vars=list(MODELS),
                      var_name="model", value_name="pred")
