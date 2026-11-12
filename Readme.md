@@ -59,6 +59,8 @@ Scored on the most recent 52 weeks (2025-11-10 to 2026-11-02, 9,204 ZIP-weeks), 
 
 Skill is the reduction in weighted error (WAPE); intervals resample whole weeks. Against exponential smoothing, the best baseline on this holdout: +1.8% (95% interval -4.4% to +8.1%, ahead in 21 of 52 weeks); the interval includes zero, so the edge over that baseline is not established. Against last week: +6.7% (95% interval +0.7% to +11.9%, ahead in 37 of 52 weeks). Rolling origin: ahead of that quarter's best baseline in 1 of 4 quarters, ahead of last week in 3; behind last week on RMSE (157 against 156). MASE is scaled by the in-sample error of repeating last week. Exponential smoothing uses the weight (0.5) that did best on the training weeks.
 
+Model choice: histogram gradient boosting had the lowest cross-validated error and was already the published model.
+
 80% intervals covered 79.8% of the holdout; median ZIP 81%; by volume: low-volume ZIPs 77.2%; mid-volume ZIPs 80.4%; high-volume ZIPs 81.8%.
 <!-- /results:forecast -->
 

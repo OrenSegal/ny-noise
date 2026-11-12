@@ -50,9 +50,22 @@ def forecast_block(m: dict) -> str:
         "MASE is scaled by the in-sample error of repeating last week. Exponential smoothing uses the weight "
         f"({m['exp_smoothing_alpha']:.1f}) that did best on the training weeks.",
         "",
+        selection_sentence(m["selection"]),
+        "",
         f"80% intervals covered {m['interval']['empirical_coverage']:.1%} of the holdout; median ZIP "
         f"{m['interval_by_zip']['median']:.0%}; by volume: {vol}.",
     ])
+
+
+def selection_sentence(sel: dict) -> str:
+    name = lambda k: LABELS.get(k, k).lower()
+    if sel["incumbent"] is None or sel["incumbent"] == sel["challenger"]:
+        was = "was already the published model" if sel["incumbent"] else "there was no published model to defend"
+        return f"Model choice: {name(sel['selected'])} had the lowest cross-validated error and {was}."
+    verdict = "replaced it" if sel["selected"] == sel["challenger"] else "did not replace it"
+    return (f"Model choice: {name(sel['challenger'])} had the lower cross-validated error than the published {name(sel['incumbent'])} "
+            f"by {sel['cv_gain']:.4f} (standard error {sel['cv_gain_se']:.4f} over {len(sel['fold_mae'][sel['challenger']])} folds) and {verdict}; "
+            "a challenger takes over only when its gain exceeds the standard error.")
 
 
 def spatial_block(s: dict, meta: dict, cells: pd.DataFrame) -> str:
