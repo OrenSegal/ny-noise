@@ -24,6 +24,8 @@ export type Scorecard = {
   holdout: Record<string, Record<string, number>>; holdout_weeks: [string, string];
   interval: { nominal: number; empirical_coverage: number }; interval_by_zip: { median: number; p10: number; min: number };
   rolling_origin: Record<string, any>[];
+  skill: Record<string, { baseline: string; skill: number; ci: [number, number]; weeks_won: number; weeks: number }>;
+  interval_by_volume: { tercile: string; zips: number; mean_weekly: number; coverage: number }[];
   race: { weeks: string[] } & Record<string, (number | null)[]>; weekly_coverage: (number | null)[]; surges: string[];
   model_labels: Record<string, string>;
 };

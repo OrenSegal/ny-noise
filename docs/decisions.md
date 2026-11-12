@@ -17,7 +17,7 @@ Short records of the choices that shape the project, with what was rejected and 
 
 - Last 52 target weeks are held out; hyperparameters are chosen by expanding-window CV on whole weeks. A random split would let the model see weeks after the ones it is scored on.
 - Every number is reported next to three naive baselines (last week, 4-week mean, same week last year). A model that does not beat them is not a result.
-- Metrics: WAPE (scale-free across busy and quiet ZIPs), MASE (against seasonal-naive error on the training years), sMAPE, plus MAE/RMSE/R2 for familiarity. R2 alone is misleading on counts that span orders of magnitude.
+- Metrics: WAPE (scale-free across busy and quiet ZIPs), MASE (against the in-sample error of repeating last week; seasonal-naive is the weakest baseline here and flattered the ratio), sMAPE, plus MAE/RMSE/R2 for familiarity. R2 alone is misleading on counts that span orders of magnitude.
 - A rolling-origin check refits before each quarter of the holdout, so one lucky quarter cannot carry the headline.
 - Leakage is tested directly: the features for week t must not change when every later week is altered.
 

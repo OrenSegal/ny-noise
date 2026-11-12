@@ -74,6 +74,13 @@ def test_train_beats_naive_baselines_on_seasonal_data_and_intervals_cover():
     assert m["wape_skill_vs_best_baseline"] > 0
     assert 0.6 <= m["interval"]["empirical_coverage"] <= 1.0
     assert out["backtest"]["target_week"].nunique() == model.HOLDOUT_WEEKS
+    assert m["selection"]["selected"] == m["best_model"] and set(m["selection"]["fold_mae"]) == set(m["cv"])
+    assert {"exp_smoothing", "blend_last_week_mean_4"} <= set(m["holdout"]) and m["best_baseline"] in m["skill"]
+    sk = m["skill"]["last_week"]
+    assert sk["ci"][0] <= sk["skill"] <= sk["ci"][1] and sk["weeks"] == model.HOLDOUT_WEEKS
+    assert sk["skill"] == pytest.approx(1 - m["holdout"][m["best_model"]]["wape"] / m["holdout"]["last_week"]["wape"])
+    assert [v["tercile"] for v in m["interval_by_volume"]] == ["low", "mid", "high"] and sum(v["zips"] for v in m["interval_by_volume"]) == 12
+    assert all(q["best_baseline"] in q for q in m["rolling_origin"])
     assert (out["forecast"]["lo"] <= out["forecast"]["pred"]).all()
     assert (out["forecast"]["pred"] <= out["forecast"]["hi"]).all()
 
@@ -117,9 +124,20 @@ def test_dashboard_baselines_match_model_baselines_and_running_error_ends_at_wap
         assert np.allclose(got["pred"], got["p"])
     # the last point of the cumulative curve is the headline WAPE
     run = analysis.running_error(race)
-    final = run[run["model"] == "random_forest"]["cum_wape"].iloc[-1]
-    assert final == pytest.approx(out["metrics"]["holdout"]["random_forest"]["wape"]) or \
-           final == pytest.approx(out["metrics"]["holdout"][out["metrics"]["best_model"]]["wape"])
+    final = run[run["model"] == "model"]["cum_wape"].iloc[-1]
+    assert final == pytest.approx(out["metrics"]["holdout"][out["metrics"]["best_model"]]["wape"])
+
+
+@pytest.mark.parametrize("best", ["random_forest", "hist_gradient_boosting"])
+def test_scorecard_labels_the_selected_model(best):
+    from nynoise import analysis, export
+
+    weeks = pd.date_range("2024-01-01", periods=3, freq="7D")
+    bt = pd.DataFrame({"zip": "10001", "target_week": weeks, "actual": [10, 12, 9], "pred": [9.0, 11.0, 10.0], "lo": 5.0, "hi": 15.0})
+    panel = pd.DataFrame({"zip": "10001", "week": pd.date_range("2022-12-05", periods=60, freq="7D"), "n": 10})
+    card = export.scorecard_json({"best_model": best}, analysis.race_frame(panel, bt), analysis.interval_hits(bt), [])
+    assert card["model_labels"]["model"] == analysis.MODEL_NAMES[best]
+    assert "random_forest" not in card["race"] and card["race"]["model"][-1] is not None
 
 
 def test_band_edges():
@@ -127,3 +145,38 @@ def test_band_edges():
 
     s = pd.Series([-0.5, -0.2, 0.0, 0.2, 0.5])
     assert analysis.band(s).tolist() == analysis.BANDS
+
+
+def test_baselines_hand_computed_and_mase_is_scaled_by_last_week():
+    panel = synthetic_panel(weeks=60, zips=1)
+    f = model.make_features(panel)
+    n = panel["n"].to_numpy()
+    i = 55  # week index of one feature row
+    row = f[f["week"] == panel["week"].iloc[i]].index[0]
+    b = model.baselines(f, 5)
+    ses = n[0]
+    for v in n[1:i + 1]:
+        ses = 0.5 * v + 0.5 * ses
+    assert b["exp_smoothing"][row] == pytest.approx(ses)
+    assert b["blend_last_week_mean_4"][row] == pytest.approx((n[i] + n[i - 3:i + 1].mean()) / 2)
+    y = np.array([10.0, 20.0])
+    assert model.score(y, y + 2, mase_scale=4.0)["mase"] == pytest.approx(0.5)
+
+
+def test_skill_interval_resamples_weeks():
+    weeks = np.repeat(np.arange(30), 5)
+    y = np.full(150, 100.0)
+    out = model.skill_interval(weeks, y, y + 8, y + 10)
+    assert out["skill"] == pytest.approx(0.2) and out["ci"] == pytest.approx([0.2, 0.2]) and out["weeks_won"] == 30
+
+
+def test_incumbent_is_kept_unless_the_cv_gain_exceeds_its_standard_error():
+    a = np.array([0.30, 0.31, 0.29, 0.30])
+    noise = a + np.array([-0.002, 0.003, -0.003, 0.001])  # mean gain 0.00025, se 0.0014: noise
+    clear = a - np.array([0.010, 0.012, 0.009, 0.011])     # mean gain 0.0105, se 0.0006: real
+    assert model.choose_model({"rf": a, "gb": noise})["selected"] == "gb"  # no incumbent: lowest error
+    kept = model.choose_model({"rf": a, "gb": noise}, incumbent="rf")
+    assert (kept["challenger"], kept["selected"]) == ("gb", "rf") and kept["cv_gain"] < kept["cv_gain_se"]
+    assert model.choose_model({"rf": a, "gb": clear}, incumbent="rf")["selected"] == "gb"
+    assert model.choose_model({"rf": a, "gb": clear}, incumbent="gb")["selected"] == "gb"
+    assert model.choose_model({"rf": a, "gb": noise}, incumbent="retired_model")["selected"] == "gb"

@@ -6,7 +6,7 @@ const GROUP_COLORS: Record<string, string> = {
   People: "#7E86A1", "Built form": "#5B6380", Business: "#8E5CF7", Nightlife: "#C2187A", Roads: "#F2552C",
   "Rail and air": "#FFB23E", Construction: "#E8D44D", Sirens: "#FF7A7A", "Green space": "#3FD0E0",
 };
-const MODEL_COLORS: Record<string, string> = { random_forest: "#FFF4D6", last_week: "#F2552C", mean_4_weeks: "#C2187A", same_week_last_year: "#5B6380" };
+const MODEL_COLORS: Record<string, string> = { model: "#FFF4D6", last_week: "#F2552C", mean_4_weeks: "#C2187A", same_week_last_year: "#5B6380", exp_smoothing: "#3FD0E0", blend_last_week_mean_4: "#8FD14F" };
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const d = (s: string) => new Date(`${s}T12:00:00`);
 const dateFmt = (v: Date) => v.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
@@ -124,12 +124,14 @@ export function Honesty({ b }: { b: Bundle }) {
   const cov = s.race.weeks.map((w, k) => ({ week: d(w), c: s.weekly_coverage[k] })).filter((r) => r.c !== null);
   const surges = s.surges.map((w) => ({ x1: d(w), x2: new Date(d(w).getTime() + 7 * 864e5) }));
   const best = s.holdout[s.best_model], base = s.holdout[s.best_baseline];
-  const wins = s.rolling_origin.filter((r) => r.model.wape < r.last_week.wape).length;
+  const wins = s.rolling_origin.filter((r) => r.model.wape < r[r.best_baseline].wape).length;
+  const edge = s.skill[s.best_baseline], sure = edge.ci[0] > 0;
   return (
     <section className="sec" id="honesty">
       <h2>How good is the forecast, honestly</h2>
       <p className="lede">Scored on 52 weeks it never saw ({s.holdout_weeks[0]} to {s.holdout_weeks[1]}). It misses by <b>{pct(best.wape, 1)}</b> of volume against <b>{pct(base.wape, 1)}</b>
-        {" "}for simply repeating last week: a modest edge, ahead in {wins} of {s.rolling_origin.length} quarters and behind on RMSE. Most of the signal is a ZIP's recent level.</p>
+        {" "}for the best simple baseline ({s.model_labels[s.best_baseline].toLowerCase()}): {pct(edge.skill, 1)} less error, with a 95% range of {pct(edge.ci[0], 1)} to {pct(edge.ci[1], 1)} when whole weeks are resampled
+        {sure ? "" : ", which includes zero, so that edge is not established"}. It is ahead of each quarter's best baseline in {wins} of {s.rolling_origin.length} quarters. Most of the signal is a ZIP's recent level.</p>
       <div className="grid2">
         <figure className="figure">
           <h3>The race: error accumulated week by week</h3>
@@ -138,7 +140,7 @@ export function Honesty({ b }: { b: Bundle }) {
             width: w, height: 320, style: plotStyle, marginLeft: 44, marginRight: 50, x: { type: "utc", label: null }, y: { grid: true, label: "cumulative WAPE", tickFormat: "%" },
             color: { domain: models.map((m) => s.model_labels[m]), range: models.map((m) => MODEL_COLORS[m]) },
             marks: [Plot.rectX(surges, { x1: "x1", x2: "x2", fill: "#F2552C", fillOpacity: 0.16 }),
-                    Plot.lineY(race, { x: "week", y: "wape", stroke: "model", strokeWidth: (r) => (r.key === "random_forest" ? 3 : 1.6), tip: { format: { x: dateFmt, y: (v: number) => pct(v, 1) } } }),
+                    Plot.lineY(race, { x: "week", y: "wape", stroke: "model", strokeWidth: (r) => (r.key === "model" ? 3 : 1.6), tip: { format: { x: dateFmt, y: (v: number) => pct(v, 1) } } }),
                     Plot.text(endLabels(race), { x: "week", y: "y", text: (r) => pct(r.wape, 1), dx: 6, textAnchor: "start", fill: "model" })],
           })} />
           <figcaption>Lower is better; the end of each line is the year's error. Shaded weeks are citywide surges, 25% or more above the previous four weeks.</figcaption>
@@ -150,7 +152,7 @@ export function Honesty({ b }: { b: Bundle }) {
             marks: [Plot.rectX(surges, { x1: "x1", x2: "x2", fill: "#F2552C", fillOpacity: 0.16 }), Plot.ruleY([0.8], { stroke: "#7E86A1", strokeDasharray: "4,3" }),
                     Plot.lineY(cov, { x: "week", y: "c", stroke: "#3FD0E0", strokeWidth: 2, tip: { format: { x: dateFmt, y: (v: number) => pct(v) } } })],
           })} />
-          <figcaption>Overall {pct(s.interval.empirical_coverage, 1)} against a target of 80%; median ZIP {pct(s.interval_by_zip.median)}. Coverage falls in surge weeks, which the range is not built for.</figcaption>
+          <figcaption>Overall {pct(s.interval.empirical_coverage, 1)} against a target of 80%; median ZIP {pct(s.interval_by_zip.median)}. By ZIP volume: {s.interval_by_volume.map((v) => `${v.tercile} ${pct(v.coverage, 1)}`).join(", ")}. Coverage falls in surge weeks, which the range is not built for.</figcaption>
         </figure>
       </div>
     </section>
