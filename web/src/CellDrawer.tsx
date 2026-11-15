@@ -1,3 +1,4 @@
+import { cellToLatLng } from "h3-js";
 import { type Cells, type Spatial, TYPE_COLORS, factFmt, fmt, pct, thermal } from "./data";
 import PlotFigure, { Plot, plotStyle } from "./Plot";
 
@@ -45,6 +46,10 @@ export default function CellDrawer({ i, cells, spatial, zip, onClose }: {
         <div><b>{pct(cells.night[i])}</b><span>at night (22 to 06)</span></div>
       </div>
       <p className="rank-line">More complaints than <b>{pct(pAll)}</b> of NYC blocks, and than <b>{pct(pNight)}</b> at night.</p>
+      <p className="rank-line">Complaints count who calls. <button className="linkish" onClick={() => {
+        const [lat, lon] = cellToLatLng(cells.h3[i]);
+        window.location.hash = `tab=honk&lat=${lat.toFixed(5)}&lon=${lon.toFixed(5)}`;
+      }}>Honk here at 3 a.m. and see who hears</button></p>
       <p className="verdict">This ~250 m cell is <b>{verdict}</b>. The expectation comes from a model that never saw this neighbourhood.
         {cells.reports[i] > cells.complaints[i] * 1.5 && <> Raw 311 reports: {fmt(cells.reports[i] / cells.years)} a year, from {fmt(cells.days[i] / cells.years)} address-days.
           {cells.top_share[i] >= 0.25 && <> One address filed {pct(cells.top_share[i])} of them;</>} each address counts at most 24 times in two years here.</>}</p>

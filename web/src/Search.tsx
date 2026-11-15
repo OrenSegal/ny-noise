@@ -2,7 +2,7 @@ import { useState } from "react";
 
 type Hit = { label: string; lat: number; lon: number };
 
-/** Address search via NYC Planning's GeoSearch (free, no key). The only runtime network call, made on submit. */
+/** Address search via NYC Planning's GeoSearch (free, no key). Called on submit. (Wake the city reads prebuilt tiles and falls back to NYC Open Data.) */
 export default function Search({ onPick }: { onPick: (lat: number, lon: number, label: string) => void }) {
   const [q, setQ] = useState("");
   const [hits, setHits] = useState<Hit[]>([]);

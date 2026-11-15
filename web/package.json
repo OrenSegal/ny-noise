@@ -5,9 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "(node scripts/build-tiles.mjs || echo \"tiles: build failed, app will query NYC Open Data live\") && tsc -b && vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "tiles": "node scripts/build-tiles.mjs",
+    "check": "node --experimental-strip-types scripts/check.mjs"
   },
   "dependencies": {
     "@deck.gl/aggregation-layers": "^9.4.1",

@@ -24,3 +24,6 @@ web/node_modules/
 web/dist/
 .vercel/
 .claude/
+
+# Wake the city building tiles, built at deploy by web/scripts/build-tiles.mjs
+web/public/tiles/
