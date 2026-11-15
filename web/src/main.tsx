@@ -6,7 +6,8 @@ import Honk from './honk/Honk.tsx'
 import { startAnalytics, track } from './track'
 
 startAnalytics()
-const tabOf = () => (window.location.hash.includes('tab=honk') ? 'honk' : 'map')
+// Wake the city is the front door; the noise map opens from its tab or from any #lens=... link it wrote.
+const tabOf = () => (/(^|[#&])(lens=|tab=map)/.test(window.location.hash) ? 'map' : 'honk')
 
 // Two views share the page; the map keeps its own #lens=... links, the other is #tab=honk (plus a honk to replay).
 // Links between them set location.hash, which fires hashchange; each view rewrites its own hash with replaceState.
@@ -20,15 +21,15 @@ function Shell() {
   }, [])
   const go = (t: 'map' | 'honk') => {
     if (t === tab) return
-    window.history.replaceState(null, '', t === 'honk' ? '#tab=honk' : window.location.pathname)
+    window.history.replaceState(null, '', t === 'honk' ? '#tab=honk' : '#tab=map')
     setTab(t)
     track('tab', { tab: t })
   }
   return (
     <>
       <nav className="tabs" aria-label="Views">
-        <button aria-pressed={tab === 'map'} onClick={() => go('map')}>Noise map</button>
         <button aria-pressed={tab === 'honk'} onClick={() => go('honk')}>Wake the city</button>
+        <button aria-pressed={tab === 'map'} onClick={() => go('map')}>Noise map</button>
       </nav>
       {tab === 'map' ? <App key={key} /> : <Honk key={key} />}
     </>

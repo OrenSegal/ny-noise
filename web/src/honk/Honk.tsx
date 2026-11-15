@@ -1,5 +1,5 @@
 import DeckGL from "@deck.gl/react";
-import { WebMercatorViewport } from "@deck.gl/core";
+import { LinearInterpolator, WebMercatorViewport } from "@deck.gl/core";
 import { BitmapLayer, ScatterplotLayer } from "@deck.gl/layers";
 import { Map as BaseMap } from "react-map-gl/maplibre";
 import { latLngToCell } from "h3-js";
@@ -92,7 +92,7 @@ export default function Honk() {
   const [init] = useState(readHash);
   const [sound, setSound] = useState<Sound>(init.sound ?? SOUNDS[0]);
   const [place, setPlace] = useState<string>(init.place ?? (init.at ? "this block" : PLACES[0].name));
-  const [intro, setIntro] = useState(!init.at);
+  const [intro, setIntro] = useState(false); // the map is the front door; the picker opens from the place chip
   const [help, setHelp] = useState(false);
   const [view, setView] = useState<View>({ longitude: init.at?.lon ?? PLACES[0].lon, latitude: init.at?.lat ?? PLACES[0].lat, zoom: init.at ? 16 : 15.4, pitch: 0, bearing: 0 });
   const [windows, setWindows] = useState<Windows>(init.windows ?? "open");
@@ -136,8 +136,17 @@ export default function Honk() {
     tab: "honk", lat: s.lat.toFixed(5), lon: s.lon.toFixed(5), s: s.sound.id, d: s.dur.toFixed(1), w: s.windows, n: String(n), ...(place === "this block" ? {} : { p: place }) })}`);
   const sound$ = (s: Sound, secs?: number) => (muted ? () => {} : play(s, secs));
 
+  // On a phone the result card covers the lower half: glide the honk into the upper third so its spread stays in view.
+  const frameSpot = (lat: number, lon: number) => {
+    if (window.innerWidth > 860) return;
+    const vp = new WebMercatorViewport({ ...view, ...size.current }), [x, y] = vp.project([lon, lat]);
+    const [longitude, latitude] = vp.unproject([x, y + size.current.height * 0.17]);
+    setView({ ...view, longitude, latitude, transitionDuration: reducedMotion() ? 0 : 450, transitionInterpolator: new LinearInterpolator(["longitude", "latitude"]) } as View);
+  };
+
   async function honk(lat: number, lon: number, dur: number, replay = false) {
     setErr(null); setShared(null); setBlock(null);
+    frameSpot(lat, lon);
     setBusy({ lat, lon });
     try {
       let a = area.current;
@@ -279,6 +288,8 @@ export default function Honk() {
     frame && shot && new BitmapLayer({ id: "honk-field", image: frame, bounds: bounds(shot.area) }),
     shot && new ScatterplotLayer({ id: "honk-range", data: [shot], getPosition: (d: Shot) => [d.lon, d.lat], getRadius: RANGE, filled: false, stroked: true,
       getLineColor: [255, 244, 214, done ? 40 : 18], lineWidthUnits: "pixels", getLineWidth: 1, updateTriggers: { getLineColor: [done] } }),
+    shot && !done && new ScatterplotLayer({ id: "honk-wave-glow", data: [shot], getPosition: (d: Shot) => [d.lon, d.lat], getRadius: Math.max(1, wave), filled: false, stroked: true,
+      getLineColor: [242, 85, 44, Math.round(70 * (1 - wave / RANGE))], lineWidthUnits: "pixels", getLineWidth: 16, updateTriggers: { getRadius: [wave], getLineColor: [wave] } }),
     shot && !done && new ScatterplotLayer({ id: "honk-wave", data: [shot], getPosition: (d: Shot) => [d.lon, d.lat], getRadius: Math.max(1, wave), filled: false, stroked: true,
       getLineColor: [255, 178, 62, Math.round(220 * (1 - wave / RANGE)) + 30], lineWidthUnits: "pixels", getLineWidth: 2, updateTriggers: { getRadius: [wave], getLineColor: [wave] } }),
     new ScatterplotLayer({ id: "honk-people", data: sleepers.filter((p) => p.d <= wave), getPosition: (p: { pos: [number, number] }) => p.pos,
@@ -287,6 +298,8 @@ export default function Honk() {
       getRadius: hold ? 14 + Math.min(8, heldFor) * 9 : 12 + 10 * ((now / 600) % 1), radiusUnits: "pixels", filled: false, stroked: true,
       getLineColor: [255, 178, 62, hold ? 230 : Math.round(255 * (1 - ((now / 600) % 1)))], lineWidthUnits: "pixels", getLineWidth: 2,
       updateTriggers: { getRadius: [now], getLineColor: [now] } }),
+    (shot || busy || hold) && new ScatterplotLayer({ id: "honk-halo", data: [hold ?? busy ?? shot], getPosition: (d: { lat: number; lon: number }) => [d.lon, d.lat],
+      getRadius: 18, radiusUnits: "pixels", getFillColor: [255, 178, 62, 55] }),
     (shot || busy || hold) && new ScatterplotLayer({ id: "honk-src", data: [hold ?? busy ?? shot], getPosition: (d: { lat: number; lon: number }) => [d.lon, d.lat],
       getRadius: 6, radiusUnits: "pixels", getFillColor: [255, 178, 62, 255], stroked: true, getLineColor: [7, 9, 15, 255], lineWidthUnits: "pixels", getLineWidth: 2 }),
   ].filter(Boolean);
@@ -308,13 +321,22 @@ export default function Honk() {
         </DeckGL>
       </div>
 
+      {!shot && !busy && !hold && <div className="coach" aria-hidden="true"><i /><i /><span>Tap anywhere</span></div>}
+
       <div className="honk-tl">
+        <header className={`honk-hero${shot || busy ? " small" : ""}`}>
+          <p className="eyebrow">3 a.m. · New York</p>
+          <h1>How many New Yorkers did you wake?</h1>
+          <p className="lede">Pick a sound, then tap anywhere on the map. Watch it spread down the streets and over the roofs, and count who wakes up.</p>
+        </header>
+        <div className="chip-row">
         <button className="chip" onClick={() => setIntro(true)} aria-label="Change place">
           <svg width="12" height="14" viewBox="0 0 12 14" aria-hidden="true"><path d="M6 13s5-4.6 5-8A5 5 0 0 0 1 5c0 3.4 5 8 5 8z" fill="currentColor" /></svg>
           {place}
         </button>
         <button className="chip" aria-pressed={windows !== "open"} onClick={() => setWindows(WINDOWS[(WINDOWS.indexOf(windows) + 1) % 3])}
           title={`Measured median: an open window takes off ${CAL.win.open[1]} dB, tilted ${CAL.win.tilted[1]}, closed ${CAL.win.closed[1]}`}>Windows {windows}</button>
+        </div>
         <div className="chip-row">
           <button className="chip sq" onClick={() => setHelp(true)} aria-label="How it is calculated">?</button>
           <button className="chip sq" aria-pressed={muted} onClick={() => setMuted(!muted)} aria-label={muted ? "Turn sound on" : "Mute"}>
@@ -325,13 +347,19 @@ export default function Honk() {
         </div>
       </div>
 
-      <section className={`honk-count${more ? " more" : ""}`} aria-label="People woken">
+      {(shot || busy || err) && <section className={`honk-count${more ? " more" : ""}${done ? " done" : ""}`} aria-label="People woken">
         <p className="sr-only" aria-live="polite">{done ? `${count(shot.res.woke.mid)} people woke up, range ${count(shot.res.woke.lo)} to ${count(shot.res.woke.hi)}.` : busy ? "Honking…" : ""}</p>
         <div className="big-n" aria-hidden="true"><b className={shot && !done ? "ticking" : ""}>{shot ? count(done ? shot.res.woke.mid : woke) : busy ? "…" : "0"}</b><span>woke up</span></div>
         {done && <p className="range">range <b>{count(shot.res.woke.lo)}</b> to <b>{count(shot.res.woke.hi)}</b>, from measured window losses and assumed street and back-room losses</p>}
-        {!shot && !busy && <p className="hint">Tap a street on the map</p>}
         {busy && <p className="hint">Measuring every building nearby…</p>}
-        {shot && <p className="sub"><b>{fmt(done ? shot.res.reacted.mid : reacted)}</b> stirred in their sleep · {shot.sound.label.toLowerCase()}, {shot.dur < 1 ? shot.dur.toFixed(1) : Math.round(shot.dur)} s, windows {shot.windows}</p>}
+        {shot && !busy && <>
+          <div className="meter" aria-hidden="true"><i style={{ transform: `scaleX(${wave / RANGE})` }} /></div>
+          <div className="stats">
+            <span><b>{fmt(done ? shot.res.reacted.mid : reacted)}</b>stirred in their sleep</span>
+            <span><b>{Math.round(wave)} m</b>{done ? "heard to" : "and spreading"}</span>
+          </div>
+          <p className="sub">{shot.sound.label}, {shot.dur < 1 ? shot.dur.toFixed(1) : Math.round(shot.dur)} s, windows {shot.windows}</p>
+        </>}
         {done && jokes && <>
           <p className="flav">{flavour(shot.res.woke.mid)}</p>
           <div className="nightly">
@@ -350,7 +378,7 @@ export default function Honk() {
           </div>
         </>}
         {err && <p className="err">{err}</p>}
-      </section>
+      </section>}
 
       <div className="honk-bottom">
         <div className="strip" role="radiogroup" aria-label="Sound">
@@ -373,10 +401,9 @@ export default function Honk() {
       </div>
 
       {intro && (
-        <div className="honk-intro" role="dialog" aria-modal="true" aria-labelledby="honk-title">
+        <div className="honk-intro" role="dialog" aria-modal="true" aria-labelledby="honk-title" onClick={(e) => e.target === e.currentTarget && setIntro(false)}>
           <div className="card">
-            <h2 id="honk-title">How many New Yorkers did you wake?</h2>
-            <p className="lede">3 a.m. The city is mostly asleep. Pick a sound and a block, and the model works out, building by building, how many people it woke.</p>
+            <div className="help-head"><h2 id="honk-title">Pick a sound and a block</h2><button className="close" onClick={() => setIntro(false)} aria-label="Close">×</button></div>
             <h3><i>1</i> What makes the noise?</h3>
             <div className="sound-grid">
               {SOUNDS.map((s) => (

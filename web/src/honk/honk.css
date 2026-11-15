@@ -1,21 +1,53 @@
 /* Wake the city: one full-screen map with floating panels, in the site's night palette. */
 .honk { position: relative; height: 100svh; min-height: 520px; overflow: hidden; background: var(--night); touch-action: none; }
+.honk { --glass: color-mix(in srgb, var(--panel) 80%, transparent); --glass-edge: rgba(255, 255, 255, .08); }
 .honk-map { position: absolute; inset: 0; }
+/* a soft vignette pulls the eye to the middle, where the honk happens; it never takes taps */
+.honk::after { content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(4, 6, 12, .55) 100%); }
+.honk-glass, .honk .chip, .honk-count, .strip, .honk-legend, .honk-hero { background: var(--glass); border: 1px solid var(--glass-edge);
+  backdrop-filter: blur(14px) saturate(140%); -webkit-backdrop-filter: blur(14px) saturate(140%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .05), 0 18px 44px -16px rgba(0, 0, 0, .75); }
 /* grey CARTO tiles pushed toward the site's night navy; only the basemap canvas, not the sound field */
 .honk-map .maplibregl-canvas { filter: sepia(.5) hue-rotate(185deg) saturate(2.2) brightness(.82); }
-.honk .chip { display: inline-flex; align-items: center; gap: 7px; background: var(--panel); border: 1px solid var(--hair); border-radius: 9px;
+.honk .chip { display: inline-flex; align-items: center; gap: 7px; border-radius: 10px;
   padding: 8px 12px; font-size: .84rem; color: var(--ink); cursor: pointer; transition: border-color .18s var(--ease), background .18s var(--ease); }
-.honk .chip:hover { border-color: var(--ink-3); }
+.honk .chip:hover { border-color: rgba(255, 255, 255, .22); }
 .honk .chip[aria-pressed="true"] { background: var(--ink); color: var(--night); }
 .honk .chip.sq { width: 36px; height: 36px; padding: 0; justify-content: center; font-weight: 600; }
 .honk .chip svg path[d^="M6"] { color: var(--amber); }
-.honk-tl { position: absolute; z-index: 3; top: 16px; left: 16px; display: grid; gap: 8px; justify-items: start; }
+.honk-tl { position: absolute; z-index: 3; top: 16px; left: 16px; display: grid; gap: 8px; justify-items: start; width: 330px; }
+.honk-hero { border-radius: 16px; padding: 16px 18px 15px; transition: padding .35s var(--ease); }
+.honk-hero .eyebrow { margin: 0 0 6px; font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--amber); font-weight: 650; }
+.honk-hero h1 { margin: 0; font-family: var(--display); font-stretch: 78%; font-weight: 780; font-size: 2.35rem; line-height: .95; letter-spacing: -0.03em;
+  text-wrap: balance; background: linear-gradient(180deg, #FFD08A, var(--amber) 55%, var(--ember)); -webkit-background-clip: text; background-clip: text; color: transparent;
+  transition: font-size .35s var(--ease); }
+.honk-hero .lede { margin: 10px 0 0; font-size: .86rem; line-height: 1.45; color: var(--ink-2); }
+.honk-hero.small { padding: 10px 14px; }
+.honk-hero.small h1 { font-size: 1.25rem; }
+.honk-hero.small .lede { display: none; }
+
+/* before the first honk: a pulsing target in the middle that says what to do */
+.coach { position: absolute; z-index: 3; left: 50%; top: 50%; width: 0; height: 0; pointer-events: none; }
+.coach i { position: absolute; left: -9px; top: -9px; width: 18px; height: 18px; border-radius: 50%; background: var(--amber);
+  box-shadow: 0 0 22px 4px rgba(255, 178, 62, .55); }
+.coach i + i { background: transparent; box-shadow: none; border: 2px solid var(--amber); animation: ping 1.8s var(--ease) infinite; }
+.coach span { position: absolute; top: 20px; left: 0; transform: translateX(-50%); white-space: nowrap; font-family: var(--display); font-stretch: 85%;
+  font-weight: 700; font-size: 1.05rem; color: var(--ink); text-shadow: 0 2px 12px var(--night), 0 0 2px var(--night); }
+@keyframes ping { from { transform: scale(1); opacity: .9; } to { transform: scale(5); opacity: 0; } }
 .chip-row { display: flex; gap: 6px; }
 
-.honk-count { position: absolute; z-index: 3; top: 16px; right: 16px; width: 280px; background: var(--panel); border: 1px solid var(--hair);
-  border-radius: 14px; padding: 14px 16px; box-shadow: 0 20px 50px -14px rgba(0, 0, 0, .7); }
+.honk-count { position: absolute; z-index: 3; top: 16px; right: 16px; width: 300px; border-radius: 16px; padding: 16px 18px; animation: rise .4s var(--ease); }
+.honk-count .meter { height: 3px; margin-top: 12px; border-radius: 2px; background: rgba(255, 255, 255, .08); overflow: hidden; }
+.honk-count .meter i { display: block; height: 100%; transform-origin: left; background: linear-gradient(90deg, var(--amber), var(--ember)); }
+.honk-count.done .meter i { background: var(--ink-3); }
+.honk-count .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+.honk-count .stats span { display: grid; font-size: .72rem; color: var(--ink-3); line-height: 1.3; }
+.honk-count .stats b { font-family: var(--display); font-stretch: 85%; font-size: 1.35rem; font-weight: 720; color: var(--ink); font-variant-numeric: tabular-nums; }
+.honk-count .sub { color: var(--ink-3); }
 .big-n { display: flex; align-items: baseline; gap: 10px; }
-.big-n b { font-family: var(--display); font-stretch: 80%; font-weight: 780; font-size: 3.4rem; line-height: .9; color: var(--ember);
+.big-n b { font-family: var(--display); font-stretch: 80%; font-weight: 800; font-size: 4rem; line-height: .9; color: var(--ember);
+  text-shadow: 0 0 30px rgba(242, 85, 44, .35);
   font-variant-numeric: tabular-nums; letter-spacing: -0.03em; }
 .big-n b.ticking { color: var(--amber); }
 .big-n span { font-family: var(--display); font-stretch: 85%; font-weight: 680; font-size: 1.3rem; }
@@ -46,18 +78,18 @@
 .honk-bottom { position: absolute; z-index: 3; left: 50%; bottom: 14px; transform: translateX(-50%); display: grid; justify-items: center; gap: 10px;
   width: min(760px, calc(100% - 32px)); pointer-events: none; }
 .honk-bottom > * { pointer-events: auto; }
-.strip { display: flex; gap: 2px; background: color-mix(in srgb, var(--panel) 92%, transparent); border: 1px solid var(--hair); border-radius: 14px;
-  padding: 4px; max-width: 100%; overflow-x: auto; scrollbar-width: none; backdrop-filter: blur(8px); }
+.strip { display: flex; gap: 2px; border-radius: 16px; padding: 5px; max-width: 100%; overflow-x: auto; scrollbar-width: none; }
 .strip button { flex: none; border: 0; background: transparent; border-radius: 10px; padding: 3px 4px; cursor: pointer; color: var(--ink-2);
   transition: background .18s var(--ease), color .18s var(--ease), transform .18s var(--ease); }
 .strip button:hover { color: var(--ink); background: var(--night-2); }
-.strip button[aria-checked="true"] { color: var(--night); background: var(--amber); }
+.strip button[aria-checked="true"] { color: var(--night); background: var(--amber); box-shadow: 0 6px 18px -6px rgba(255, 178, 62, .7); }
+.strip button:active { transform: scale(.92); }
 .honk svg path { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 .honk .chip svg path { fill: currentColor; stroke: none; }
 .honk .chip svg path[stroke] { fill: none; stroke: currentColor; }
 
 .honk-btn { display: inline-flex; align-items: center; gap: 8px; border: 0; border-radius: 999px; padding: 6px 30px 6px 18px; cursor: pointer;
-  background: var(--amber); color: var(--night); font-family: var(--display); font-stretch: 82%; font-weight: 780; font-size: 1.7rem; line-height: 1;
+  background: linear-gradient(180deg, #FFC766, var(--amber) 60%, #F0961F); color: var(--night); font-family: var(--display); font-stretch: 82%; font-weight: 780; font-size: 1.7rem; line-height: 1;
   box-shadow: 0 0 0 0 rgba(255, 178, 62, .5), 0 14px 34px -10px rgba(255, 178, 62, .55); user-select: none; -webkit-user-select: none; touch-action: none;
   transition: transform .14s var(--ease), box-shadow .3s var(--ease); min-width: 170px; justify-content: center; }
 .honk-btn:hover { transform: translateY(-1px); }
@@ -69,8 +101,7 @@
 .tip b { color: var(--ink-2); font-weight: 600; }
 .tip { margin: 0; max-width: 100%; font-size: .74rem; color: var(--ink-3); text-align: center; text-shadow: 0 1px 6px var(--night); }
 
-.honk-legend { position: absolute; z-index: 3; left: 16px; bottom: 16px; width: 210px; background: var(--panel); border: 1px solid var(--hair);
-  border-radius: 10px; padding: 8px 10px; }
+.honk-legend { position: absolute; z-index: 3; left: 16px; bottom: 16px; width: 210px; border-radius: 12px; padding: 8px 10px; }
 .honk-legend .ramp { height: 8px; border-radius: 4px; }
 .honk-legend .ticks { display: flex; justify-content: space-between; margin-top: 5px; font-size: .64rem; color: var(--ink-3); }
 .honk-legend .ticks span { display: grid; justify-items: center; }
@@ -107,23 +138,35 @@
 
 /* top-level view switch, shared by both tabs */
 .tabs { position: fixed; z-index: 20; top: 16px; left: 50%; transform: translateX(-50%); display: flex; gap: 3px; padding: 4px;
-  background: var(--panel); border: 1px solid var(--hair); border-radius: 999px; box-shadow: 0 10px 30px -10px rgba(0, 0, 0, .7); }
+  background: color-mix(in srgb, var(--panel) 80%, transparent); border: 1px solid rgba(255, 255, 255, .08); border-radius: 999px;
+  backdrop-filter: blur(14px) saturate(140%); -webkit-backdrop-filter: blur(14px) saturate(140%); box-shadow: 0 10px 30px -10px rgba(0, 0, 0, .7); }
 .tabs button { border: 0; background: transparent; border-radius: 999px; padding: 7px 14px; font-size: .84rem; color: var(--ink-2); cursor: pointer;
   transition: background .18s var(--ease), color .18s var(--ease); white-space: nowrap; }
 .tabs button:hover { color: var(--ink); }
 .tabs button[aria-pressed="true"] { background: var(--ink); color: var(--night); font-weight: 600; }
 
+/* the centred tabs would sit on the headline */
+@media (max-width: 1180px) and (min-width: 861px) { .honk-tl { top: 70px; } }
+@media (prefers-reduced-motion: reduce) { .coach i + i { animation: none; opacity: .5; transform: scale(2); } }
+
 @media (max-width: 860px) {
   .tabs { position: sticky; top: 8px; transform: none; left: auto; margin: 8px auto; width: max-content; }
   .honk { height: calc(100svh - 56px); }
   .honk-count { top: auto; bottom: 192px; right: 12px; left: 12px; width: auto; padding: 10px 14px; }
-  .big-n b { font-size: 2.4rem; }
+  .big-n b { font-size: 2.8rem; }
   .honk-legend { display: none; }
-  .honk-tl { top: 12px; left: 12px; }
+  .honk-tl { top: 12px; left: 12px; right: 12px; width: auto; }
+  .honk-hero { width: 100%; box-sizing: border-box; padding: 12px 14px; }
+  .honk-hero h1 { font-size: 1.7rem; }
+  .honk-hero .lede { font-size: .8rem; margin-top: 6px; }
+  .honk-hero.small h1 { font-size: 1.05rem; }
+  .honk-hero.small .eyebrow { display: none; }
+  .coach { top: 58%; }
   .honk-bottom { bottom: 34px; } /* clears the map attribution, which must stay readable */
   .honk-btn { font-size: 1.4rem; }
   .jokes, .tip { display: none; }
   .honk-count:not(.more) :is(.sub, .flav, .nightly, .block311) { display: none; }
+  .honk-count .stats b { font-size: 1.1rem; }
   .honk-count .more-btn { display: block; }
   .honk-count .range { font-size: .74rem; }
   .honk-count { max-height: 46svh; }
