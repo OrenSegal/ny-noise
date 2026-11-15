@@ -17,14 +17,20 @@ export type Windows = "open" | "tilted" | "closed";
 export type Range = { lo: number; mid: number; hi: number };
 export type Result = { sx: number; sy: number; field: Float32Array; hits: Hit[]; woke: Range; reacted: Range; over: Record<number, number> };
 
-const mPerLon = (lat: number) => 111320 * Math.cos((lat * Math.PI) / 180);
+// One fixed 4 m lattice for the whole city: any two areas put a block on the same pixels, so a shared honk replays exactly.
+// A single east-west scale (at 40.7°N) is off by under 0.4% at the city's north and south edges.
+const M_PER_LON = 111320 * Math.cos((40.7 * Math.PI) / 180);
+export const anchor = (lat: number, lon: number) => ({
+  lat0: 40.7 + (Math.round(((lat - 40.7) * M_PER_LAT) / PX) * PX) / M_PER_LAT,
+  lon0: -74 + (Math.round(((lon + 74) * M_PER_LON) / PX) * PX) / M_PER_LON,
+});
 export const M_PER_LAT = 110540;
 export const toGrid = (a: { lat0: number; lon0: number }, lat: number, lon: number) =>
-  [((lon - a.lon0) * mPerLon(a.lat0) + HALF) / PX, (HALF - (lat - a.lat0) * M_PER_LAT) / PX] as const;
+  [((lon - a.lon0) * M_PER_LON + HALF) / PX, (HALF - (lat - a.lat0) * M_PER_LAT) / PX] as const;
 export const fromGrid = (a: { lat0: number; lon0: number }, x: number, y: number) =>
-  ({ lat: a.lat0 + (HALF - (y + 0.5) * PX) / M_PER_LAT, lon: a.lon0 + ((x + 0.5) * PX - HALF) / mPerLon(a.lat0) });
+  ({ lat: a.lat0 + (HALF - (y + 0.5) * PX) / M_PER_LAT, lon: a.lon0 + ((x + 0.5) * PX - HALF) / M_PER_LON });
 export const bounds = (a: { lat0: number; lon0: number }): [number, number, number, number] => {
-  const dl = HALF / mPerLon(a.lat0), dp = HALF / M_PER_LAT;
+  const dl = HALF / M_PER_LON, dp = HALF / M_PER_LAT;
   return [a.lon0 - dl, a.lat0 - dp, a.lon0 + dl, a.lat0 + dp];
 };
 
@@ -147,7 +153,7 @@ const STREET = 4000; // open pixels (~6.4 ha) a region needs to count as the str
 
 /** Nearest open pixel on the street network to (x,y), within ~160 m: a click on a roof or into a courtyard honks from the street. */
 function snapOpen(a: Area, x: number, y: number) {
-  const W = a.W, x0 = Math.round(x), y0 = Math.round(y), seen = new Uint8Array(W * W);
+  const W = a.W, x0 = Math.floor(x), y0 = Math.floor(y), seen = new Uint8Array(W * W);
   for (let r = 0; r <= 40; r++) for (let dy = -r; dy <= r; dy++) for (let dx = -r; dx <= r; dx++) {
     if (Math.max(Math.abs(dx), Math.abs(dy)) !== r) continue;
     const px = x0 + dx, py = y0 + dy, p = py * W + px;
@@ -163,7 +169,7 @@ function snapOpen(a: Area, x: number, y: number) {
  * Taking the max rather than adding energy keeps open streets from gaining a flat 3 dB.
  */
 export function simulate(a: Area, s: Src, gx: number, gy: number, windows: Windows): Result {
-  const W = a.W, [sx, sy] = s.hs > 20 ? [Math.round(gx), Math.round(gy)] as const : snapOpen(a, gx, gy);
+  const W = a.W, [sx, sy] = s.hs > 20 ? [Math.floor(gx), Math.floor(gy)] as const : snapOpen(a, gx, gy);
   const s0 = sy * W + sx, path = streetPaths(a, s0, RANGE + 40);
   const field = new Float32Array(W * W).fill(NaN);
   const R = RANGE / PX, hr = 1.5;

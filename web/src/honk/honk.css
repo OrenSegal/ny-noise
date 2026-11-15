@@ -116,11 +116,11 @@
 @media (max-width: 860px) {
   .tabs { position: sticky; top: 8px; transform: none; left: auto; margin: 8px auto; width: max-content; }
   .honk { height: calc(100svh - 56px); }
-  .honk-count { top: auto; bottom: 168px; right: 12px; left: 12px; width: auto; padding: 10px 14px; }
+  .honk-count { top: auto; bottom: 192px; right: 12px; left: 12px; width: auto; padding: 10px 14px; }
   .big-n b { font-size: 2.4rem; }
   .honk-legend { display: none; }
   .honk-tl { top: 12px; left: 12px; }
-  .honk-bottom { bottom: 10px; }
+  .honk-bottom { bottom: 34px; } /* clears the map attribution, which must stay readable */
   .honk-btn { font-size: 1.4rem; }
   .jokes, .tip { display: none; }
   .honk-count:not(.more) :is(.sub, .flav, .nightly, .block311) { display: none; }

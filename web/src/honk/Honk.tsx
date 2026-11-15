@@ -64,6 +64,7 @@ const readHash = () => {
     at: Number.isFinite(lat) && Number.isFinite(lon) && Math.abs(lat - 40.7) < 0.5 && Math.abs(lon + 73.95) < 0.5 ? { lat, lon } : null,
     sound, dur: Number.isFinite(d) ? Math.min(30, Math.max(0.1, d)) : undefined,
     windows: WINDOWS.find((w) => w === q.get("w")), nightly: NIGHTLY.find((n) => n === Number(q.get("n"))),
+    place: PLACES.find((p) => p.name === q.get("p"))?.name,
   };
 };
 const vibrate = (p: number | number[]) => { try { navigator.vibrate?.(p); } catch { /* not supported */ } };
@@ -90,7 +91,7 @@ function Glyph({ s }: { s: Sound }) {
 export default function Honk() {
   const [init] = useState(readHash);
   const [sound, setSound] = useState<Sound>(init.sound ?? SOUNDS[0]);
-  const [place, setPlace] = useState<string>(init.at ? "this block" : PLACES[0].name);
+  const [place, setPlace] = useState<string>(init.place ?? (init.at ? "this block" : PLACES[0].name));
   const [intro, setIntro] = useState(!init.at);
   const [help, setHelp] = useState(false);
   const [view, setView] = useState<View>({ longitude: init.at?.lon ?? PLACES[0].lon, latitude: init.at?.lat ?? PLACES[0].lat, zoom: init.at ? 16 : 15.4, pitch: 0, bearing: 0 });
@@ -132,7 +133,7 @@ export default function Honk() {
     return { lat, lon };
   };
   const writeHash = (s: Shot, n: number) => window.history.replaceState(null, "", `#${new URLSearchParams({
-    tab: "honk", lat: s.lat.toFixed(5), lon: s.lon.toFixed(5), s: s.sound.id, d: s.dur.toFixed(1), w: s.windows, n: String(n) })}`);
+    tab: "honk", lat: s.lat.toFixed(5), lon: s.lon.toFixed(5), s: s.sound.id, d: s.dur.toFixed(1), w: s.windows, n: String(n), ...(place === "this block" ? {} : { p: place }) })}`);
   const sound$ = (s: Sound, secs?: number) => (muted ? () => {} : play(s, secs));
 
   async function honk(lat: number, lon: number, dur: number, replay = false) {

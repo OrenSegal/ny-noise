@@ -1,6 +1,6 @@
 // Buildings (footprints + roof heights) and residents around a point. Prebuilt tiles first (scripts/build-tiles.mjs);
 // if the deploy has none, live from NYC Open Data.
-import { type Area, type Bldg, HALF, M_PER_LAT, PX, RANGE, fillPolygon, toGrid } from "./physics";
+import { type Area, type Bldg, HALF, anchor, M_PER_LAT, PX, RANGE, fillPolygon, toGrid } from "./physics";
 
 const FOOTPRINTS = "https://data.cityofnewyork.us/resource/5zhs-2jue.json";
 const PLUTO = "https://data.cityofnewyork.us/resource/64uk-42ks.json";
@@ -101,8 +101,8 @@ async function live(lat0: number, lon0: number): Promise<Area> {
   return a;
 }
 
-export async function loadArea(lat0: number, lon0: number): Promise<Area> {
-  const ix = await getIndex();
+export async function loadArea(lat: number, lon: number): Promise<Area> {
+  const { lat0, lon0 } = anchor(lat, lon), ix = await getIndex();
   if (ix) { try { return await fromTiles(ix, lat0, lon0); } catch (e) { console.warn("tiles failed, querying live", e); } }
   return live(lat0, lon0);
 }
