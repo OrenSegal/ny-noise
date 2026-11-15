@@ -17,6 +17,7 @@
     "@deck.gl/layers": "^9.4.1",
     "@deck.gl/react": "^9.4.1",
     "@observablehq/plot": "^0.6.19",
+    "@tabler/icons-react": "^3.52.0",
     "deck.gl": "^9.4.1",
     "h3-js": "^4.5.0",
     "maplibre-gl": "^6.17.0",

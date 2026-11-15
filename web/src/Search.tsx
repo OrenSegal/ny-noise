@@ -3,7 +3,7 @@ import { useState } from "react";
 type Hit = { label: string; lat: number; lon: number };
 
 /** Address search via NYC Planning's GeoSearch (free, no key). Called on submit. (Wake the city reads prebuilt tiles and falls back to NYC Open Data.) */
-export default function Search({ onPick }: { onPick: (lat: number, lon: number, label: string) => void }) {
+export default function Search({ onPick, placeholder = "Find an address, e.g. 350 5th Ave" }: { onPick: (lat: number, lon: number, label: string) => void; placeholder?: string }) {
   const [q, setQ] = useState("");
   const [hits, setHits] = useState<Hit[]>([]);
   const [state, setState] = useState<"idle" | "busy" | "none" | "error">("idle");
@@ -27,7 +27,7 @@ export default function Search({ onPick }: { onPick: (lat: number, lon: number, 
   return (
     <form className="search" onSubmit={run} role="search">
       <label htmlFor="addr" className="sr-only">Find an address</label>
-      <input id="addr" value={q} onChange={(e) => { setQ(e.target.value); setState("idle"); }} placeholder="Find an address, e.g. 350 5th Ave" autoComplete="street-address" />
+      <input id="addr" value={q} onChange={(e) => { setQ(e.target.value); setState("idle"); }} placeholder={placeholder} autoComplete="street-address" />
       <button type="submit" disabled={state === "busy"}>{state === "busy" ? "…" : "Find"}</button>
       {state === "none" && <p className="search-msg">No NYC address matched. Try adding the borough.</p>}
       {state === "error" && <p className="search-msg">Address search is unavailable right now; click the map instead.</p>}

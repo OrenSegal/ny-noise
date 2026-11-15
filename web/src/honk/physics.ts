@@ -11,7 +11,8 @@ export type Bldg = { people: number; floors: number; h: number };
 export type Area = { lat0: number; lon0: number; W: number; h: Float32Array; bid: Int32Array; b: Bldg[] };
 /** db: dB(A) at 7 m. dur: seconds. hs: source height m. lam: wavelength m (barriers). air: dB per m. */
 export type Src = { db: number; dur: number; hs: number; lam: number; air: number };
-export type Hit = { b: number; d: number; woke: number; reacted: number; at: number };
+/** peak: loudest bedroom in the building, dB indoors (middle calibration). */
+export type Hit = { b: number; d: number; woke: number; reacted: number; at: number; peak: number };
 export type Windows = "open" | "tilted" | "closed";
 /** Expected counts under the quiet-leaning, middle and loud-leaning calibration (see CAL). */
 export type Range = { lo: number; mid: number; hi: number };
@@ -60,19 +61,19 @@ export const durationDb = (s: number) => (s < 1 ? 10 * Math.log10(Math.max(s, 0.
 /**
  * Calibration, each as [quiet-leaning, middle, loud-leaning]; the counter shows the spread.
  * win: outdoor-indoor difference, measured medians and quartiles from 102 Swiss homes (Locher et al. 2018, Table 2).
- * rear: back rooms vs the loud façade. 10 dB is the usual "quiet side" threshold in the literature; 20 is our upper guess.
  * canyon: extra loss per metre of detour down a side street, on top of spreading. An assumption, set so the total along a
  *   side street (with spreading) lands near the 20-30 dB per 100 m a computed, scale-model-checked canyon study reports.
  */
 export const CAL = {
   win: { open: [11.5, 10.0, 8.1], tilted: [17.2, 15.8, 14.0], closed: [30.8, 27.8, 25.4] },
-  rear: [20, 15, 10],
   canyon: [0.20, 0.15, 0.10],
 } as const;
 const CORNER = 4.8; // Maekawa at grazing incidence, 10 log10(3): the drop on first losing line of sight round a corner
 const PEOPLE_AWAKE_FLOOR = 32; // WHO: the body reacts in sleep above 32 dB indoors
+const ASLEEP = 0.95; // share of people asleep at 3 a.m., American Time Use Survey 2005-11 (BLS table A-3)
 
-const free = (s: Src, d: number) => s.db - 20 * Math.log10(Math.max(d, 1) / 7) - s.air * d;
+// Closer than 4 m the source is no longer a point (a car is 4.5 m long) and no window sits nearer a lane than a sidewalk.
+const free = (s: Src, d: number) => s.db - 20 * Math.log10(Math.max(d, 4) / 7) - s.air * d;
 /** Maekawa single-edge barrier from the path difference, capped at 25 dB for thick city blocks. */
 const barrier = (delta: number, lam: number) => (delta <= 0 ? 0 : Math.min(25, 10 * Math.log10(3 + (40 * delta) / lam)));
 /** Extra loss for the street-channel path: a corner drop, then a steady decay per metre of detour, capped like a barrier. */
@@ -164,7 +165,7 @@ function snapOpen(a: Area, x: number, y: number) {
 }
 
 /**
- * Level at every street pixel (1.5 m) within RANGE, then at each façade floor of every building, then people woken.
+ * Level at every street pixel (1.5 m) within RANGE, then along every exterior wall, floor by floor, then people woken.
  * Two paths, the louder wins: the direct line over the roofs, and the walk down the streets (stands in for reflections and corners).
  * Taking the max rather than adding energy keeps open streets from gaining a flat 3 dB.
  */
@@ -182,34 +183,51 @@ export function simulate(a: Area, s: Src, gx: number, gy: number, windows: Windo
     field[p] = L;
   }
 
-  // The loud façade of each building: its pixel with the loudest open neighbour.
-  const face = new Map<number, { p: number; L: number; q: number }>();
+  // Windows sit on exterior walls: every building pixel that touches open air is ~4 m of façade, and a building's residents
+  // are spread evenly along them. Party walls (pixels touching only other buildings) have no windows. Each stretch hears
+  // what the open air right outside it hears, so a back wall facing a quiet courtyard gets that courtyard's level.
+  const walls = new Map<number, { p: number; q: number; L: number }[]>();
   for (let y = 1; y < W - 1; y++) for (let x = 1; x < W - 1; x++) {
     const p = y * W + x, bi = a.bid[p];
     if (bi < 0 || !(a.b[bi].people > 0)) continue;
-    for (const q of [p - 1, p + 1, p - W, p + W]) {
-      const L = field[q];
-      if (L === L && (!face.has(bi) || L > face.get(bi)!.L)) face.set(bi, { p, L, q });
+    let q = -1, L = -Infinity, open = false;
+    for (const n of [p - 1, p + 1, p - W, p + W]) {
+      if (a.h[n] > 0) continue;
+      open = true;
+      if (field[n] > L) { L = field[n]; q = n; }
     }
+    if (!open) continue;
+    if (!walls.has(bi)) walls.set(bi, []);
+    walls.get(bi)!.push({ p, q, L: q < 0 ? NaN : L });
   }
-  // Per floor: the over-the-roof level and the street-path length once; each calibration then only re-weighs them.
+  // Per floor, the full model runs once at the loudest stretch of wall; every other stretch is offset by how much quieter
+  // the air outside it is. Each calibration then only re-weighs the same paths.
   const dur = durationDb(s.dur), hits: Hit[] = [];
   const woke = [0, 0, 0], reacted = [0, 0, 0];
-  for (const [bi, f] of face) {
-    const b = a.b[bi], x = f.p % W, y = (f.p / W) | 0, D = Math.hypot(x - sx, y - sy) * PX, per = b.people / b.floors;
+  for (const [bi, ws] of walls) {
+    let f = ws[0];
+    for (const w of ws) if (!(f.L >= w.L)) f = w;
+    if (!(f.L === f.L)) continue; // no wall within range
+    const b = a.b[bi], x = f.p % W, y = (f.p / W) | 0, D = Math.hypot(x - sx, y - sy) * PX;
+    const share = (ASLEEP * b.people) / b.floors / ws.length;
     const w = [0, 0, 0], r = [0, 0, 0];
+    let peak = -Infinity;
     for (let k = 0; k < b.floors; k++) {
       const h = 3 * k + 1.5, d3 = Math.hypot(D, s.hs - h);
       const direct = free(s, d3) - barrier(delta(a, sx + 0.5, sy + 0.5, s.hs, x + 0.5, y + 0.5, h, bi), s.lam);
       const pl = path[f.q] < Infinity ? Math.hypot(path[f.q], s.hs - h) : Infinity;
       for (let c = 0; c < 3; c++) {
-        const L = pl < Infinity ? Math.max(direct, free(s, pl) - bend(pl - d3, CAL.canyon[c])) : direct;
-        const front = L - CAL.win[windows][c] + dur, rear = front - CAL.rear[c];
-        w[c] += per * 0.5 * (pWake(front) + pWake(rear));
-        r[c] += per * 0.5 * ((front > PEOPLE_AWAKE_FLOOR ? 1 : 0) + (rear > PEOPLE_AWAKE_FLOOR ? 1 : 0));
+        const top = (pl < Infinity ? Math.max(direct, free(s, pl) - bend(pl - d3, CAL.canyon[c])) : direct) - CAL.win[windows][c] + dur;
+        for (const wl of ws) {
+          if (!(wl.L === wl.L)) continue;
+          const L = top + wl.L - f.L;
+          if (c === 1 && L > peak) peak = L;
+          if (L <= PEOPLE_AWAKE_FLOOR) continue;
+          w[c] += share * pWake(L); r[c] += share;
+        }
       }
     }
-    if (r[2] > 0) { hits.push({ b: bi, d: D, woke: w[1], reacted: r[1], at: f.p }); for (let c = 0; c < 3; c++) { woke[c] += w[c]; reacted[c] += r[c]; } }
+    if (r[2] > 0) { hits.push({ b: bi, d: D, woke: w[1], reacted: r[1], at: f.p, peak }); for (let c = 0; c < 3; c++) { woke[c] += w[c]; reacted[c] += r[c]; } }
   }
   hits.sort((p, q) => p.d - q.d);
   const over: Record<number, number> = {};

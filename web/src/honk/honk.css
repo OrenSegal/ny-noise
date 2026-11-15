@@ -15,7 +15,7 @@
 .honk .chip:hover { border-color: rgba(255, 255, 255, .22); }
 .honk .chip[aria-pressed="true"] { background: var(--ink); color: var(--night); }
 .honk .chip.sq { width: 36px; height: 36px; padding: 0; justify-content: center; font-weight: 600; }
-.honk .chip svg path[d^="M6"] { color: var(--amber); }
+.honk .chip .tabler-icon-map-pin { color: var(--amber); }
 .honk-tl { position: absolute; z-index: 3; top: 16px; left: 16px; display: grid; gap: 8px; justify-items: start; width: 330px; }
 .honk-hero { border-radius: 16px; padding: 16px 18px 15px; transition: padding .35s var(--ease); }
 .honk-hero .eyebrow { margin: 0 0 6px; font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--amber); font-weight: 650; }
@@ -66,7 +66,7 @@
 .honk-count .block311 .linkish { font-size: .78rem; display: inline; }
 .honk-count .actions { display: flex; gap: 6px; margin-top: 12px; }
 .honk-count .more-btn { display: none; border: 1px solid var(--hair); background: transparent; color: var(--ink-2); border-radius: 9px; padding: 0 14px; cursor: pointer; font-size: .84rem; }
-.honk-count .share { flex: 1; border: 0; border-radius: 9px; padding: 9px 12px; cursor: pointer; font-weight: 650; font-size: .86rem;
+.honk-count .share { flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 7px; border: 0; border-radius: 9px; padding: 9px 12px; cursor: pointer; font-weight: 650; font-size: .86rem;
   background: var(--ink); color: var(--night); transition: transform .14s var(--ease); }
 .honk-count .share:hover { transform: translateY(-1px); }
 .honk-count { max-height: calc(100% - 200px); overflow-y: auto; }
@@ -84,9 +84,7 @@
 .strip button:hover { color: var(--ink); background: var(--night-2); }
 .strip button[aria-checked="true"] { color: var(--night); background: var(--amber); box-shadow: 0 6px 18px -6px rgba(255, 178, 62, .7); }
 .strip button:active { transform: scale(.92); }
-.honk svg path { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
-.honk .chip svg path { fill: currentColor; stroke: none; }
-.honk .chip svg path[stroke] { fill: none; stroke: currentColor; }
+.strip button { width: 46px; height: 42px; display: grid; place-items: center; }
 
 .honk-btn { display: inline-flex; align-items: center; gap: 8px; border: 0; border-radius: 999px; padding: 6px 30px 6px 18px; cursor: pointer;
   background: linear-gradient(180deg, #FFC766, var(--amber) 60%, #F0961F); color: var(--night); font-family: var(--display); font-stretch: 82%; font-weight: 780; font-size: 1.7rem; line-height: 1;
@@ -95,7 +93,7 @@
 .honk-btn:hover { transform: translateY(-1px); }
 .honk-btn:active, .honk-btn.held { transform: scale(.97); box-shadow: 0 0 0 10px rgba(255, 178, 62, .18), 0 10px 26px -10px rgba(255, 178, 62, .6); }
 .honk-btn.held { animation: throb .5s ease-in-out infinite alternate; }
-.honk-btn svg { width: 44px; height: 32px; }
+.honk-btn svg { width: 30px; height: 30px; stroke-width: 2; }
 .honk-btn span { font-variant-numeric: tabular-nums; }
 @keyframes throb { to { box-shadow: 0 0 0 18px rgba(255, 178, 62, .08), 0 10px 26px -10px rgba(255, 178, 62, .6); } }
 .tip b { color: var(--ink-2); font-weight: 600; }
@@ -128,7 +126,6 @@
 .sound-grid small, .place-grid small { font-size: .7rem; color: var(--ink-3); font-variant-numeric: tabular-nums; }
 .place-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 6px; }
 .place-grid button { justify-items: start; text-align: left; padding: 10px 12px; }
-.honk-intro .search { max-width: 420px; }
 .help h2 { color: var(--ink); font-size: 2rem; max-width: none; text-shadow: none; }
 .help-head { display: flex; justify-content: space-between; align-items: start; }
 .help p, .help li { color: var(--ink-2); font-size: .88rem; }
@@ -178,3 +175,16 @@
   .sound-grid b { font-size: .7rem; }
   .place-grid { grid-template-columns: repeat(2, 1fr); }
 }
+
+/* Find: an address or your location honks straight away */
+.honk-find { display: flex; gap: 6px; align-items: flex-start; width: min(340px, 100%); }
+.honk-find .search { flex: 1; margin: 0; }
+.honk-find .search input { background: var(--glass); border-color: var(--glass-edge); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); height: 36px; font-size: 16px; }
+.honk-find .search > button { height: 36px; }
+.honk-find .search-hits { position: absolute; top: 40px; left: 0; right: 0; z-index: 5; }
+.honk .spin { animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.honk-count .why { margin: 10px 0 0; font-size: .8rem; line-height: 1.45; color: var(--ink-2); }
+.honk-count .why b { color: var(--ink); font-variant-numeric: tabular-nums; }
+.honk-count .flav span { display: block; margin-top: 4px; color: var(--ink-3); font-style: italic; font-size: .8em; }
+@media (prefers-reduced-motion: reduce) { .honk .spin { animation: none; } }
