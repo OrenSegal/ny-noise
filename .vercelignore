@@ -1,0 +1,6 @@
+# vercel --prod uploads only what builds the site: the web app and the root config.
+/*
+!/web
+!/vercel.json
+/web/node_modules
+/web/dist
