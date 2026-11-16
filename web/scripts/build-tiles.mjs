@@ -1,4 +1,4 @@
-// Build the Wake the city building tiles at deploy time: every NYC footprint with its roof height and residents,
+// Build the Wake the Block building tiles at deploy time: every NYC footprint with its roof height and residents,
 // in ~1 km binary tiles under public/tiles/. Not committed; if NYC Open Data is down the build continues and the app
 // falls back to live queries.
 //

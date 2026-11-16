@@ -413,7 +413,7 @@ export default function Honk() {
           </div>
           {block && <p className="block311">People on this block file about <b>{fmt(block.perYear)}</b> noise complaints a year to 311 ({fmt(block.expected)} expected).
             One honk woke {count(shot.res.woke.mid)}. Complaints count who calls, not who hears. <button className="linkish" onClick={toMap}>See the block on the noise map</button></p>}
-          {block && <button className="report-btn" onClick={() => openReport(true)}>Wake my block: what keeps this block up at night</button>}
+          {block && <button className="report-btn" onClick={() => openReport(true)}>Block report: what keeps this block up at night</button>}
           <ul className="jokes">{jokes.map(([n, l]) => <li key={l}><b>{fmt(n)}</b> {l}</li>)}</ul>
           <div className="actions">
             <button className="share" onClick={share}><IconShare2 size={17} stroke={1.8} aria-hidden="true" />{shared ?? "Share this honk"}</button>

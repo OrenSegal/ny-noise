@@ -1,4 +1,4 @@
-/* Wake the city: one full-screen map with floating panels, in the site's night palette. */
+/* Wake the Block: one full-screen map with floating panels, in the site's night palette. */
 .honk { position: relative; height: 100svh; min-height: 520px; overflow: hidden; background: var(--night); touch-action: none; }
 .honk { --glass: color-mix(in srgb, var(--panel) 80%, transparent); --glass-edge: rgba(255, 255, 255, .08); }
 .honk-map { position: absolute; inset: 0; }

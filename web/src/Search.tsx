@@ -2,7 +2,7 @@ import { useState } from "react";
 
 type Hit = { label: string; lat: number; lon: number };
 
-/** Address search via NYC Planning's GeoSearch (free, no key). Called on submit. (Wake the city reads prebuilt tiles and falls back to NYC Open Data.) */
+/** Address search via NYC Planning's GeoSearch (free, no key). Called on submit. (Wake the Block reads prebuilt tiles and falls back to NYC Open Data.) */
 export default function Search({ onPick, placeholder = "Find an address, e.g. 350 5th Ave" }: { onPick: (lat: number, lon: number, label: string) => void; placeholder?: string }) {
   const [q, setQ] = useState("");
   const [hits, setHits] = useState<Hit[]>([]);

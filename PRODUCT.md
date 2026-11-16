@@ -7,7 +7,7 @@
 web
 
 ## Stack
-Python pipeline (pandas, scikit-learn, geopandas, h3, shap) exports static JSON to `web/public/data/`. The web app is React + Vite with deck.gl, MapLibre (CARTO dark basemap) and Observable Plot, deployed on Vercel at ny-noise.vercel.app. No backend of its own and no secrets; the browser calls two free public APIs at runtime: NYC Planning GeoSearch for addresses, and NYC Open Data (building footprints, MapPLUTO) for the Wake the city tab only when a deploy has no prebuilt building tiles. The tiles (all ~1.08M footprints with residents, ~36 MB in ~1 km binary files) are built at deploy by `web/scripts/build-tiles.mjs` and not committed; CI skips them with SKIP_TILES. Chosen by the owner on 2026-11-07 ("react vibes", immersive, sound-like).
+Python pipeline (pandas, scikit-learn, geopandas, h3, shap) exports static JSON to `web/public/data/`. The web app is React + Vite with deck.gl, MapLibre (CARTO dark basemap) and Observable Plot, deployed on Vercel at ny-noise.vercel.app. No backend of its own and no secrets; the browser calls two free public APIs at runtime: NYC Planning GeoSearch for addresses, and NYC Open Data (building footprints, MapPLUTO) for the Wake the Block tab only when a deploy has no prebuilt building tiles. The tiles (all ~1.08M footprints with residents, ~36 MB in ~1 km binary files) are built at deploy by `web/scripts/build-tiles.mjs` and not committed; CI skips them with SKIP_TILES. Chosen by the owner on 2026-11-07 ("react vibes", immersive, sound-like).
 
 ## Users
 Two audiences of equal weight, confirmed by the owner:
@@ -28,7 +28,7 @@ Weekly cadence: data rebuilds every Tuesday by GitHub Action once the prior Mond
 - The spatial model explains and never forecasts; its effects are associations. The two models are never blurred in copy.
 - Repeat callers are de-duplicated (address, day, type) for the spatial model.
 - The target is complaint counts, never decibels. This must stay visible on the first screen.
-- The Wake the city tab (#tab=honk) is a separate physics model in decibels (one stationary source at 3 a.m., real footprints and roof heights, PLUTO homes, Basner 2006 wake curve). It never uses complaints for the physics; it shows the block's 311 rate beside the count so the gap between who hears and who calls is visible. Counts are a middle estimate with a range from measured window losses (Locher et al. 2018 quartiles), back-room shielding (10 to 20 dB) and side-street decay (20 to 30 dB per 100 m); residents are scaled to the 2020 Census.
+- The Wake the Block tab (#tab=honk) is a separate physics model in decibels (one stationary source at 3 a.m., real footprints and roof heights, PLUTO homes, Basner 2006 wake curve). It never uses complaints for the physics; it shows the block's 311 rate beside the count so the gap between who hears and who calls is visible. Counts are a middle estimate with a range from measured window losses (Locher et al. 2018 quartiles), back-room shielding (10 to 20 dB) and side-street decay (20 to 30 dB per 100 m); residents are scaled to the 2020 Census.
 - Terminology: WAPE (weighted absolute percentage error), MASE (scaled against seasonal-naive error), sMAPE, coverage, baseline, holdout, rolling origin.
 - Honest result to preserve: the model is about 4% better than last-week persistence on weighted error, wins 3 of 4 quarters, loses the Nov 2025 quarter that holds an unexplained citywide surge, and has worse RMSE and R2 than persistence.
 

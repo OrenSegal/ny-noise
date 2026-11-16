@@ -59,7 +59,7 @@ export default function Report({ c, i, place, woke, sound, onHear, onClose }: {
     <div className="honk-intro" role="dialog" aria-modal="true" aria-labelledby="report-h" onClick={(e) => e.target === e.currentTarget && onClose()}>
       <div className="card help report">
         <div className="help-head">
-          <div><p className="eyebrow">Wake my block · 3 a.m.</p><h2 id="report-h">{place}</h2></div>
+          <div><p className="eyebrow">Block report · 3 a.m.</p><h2 id="report-h">{place}</h2></div>
           <div className="report-btns">
             <button className="close" onClick={copy} aria-label="Copy a link to this report" title="Copy link"><IconLink size={16} stroke={1.8} aria-hidden="true" /></button>
             <button className="close" onClick={onClose} aria-label="Close">×</button>

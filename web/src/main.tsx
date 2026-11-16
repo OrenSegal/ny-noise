@@ -6,7 +6,7 @@ import Honk from './honk/Honk.tsx'
 import { startAnalytics, track } from './track'
 
 startAnalytics()
-// Wake the city is the front door; the noise map opens from its tab or from any #lens=... link it wrote.
+// Wake the Block is the front door; the noise map opens from its tab or from any #lens=... link it wrote.
 const tabOf = () => (/(^|[#&])(lens=|tab=map)/.test(window.location.hash) ? 'map' : 'honk')
 
 // Two views share the page; the map keeps its own #lens=... links, the other is #tab=honk (plus a honk to replay).
@@ -28,7 +28,7 @@ function Shell() {
   return (
     <>
       <nav className="tabs" aria-label="Views">
-        <button aria-pressed={tab === 'honk'} onClick={() => go('honk')}>Wake the city</button>
+        <button aria-pressed={tab === 'honk'} onClick={() => go('honk')}>Wake the Block</button>
         <button aria-pressed={tab === 'map'} onClick={() => go('map')}>Noise map</button>
       </nav>
       {tab === 'map' ? <App key={key} /> : <Honk key={key} />}
