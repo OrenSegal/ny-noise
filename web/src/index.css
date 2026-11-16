@@ -34,7 +34,10 @@ button { font: inherit; color: inherit; }
 /* ------------------------------------------------ stage (first viewport) */
 .stage { position: relative; height: 100svh; min-height: 560px; overflow: hidden; background: var(--night); }
 .stage-map { position: absolute; inset: 0; }
-.masthead { position: absolute; z-index: 3; top: 16px; left: 16px; width: 300px; background: var(--panel); border: 1px solid var(--hair);
+.leftcol { position: absolute; z-index: 3; top: 16px; left: 16px; bottom: 16px; width: 300px; display: flex; flex-direction: column; gap: 8px;
+  overflow-y: auto; pointer-events: none; scrollbar-width: none; }
+.leftcol > * { pointer-events: auto; flex: none; }
+.masthead { background: var(--panel); border: 1px solid var(--hair);
   border-radius: 12px; padding: 14px 16px; }
 .masthead h1 { font-family: var(--display); font-weight: 720; font-stretch: 85%; font-size: 1.5rem; line-height: 1.05; letter-spacing: -0.02em; margin: 0 0 12px; }
 .keystats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 14px; margin: 0; }
@@ -44,7 +47,7 @@ button { font: inherit; color: inherit; }
 .keystats dd small { display: block; font-family: var(--ui); font-size: .7rem; font-weight: 400; color: var(--ink-3); }
 .masthead .fine { margin: 12px 0 0; font-size: .74rem; color: var(--ink-3); line-height: 1.4; }
 
-.rail { position: absolute; z-index: 3; left: 16px; top: 296px; width: 300px; display: grid; gap: 8px; }
+.rail { display: grid; gap: 8px; }
 .seg { display: grid; grid-template-columns: 1fr 1fr; background: var(--panel); border: 1px solid var(--hair); border-radius: 10px; padding: 4px; gap: 3px; }
 .seg button { border: 0; background: transparent; padding: 8px 8px; border-radius: 7px; cursor: pointer;
   font-size: .84rem; color: var(--ink-2); transition: background .18s var(--ease), color .18s var(--ease); }
@@ -72,6 +75,8 @@ select { font: inherit; font-size: .86rem; background: var(--panel); color: var(
 
 .scrubber { position: absolute; z-index: 3; left: 332px; right: 16px; bottom: 16px; display: grid; grid-template-columns: auto 1fr auto;
   gap: 16px; align-items: center; background: var(--panel); border: 1px solid var(--hair); border-radius: 12px; padding: 10px 16px; }
+/* keep the basemap credit above the scrubber */
+.stage .maplibregl-ctrl-bottom-right { bottom: 76px; }
 .play { width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--hair); background: var(--ink); color: var(--night);
   display: grid; place-items: center; cursor: pointer; }
 .play:disabled { opacity: .4; cursor: not-allowed; }
@@ -142,6 +147,8 @@ figure svg text { font-variant-numeric: normal; } /* Plot sets tabular figures, 
   .grid2 { grid-template-columns: 1fr; }
   .stage { height: auto; min-height: 0; display: flex; flex-direction: column; gap: 10px; padding: 12px; }
   .stage-map { position: relative; inset: auto; height: 62svh; order: 2; border-radius: 12px; overflow: hidden; border: 1px solid var(--hair); }
+  .leftcol { display: contents; }
+  .stage .maplibregl-ctrl-bottom-right { bottom: 0; }
   .masthead, .rail, .toplist, .scrubber { position: static; width: auto; }
   .masthead { order: 1; } .scrubber { order: 3; } .rail { order: 4; } .toplist { order: 5; }
   .drawer { position: fixed; top: auto; left: 8px; right: 8px; bottom: 8px; width: auto; max-height: 72%; }

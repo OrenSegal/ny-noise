@@ -13,7 +13,7 @@ type TB = { people: number; h: number; rings: [number, number][][] }; // rings i
 let index: Promise<(Index & { keys: Set<string> }) | null> | null = null;
 const tiles = new Map<string, Promise<TB[]>>();
 
-const getIndex = () => (index ??= fetch("/tiles/index.json")
+const getIndex = () => (index ??= fetch(`/tiles/index.json?v=${__DATA_V__}`)
   .then((r) => (r.ok && r.headers.get("content-type")?.includes("json") ? r.json() : null))
   .then((j: Index | null) => (j ? { ...j, keys: new Set(j.tiles) } : null))
   .catch(() => null));
@@ -55,7 +55,7 @@ async function fromTiles(ix: Index & { keys: Set<string> }, lat0: number, lon0: 
       const k = `${ty}_${tx}`;
       if (!ix.keys.has(k)) continue;
       keys.push(k);
-      if (!tiles.has(k)) tiles.set(k, fetch(`/tiles/${k}.bin`).then((r) => {
+      if (!tiles.has(k)) tiles.set(k, fetch(`/tiles/${k}.bin?v=${__DATA_V__}`).then((r) => {
         if (!r.ok) throw new Error(`tile ${k}: ${r.status}`);
         return r.arrayBuffer();
       }).then((buf) => parseTile(buf, ix.lat0 + ty * ix.dLat, ix.lon0 + tx * ix.dLon))

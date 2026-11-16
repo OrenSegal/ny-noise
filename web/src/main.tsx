@@ -1,4 +1,4 @@
-import { StrictMode, useEffect, useState } from 'react'
+import { Component, type ReactNode, StrictMode, useEffect, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
@@ -11,6 +11,18 @@ const tabOf = () => (/(^|[#&])(lens=|tab=map)/.test(window.location.hash) ? 'map
 
 // Two views share the page; the map keeps its own #lens=... links, the other is #tab=honk (plus a honk to replay).
 // Links between them set location.hash, which fires hashchange; each view rewrites its own hash with replaceState.
+// A render crash in either view shows a way back instead of a black page.
+class Boundary extends Component<{ children: ReactNode }, { failed: boolean }> {
+  state = { failed: false }
+  static getDerivedStateFromError() { return { failed: true } }
+  componentDidCatch(e: unknown) { track('crash', { message: String(e).slice(0, 120) }) }
+  render() {
+    return this.state.failed
+      ? <div className="loading"><p>Something broke while drawing this view. <button className="linkish" onClick={() => window.location.reload()}>Reload the page</button></p></div>
+      : this.props.children
+  }
+}
+
 function Shell() {
   const [tab, setTab] = useState<'map' | 'honk'>(tabOf)
   const [key, setKey] = useState(0)
@@ -31,7 +43,7 @@ function Shell() {
         <button aria-pressed={tab === 'honk'} onClick={() => go('honk')}>Wake the Block</button>
         <button aria-pressed={tab === 'map'} onClick={() => go('map')}>Noise map</button>
       </nav>
-      {tab === 'map' ? <App key={key} /> : <Honk key={key} />}
+      <Boundary key={`${tab}${key}`}>{tab === 'map' ? <App /> : <Honk />}</Boundary>
     </>
   )
 }

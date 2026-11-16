@@ -38,7 +38,7 @@ export type Heat = {
 export type Bundle = { cells: Cells; spatial: Spatial; forecast: Forecast; score: Scorecard; hourly: Hourly; manifest: Manifest; heat: Heat };
 
 export async function loadAll(): Promise<Bundle> {
-  const get = (f: string) => fetch(`/data/${f}`).then((r) => { if (!r.ok) throw new Error(`${f}: ${r.status}`); return r.json(); });
+  const get = (f: string) => fetch(`/data/${f}?v=${__DATA_V__}`).then((r) => { if (!r.ok) throw new Error(`${f}: ${r.status}`); return r.json(); });
   const [cells, spatial, forecast, score, hourly, manifest, heat] = await Promise.all(
     ["cells.json", "spatial.json", "forecast.json", "scorecard.json", "hourly.json", "manifest.json", "heat.json"].map(get));
   return { cells, spatial, forecast, score, hourly, manifest, heat };

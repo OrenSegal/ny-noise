@@ -59,6 +59,12 @@ export default function App() {
   }, [playing, b]);
   useEffect(() => setActiveClass(null), [lens, factor]);
   useEffect(() => {
+    if (sel === null) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setSel(null); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [sel]);
+  useEffect(() => {
     if (!b) return;
     const p = new URLSearchParams({ lens });
     if (lens === "factor") p.set("factor", b.cells.features[factor]);
@@ -76,7 +82,7 @@ export default function App() {
     [b, blockLens, month, blockFactor, timeLens, tod]);
   const heat: HeatPoints = useMemo(() => {
     if (!b) return null;
-    if (lens === "exposure") return { lat: b.heat.exposure.lat, lon: b.heat.exposure.lon, w: b.heat.exposure[source], level: source === "traffic" ? "db" : "ratio" };
+    if (lens === "exposure") return { lat: b.heat.exposure.lat, lon: b.heat.exposure.lon, w: b.heat.exposure[source] ?? b.heat.exposure.lat.map(() => 0), level: source === "traffic" ? "db" : "ratio" };
     if (lens !== "complaints" || display !== "heat") return null;
     const h = b.heat.complaints;
     return { lat: h.lat, lon: h.lon, w: tod === "night" ? h.night : tod === "day" ? h.all.map((v, i) => v - h.night[i]) : h.all };
@@ -95,6 +101,16 @@ export default function App() {
       return best;
     };
   }, [b]);
+  // Where a block sits relative to its ZIP's centre, so ten rows of "10023" read apart.
+  const placeOf = (i: number) => {
+    const z = zipOf(i);
+    const zz = b?.forecast.zips.find((q) => q.zip === z);
+    if (!b || !zz) return "—";
+    const [lat, lon] = cellToLatLng(b.cells.h3[i]);
+    const dy = lat - zz.lat, dx = (lon - zz.lon) * 0.76;
+    if (Math.hypot(dx, dy) < 0.003) return `${z}, centre`; // ~300 m
+    return `${z}, ${["E", "NE", "N", "NW", "W", "SW", "S", "SE"][Math.round(Math.atan2(dy, dx) / (Math.PI / 4) + 8) % 8]}`;
+  };
 
   if (err) return <div className="loading">Could not load the data ({err}).</div>;
   if (!b || !classed) return <div className="loading">Loading two years of complaints…</div>;
@@ -145,6 +161,7 @@ export default function App() {
             <MapView cells={c} classed={classed} activeClass={activeClass} selected={sel} onSelect={setSel} view={view} setView={setView} tooltip={tooltip} heat={heat} />
           </div>
 
+          <div className="leftcol">
           <header className="masthead">
             <h1>New York noise, block by block</h1>
             <dl className="keystats">
@@ -212,6 +229,7 @@ export default function App() {
             </div>
             )}
           </aside>
+          </div>
 
           {sel === null && (
             <aside className="toplist" aria-label="Top blocks for this lens">
@@ -219,7 +237,7 @@ export default function App() {
               <table className="tbl compact">
                 <tbody>{top.map((i, r) => (
                   <tr key={i} onClick={() => pick(i)} tabIndex={0} onKeyDown={(e) => e.key === "Enter" && pick(i)}>
-                    <td className="rank">{r + 1}</td><td>{zipOf(i) ?? "—"}</td><td className="num">{classed.format(classed.value[i])}</td>
+                    <td className="rank">{r + 1}</td><td>{placeOf(i)}</td><td className="num">{classed.format(classed.value[i])}</td>
                   </tr>))}</tbody>
               </table>
               <div className="legend-foot">{lens === "anomaly" ? "Blocks expecting 25+ complaints a year. " : ""}Select a row to zoom to it.</div>

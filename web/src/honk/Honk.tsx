@@ -55,7 +55,7 @@ function simulateOff(a: Area, src: Src, gx: number, gy: number, windows: Windows
 }
 // 311 for the block under a honk, from the noise map's own data (fetched once, only when needed).
 let cellsP: Promise<{ c: Cells; at: Map<string, number> } | null> | null = null;
-const getCells = () => (cellsP ??= fetch("/data/cells.json").then((r) => r.json())
+const getCells = () => (cellsP ??= fetch(`/data/cells.json?v=${__DATA_V__}`).then((r) => r.json())
   .then((c: Cells) => ({ c, at: new Map(c.h3.map((h, i) => [h, i])) })).catch(() => null));
 type Block = { h3: string; i: number; c: Cells; perYear: number; expected: number } | null;
 
