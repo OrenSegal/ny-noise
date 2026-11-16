@@ -188,3 +188,26 @@
 .honk-count .why b { color: var(--ink); font-variant-numeric: tabular-nums; }
 .honk-count .flav span { display: block; margin-top: 4px; color: var(--ink-3); font-style: italic; font-size: .8em; }
 @media (prefers-reduced-motion: reduce) { .honk .spin { animation: none; } }
+
+/* Wake my block report */
+.report-btn { display: block; width: 100%; margin: 10px 0 4px; padding: 10px 12px; border-radius: 11px; border: 1px solid var(--amber); background: rgba(255, 178, 62, .1);
+  color: var(--amber); font-weight: 600; font-size: .86rem; text-align: left; cursor: pointer; transition: background .18s var(--ease); }
+.report-btn:hover { background: rgba(255, 178, 62, .2); }
+.report .eyebrow { margin: 0 0 4px; }
+.report h2 { font-size: clamp(1.6rem, 5vw, 2.4rem); margin-bottom: 6px; }
+.report-btns { display: flex; gap: 6px; }
+.report-verdict { font-family: var(--display); font-stretch: 85%; font-weight: 680; font-size: 1.15rem; color: var(--amber) !important; margin: 0 0 14px; }
+.report-big { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 0 0 12px; }
+.report-big b { display: block; font-family: var(--display); font-stretch: 85%; font-size: 2rem; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
+.report-big span { font-size: .76rem; color: var(--ink-3); }
+.report .fine-top { color: var(--ink-3); font-size: .78rem; margin: -4px 0 8px; }
+.suspects { list-style: none; padding: 0 !important; display: grid; gap: 6px; }
+.suspects button { width: 100%; display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; padding: 10px 12px; border-radius: 11px;
+  border: 1px solid var(--hair); background: var(--night-2); color: var(--ink-2); text-align: left; cursor: pointer;
+  transition: border-color .18s var(--ease), color .18s var(--ease); }
+.suspects button:hover { border-color: var(--amber); color: var(--amber); }
+.suspects span { display: grid; gap: 1px; }
+.suspects b { font-size: .9rem; }
+.suspects small { font-size: .74rem; color: var(--ink-3); }
+.suspects em { font-style: normal; font-size: .74rem; color: var(--ink-3); white-space: nowrap; font-variant-numeric: tabular-nums; }
+@media (max-width: 560px) { .report-big { grid-template-columns: 1fr 1fr; } .report-big div:last-child { grid-column: 1 / -1; } .suspects em { display: none; } }

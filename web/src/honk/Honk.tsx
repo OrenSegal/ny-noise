@@ -12,6 +12,7 @@ import Search from "../Search";
 import { track } from "../track";
 import { covers, loadArea } from "./area";
 import { type Area, type Result, type Src, type Windows, CAL, PX, RANGE, SPEED, bounds, fromGrid, selfCheck, toGrid } from "./physics";
+import Report from "./Report";
 import { shareCard } from "./share";
 import { SOUNDS, type Sound, play, toSrc } from "./sounds";
 import "./honk.css";
@@ -56,7 +57,7 @@ function simulateOff(a: Area, src: Src, gx: number, gy: number, windows: Windows
 let cellsP: Promise<{ c: Cells; at: Map<string, number> } | null> | null = null;
 const getCells = () => (cellsP ??= fetch("/data/cells.json").then((r) => r.json())
   .then((c: Cells) => ({ c, at: new Map(c.h3.map((h, i) => [h, i])) })).catch(() => null));
-type Block = { h3: string; perYear: number; expected: number } | null;
+type Block = { h3: string; i: number; c: Cells; perYear: number; expected: number } | null;
 
 /** A honk is shareable: everything needed to replay it lives in the hash. */
 const readHash = () => {
@@ -66,7 +67,7 @@ const readHash = () => {
     at: Number.isFinite(lat) && Number.isFinite(lon) && Math.abs(lat - 40.7) < 0.5 && Math.abs(lon + 73.95) < 0.5 ? { lat, lon } : null,
     sound, dur: Number.isFinite(d) ? Math.min(30, Math.max(0.1, d)) : undefined,
     windows: WINDOWS.find((w) => w === q.get("w")), nightly: NIGHTLY.find((n) => n === Number(q.get("n"))),
-    place: q.get("p")?.slice(0, 60) || undefined,
+    place: q.get("p")?.slice(0, 60) || undefined, report: q.get("r") === "1",
   };
 };
 const vibrate = (p: number | number[]) => { try { navigator.vibrate?.(p); } catch { /* not supported */ } };
@@ -112,6 +113,7 @@ export default function Honk() {
   const [windows, setWindows] = useState<Windows>(init.windows ?? "open");
   const [nightly, setNightly] = useState(init.nightly ?? 1);
   const [block, setBlock] = useState<Block>(null);
+  const [report, setReport] = useState(false);
   const [shared, setShared] = useState<string | null>(null);
   const [more, setMore] = useState(false);
   const [muted, setMuted] = useState(false);
@@ -146,8 +148,8 @@ export default function Honk() {
     const [lon, lat] = new WebMercatorViewport({ ...view, ...size.current }).unproject([x, y]);
     return { lat, lon };
   };
-  const writeHash = (s: Shot, n: number) => window.history.replaceState(null, "", `#${new URLSearchParams({
-    tab: "honk", lat: s.lat.toFixed(5), lon: s.lon.toFixed(5), s: s.sound.id, d: s.dur.toFixed(1), w: s.windows, n: String(n), p: s.place })}`);
+  const writeHash = (s: Shot, n: number, r = false) => window.history.replaceState(null, "", `#${new URLSearchParams({
+    tab: "honk", lat: s.lat.toFixed(5), lon: s.lon.toFixed(5), s: s.sound.id, d: s.dur.toFixed(1), w: s.windows, n: String(n), p: s.place, ...(r ? { r: "1" } : {}) })}`);
   const sound$ = (s: Sound, secs?: number) => (muted ? () => {} : play(s, secs));
 
   // On a phone the result card covers the lower half: glide the honk into the upper third so its spread stays in view.
@@ -158,8 +160,8 @@ export default function Honk() {
     setView({ ...view, longitude, latitude, transitionDuration: reducedMotion() ? 0 : 450, transitionInterpolator: new LinearInterpolator(["longitude", "latitude"]) } as View);
   };
 
-  async function honk(lat: number, lon: number, dur: number, replay = false) {
-    setErr(null); setShared(null); setBlock(null);
+  async function honk(lat: number, lon: number, dur: number, replay = false, s: Sound = sound) {
+    setErr(null); setShared(null); setBlock(null); setReport(false);
     frameSpot(lat, lon);
     setBusy({ lat, lon });
     try {
@@ -170,16 +172,17 @@ export default function Honk() {
         area.current = a;
       }
       const [gx, gy] = toGrid(a, lat, lon);
-      const res = await simulateOff(a, toSrc(sound, dur), gx, gy, windows);
+      const res = await simulateOff(a, toSrc(s, dur), gx, gy, windows);
       const at = fromGrid(a, res.sx, res.sy); // the source may have moved to the nearest street
-      const next = { res, area: a, ...at, sound, dur, windows, start: performance.now(), place: label.current ?? nearest(lat, lon) };
+      const next = { res, area: a, ...at, sound: s, dur, windows, start: performance.now(), place: label.current ?? nearest(lat, lon) };
       label.current = undefined;
       setShot(next);
       writeHash(next, nightly);
-      track("honk", { sound: sound.id, windows, replay, woke: Math.round(res.woke.mid) });
+      track("honk", { sound: s.id, windows, replay, woke: Math.round(res.woke.mid) });
       getCells().then((cc) => {
         const i = cc?.at.get(latLngToCell(lat, lon, 9));
-        setBlock(cc && i !== undefined ? { h3: cc.c.h3[i], perYear: cc.c.complaints[i] / cc.c.years, expected: cc.c.oof[i] / cc.c.years } : null);
+        setBlock(cc && i !== undefined ? { h3: cc.c.h3[i], i, c: cc.c, perYear: cc.c.complaints[i] / cc.c.years, expected: cc.c.oof[i] / cc.c.years } : null);
+        if (replay && init.report && cc && i !== undefined) { setReport(true); writeHash(next, nightly, true); }
       });
     } catch (e) {
       setErr(`Could not load the buildings here (${e instanceof Error ? e.message : e}). Try again in a moment.`);
@@ -290,7 +293,15 @@ export default function Honk() {
   let woke = 0, reacted = 0;
   if (shot) for (const h of shot.res.hits) { if (h.d > wave) break; woke += h.woke; reacted += h.reacted; }
   const done = shot !== null && wave >= RANGE;
-  const setNightlyAndLink = (n: number) => { setNightly(n); if (shot) writeHash(shot, n); };
+  const setNightlyAndLink = (n: number) => { setNightly(n); if (shot) writeHash(shot, n, report); };
+  const openReport = (on: boolean) => { setReport(on); if (shot) writeHash(shot, nightly, on); if (on) track("report", {}); };
+  // From the report: play a suspect at this address, worst case, and show who it wakes.
+  const hear = (id: string) => {
+    const s = SOUNDS.find((x) => x.id === id)!;
+    if (!shot) return;
+    label.current = shot.place;
+    setSound(s); sound$(s, s.dur); honk(shot.lat, shot.lon, s.dur, false, s);
+  };
   useEffect(() => { if (done) vibrate([12, 60, 12]); }, [done]);
   const share = async () => {
     if (!shot || !full) return;
@@ -402,6 +413,7 @@ export default function Honk() {
           </div>
           {block && <p className="block311">People on this block file about <b>{fmt(block.perYear)}</b> noise complaints a year to 311 ({fmt(block.expected)} expected).
             One honk woke {count(shot.res.woke.mid)}. Complaints count who calls, not who hears. <button className="linkish" onClick={toMap}>See the block on the noise map</button></p>}
+          {block && <button className="report-btn" onClick={() => openReport(true)}>Wake my block: what keeps this block up at night</button>}
           <ul className="jokes">{jokes.map(([n, l]) => <li key={l}><b>{fmt(n)}</b> {l}</li>)}</ul>
           <div className="actions">
             <button className="share" onClick={share}><IconShare2 size={17} stroke={1.8} aria-hidden="true" />{shared ?? "Share this honk"}</button>
@@ -430,6 +442,9 @@ export default function Honk() {
         <div className="ramp" style={{ background: rampCss() }} />
         <div className="ticks">{LEGEND.map(([db, l]) => <span key={db}><b>{db}</b>{l}</span>)}</div>
       </div>
+
+      {report && block && shot && <Report c={block.c} i={block.i} place={shot.place} woke={shot.res.woke.mid} sound={shot.sound.label}
+        onHear={hear} onClose={() => openReport(false)} />}
 
       {help && (
         <div className="honk-intro" role="dialog" aria-modal="true" aria-labelledby="honk-help" onClick={(e) => e.target === e.currentTarget && setHelp(false)}>
