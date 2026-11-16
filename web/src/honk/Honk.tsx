@@ -409,7 +409,7 @@ export default function Honk() {
             <select id="nightly" value={nightly} onChange={(e) => setNightlyAndLink(+e.target.value)}>
               {NIGHTLY.map((n) => <option key={n} value={n}>{n === 1 ? "once a night" : `${n} times a night`}</option>)}
             </select>
-            <span>every night, that is about <b>{fmt(shot.res.woke.mid * nightly * 365)}</b> awakenings a year, if nobody gets used to it.</span>
+            <span>every night, that is about <b>{fmt(shot.res.woke.mid * nightly * 365)}</b> awakenings a year, counting each time someone wakes. Getting used to it is already in there: the wake curve comes from people who live with night flights.</span>
           </div>
           {block && <p className="block311">People on this block file about <b>{fmt(block.perYear)}</b> noise complaints a year to 311 ({fmt(block.expected)} expected).
             One honk woke {count(shot.res.woke.mid)}. Complaints count who calls, not who hears. <button className="linkish" onClick={toMap}>See the block on the noise map</button></p>}
@@ -465,7 +465,7 @@ export default function Honk() {
               <li><b>Length.</b> Under a second counts as quieter; each doubling past a second adds 1.5 dB, up to 8 s. Hold to honk longer.</li>
               <li><b>Heard it asleep</b> means above 32 dB in the room, the level where the WHO finds the sleeping body starts to react (a shift in sleep stage, a movement), without necessarily waking.</li>
               <li><b>Who lives where.</b> Homes per tax lot from PLUTO, split across that lot's buildings by volume, at about 2.36 people per home so the city adds up to the 2020 Census (8,804,190). 95% of them are counted as asleep, the share of Americans asleep at 3 a.m. in the American Time Use Survey.</li>
-              <li><b>Every night.</b> Repeats are multiplied out with no getting used to it. Field studies find people habituate only partly, so treat a year's total as an upper end.</li>
+              <li><b>Every night.</b> Repeats are added up, so the yearly figure counts awakenings, not people: one light sleeper can wake many times. No extra discount for getting used to it, because the wake curve already includes it. It was measured in 64 people living near Cologne/Bonn, a busy night-cargo airport, and counts only awakenings beyond the ones they'd have anyway; in the lab, the same levels wake people far more often. A horn isn't a plane, so treat the total as an estimate.</li>
               <li>The rats, pigeons and bodega cats are a joke. The supers are real.</li>
             </ul>
             <h3>Limits</h3>
