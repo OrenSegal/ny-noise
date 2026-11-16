@@ -17,11 +17,10 @@
 .honk .chip.sq { width: 36px; height: 36px; padding: 0; justify-content: center; font-weight: 600; }
 .honk .chip .tabler-icon-map-pin { color: var(--amber); }
 .honk-tl { position: absolute; z-index: 3; top: 16px; left: 16px; display: grid; gap: 8px; justify-items: start; width: 330px; }
-.honk-hero { border-radius: 16px; padding: 16px 18px 15px; transition: padding .35s var(--ease); }
+.honk-hero { border-radius: 16px; padding: 16px 18px 15px; }
 .honk-hero .eyebrow { margin: 0 0 6px; font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--amber); font-weight: 650; }
 .honk-hero h1 { margin: 0; font-family: var(--display); font-stretch: 78%; font-weight: 780; font-size: 2.35rem; line-height: .95; letter-spacing: -0.03em;
-  text-wrap: balance; background: linear-gradient(180deg, #FFD08A, var(--amber) 55%, var(--ember)); -webkit-background-clip: text; background-clip: text; color: transparent;
-  transition: font-size .35s var(--ease); }
+  text-wrap: balance; color: var(--amber); }
 .honk-hero .lede { margin: 10px 0 0; font-size: .86rem; line-height: 1.45; color: var(--ink-2); }
 .honk-hero.small { padding: 10px 14px; }
 .honk-hero.small h1 { font-size: 1.25rem; }
