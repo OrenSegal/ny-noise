@@ -1,8 +1,9 @@
 """Urban noise drivers on an H3 hex grid (resolution 9, ~174 m edge).
 
 Run `python -m nynoise.factors` after `python -m nynoise.data`. Writes data/cells.csv.gz:
-one row per hex cell with complaint counts over the last 104 weeks and ~20 measured
-features of the built environment around the cell centre.
+one row per hex cell with complaint counts over the last 104 weeks and the measured
+features the spatial model reads (spatial.FEATURES): sound sources averaged over the
+cell's homes, distances from the cell centre, and census tenure and income.
 
 Sources (each cached under data/raw/factors/, re-used on re-runs):
   311 noise complaints (already in data/raw/), NYC DOB after-hours construction variances,

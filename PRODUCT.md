@@ -15,7 +15,7 @@ Two audiences of equal weight, confirmed by the owner:
 - NYC residents, community boards and venue operators who want next week's complaint outlook for a ZIP code compared with its own normal.
 
 ## Product Purpose
-Show where New York is loud and what goes with it near any point (a spatial model on a ~250 m hex grid over 24 urban factors), forecast next week's 311 noise complaints for 177 ZIP codes with calibrated 80% intervals, and show how good both are. Success: a visitor finds their ZIP's outlook in seconds, and a reviewer can verify within a minute that the evaluation is leakage-safe and honestly reported.
+Show where New York is loud and what goes with it near any point (a spatial model on a ~250 m hex grid over 30 urban and census factors), forecast next week's 311 noise complaints for 177 ZIP codes with calibrated 80% intervals, and show how good both are. Success: a visitor finds their ZIP's outlook in seconds, and a reviewer can verify within a minute that the evaluation is leakage-safe and honestly reported.
 
 ## Positioning
 Most noise dashboards show a heat map of past complaints. This one forecasts, scores itself against naive baselines in the open (including the quarter it loses), and says plainly that complaints measure reporting, not decibels.
