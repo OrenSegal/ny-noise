@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { type Bundle, TYPE_COLORS, fmt, pct } from "./data";
 import PlotFigure, { Plot, plotStyle } from "./Plot";
+import { skillSentence } from "./verdict";
 
 const GROUP_COLORS: Record<string, string> = {
   People: "#7E86A1", "Built form": "#5B6380", Business: "#8E5CF7", Nightlife: "#C2187A", Roads: "#F2552C",
@@ -125,13 +126,11 @@ export function Honesty({ b }: { b: Bundle }) {
   const surges = s.surges.map((w) => ({ x1: d(w), x2: new Date(d(w).getTime() + 7 * 864e5) }));
   const best = s.holdout[s.best_model], base = s.holdout[s.best_baseline];
   const wins = s.rolling_origin.filter((r) => r.model.wape < r[r.best_baseline].wape).length;
-  const edge = s.skill[s.best_baseline], sure = edge.ci[0] > 0;
   return (
     <section className="sec" id="honesty">
       <h2>How good is the forecast, honestly</h2>
       <p className="lede">Scored on 52 weeks it never saw ({s.holdout_weeks[0]} to {s.holdout_weeks[1]}). It misses by <b>{pct(best.wape, 1)}</b> of volume against <b>{pct(base.wape, 1)}</b>
-        {" "}for the best simple baseline ({s.model_labels[s.best_baseline].toLowerCase()}): {pct(edge.skill, 1)} less error, with a 95% range of {pct(edge.ci[0], 1)} to {pct(edge.ci[1], 1)} when whole weeks are resampled
-        {sure ? "" : ", which includes zero, so that edge is not established"}. It is ahead of each quarter's best baseline in {wins} of {s.rolling_origin.length} quarters. Most of the signal is a ZIP's recent level.</p>
+        {" "}for the best simple baseline ({s.model_labels[s.best_baseline].toLowerCase()}): {skillSentence(s.skill[s.best_baseline])}. It is ahead of each quarter's best baseline in {wins} of {s.rolling_origin.length} quarters. Most of the signal is a ZIP's recent level.</p>
       <div className="grid2">
         <figure className="figure">
           <h3>The race: error accumulated week by week</h3>
