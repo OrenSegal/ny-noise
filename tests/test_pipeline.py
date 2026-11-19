@@ -167,6 +167,10 @@ def test_baselines_hand_computed_and_mase_is_scaled_by_last_week():
         ses = 0.5 * v + 0.5 * ses
     assert b["exp_smoothing"][row] == pytest.approx(ses)
     assert b["blend_last_week_mean_4"][row] == pytest.approx((n[i] + n[i - 3:i + 1].mean()) / 2)
+    assert b["last_week"][row] == pytest.approx(n[i]) and b["mean_4_weeks"][row] == pytest.approx(n[i - 3:i + 1].mean())
+    # the row at week i forecasts week i+1, so "same week last year" is week i+1-52
+    assert b["same_week_last_year"][row] == pytest.approx(n[i - 51])
+    assert f.loc[row, "target_week"] == panel["week"].iloc[i + 1] and f.loc[row, "y"] == n[i + 1]
     y = np.array([10.0, 20.0])
     assert model.score(y, y + 2, mase_scale=4.0)["mase"] == pytest.approx(0.5)
 
