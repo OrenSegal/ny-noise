@@ -92,6 +92,7 @@ def weekly_panel(raw: pd.DataFrame, min_total: int = 500) -> pd.DataFrame:
 
     - keeps 5-digit ZIPs with at least `min_total` complaints (drops typos/non-NYC)
     - fills missing zip-weeks with 0 (no complaints is a real observation)
+    - drops the leading week unless the data starts on its Monday (START is the 1st of a month, rarely a Monday)
     - drops the trailing week unless the data reaches its Sunday
     """
     d = raw.dropna(subset=["zip"])
@@ -100,9 +101,10 @@ def weekly_panel(raw: pd.DataFrame, min_total: int = 500) -> pd.DataFrame:
     week = d["created"].dt.to_period("W-SUN").dt.start_time.rename("week")
     last_week = week.max() if d["created"].max().day_of_week == 6 else week.max() - pd.Timedelta(weeks=1)
     wk = d.groupby(["zip", week]).size().rename("n").reset_index()
-    wk = wk[wk["week"] <= last_week]
+    first_week = week.min() if d["created"].min().day_of_week == 0 else week.min() + pd.Timedelta(weeks=1)
+    wk = wk[wk["week"].between(first_week, last_week)]
     full = pd.MultiIndex.from_product(
-        [sorted(wk["zip"].unique()), pd.date_range(wk["week"].min(), last_week, freq="7D")],
+        [sorted(wk["zip"].unique()), pd.date_range(first_week, last_week, freq="7D")],
         names=["zip", "week"],
     )
     out = wk.set_index(["zip", "week"]).reindex(full, fill_value=0).reset_index()

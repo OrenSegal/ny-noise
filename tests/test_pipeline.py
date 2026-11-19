@@ -30,6 +30,14 @@ def test_trailing_partial_week_is_dropped():
     assert p["week"].max() == pd.Timestamp("2024-01-08")
 
 
+def test_leading_partial_week_is_dropped():
+    raw = raw_rows()
+    raw = raw[raw["created"] >= "2024-01-06"]  # starts on the Saturday of week 1, as an ingest from the 1st of a month does
+    p = data.weekly_panel(raw, min_total=1)
+    data.validate(p)
+    assert p["week"].min() == pd.Timestamp("2024-01-08")  # a 2-day "week" is not an observation of a week
+
+
 def test_zero_weeks_are_filled():
     raw = raw_rows()
     raw = raw[~((raw["zip"] == "12345") & (raw["created"].between("2024-01-08", "2024-01-14 23:59")))]
