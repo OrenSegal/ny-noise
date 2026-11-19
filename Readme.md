@@ -64,7 +64,7 @@ Model choice: random forest had the lower cross-validated error than the publish
 80% intervals covered 80.3% of the holdout; median ZIP 81%; by volume: low-volume ZIPs 77.8%; mid-volume ZIPs 80.5%; high-volume ZIPs 82.7%.
 <!-- /results:forecast -->
 
-The model lags big jumps in the busiest ZIPs, and the first holdout quarter holds a three-week surge (Nov 24 to Dec 8, 2025) that no forecast here anticipated. In `data/weekly_panel.csv.gz` it sits in one Bronx ZIP, 10466, which went from about 1,000 reports a week to between 9,000 and 14,000 and back to under 100, while the other 176 ZIPs together fell; that one ZIP carries about 30% of the selected model's absolute error on the holdout, so read the scorecard with it in mind.
+The model lags big jumps in the busiest ZIPs, and the first holdout quarter holds a three-week surge (Nov 24 to Dec 8, 2025) that no forecast here anticipated. In `data/weekly_panel.csv.gz` it sits in one Bronx ZIP, 10466, which went from about 1,000 reports a week to between 9,000 and 14,000 and back to under 100, while the other 176 ZIPs together fell; on the 2025-11-17 to 2026-11-09 holdout that one ZIP carries about 30% of the selected model's absolute error, so read a scorecard that still contains those weeks with it in mind.
 
 ## The app
 
