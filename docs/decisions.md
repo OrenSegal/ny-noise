@@ -62,6 +62,8 @@ After the first holdout evaluation I tried a richer feature set: extra lags and 
 
 The first holdout quarter has citywide weekly totals jumping from about 14,000 to 20,000-24,000 for three weeks from 2025-11-24, then collapsing to about 10,000. The cause is not identified. It is the main reason the model loses that quarter to last-week persistence. It is kept in the evaluation: excluding it would improve the headline and weaken the claim.
 
+Note, 2026-11-19: the committed panel places the whole jump in one ZIP, 10466 (995 reports in the week of 2025-11-03, then 9,181, 13,819 and 13,325 from 2025-11-24, then 78), while the other 176 ZIPs together fell from about 12,200 to 10,200 over the same weeks. It is a single-ZIP event, not a citywide one; whether it is a single address needs the raw rows. On the 2025-11-17 to 2026-11-09 holdout that ZIP carries 30% of the selected model's absolute error, and without it the model's WAPE (21.5%) is ahead of every baseline (exponential smoothing 21.8%, last week 24.9%), where with it the model trails five of the six. The forecast still models raw volume (section on repeat callers); damping repeat filers in the weekly panel as the spatial model does is the open question this raises.
+
 ## 11. Map without a basemap
 
 The first version used a tiled map. It could not be verified in the preview environment and added a dependency on a tile service and WebGL. The final version is a plain longitude/latitude scatter with a corrected aspect ratio: it renders identically everywhere, and the NYC outline is recognizable from the 177 ZIP positions.

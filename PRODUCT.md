@@ -29,8 +29,8 @@ Weekly cadence: data rebuilds every Tuesday by GitHub Action once the prior Mond
 - Repeat callers are de-duplicated (address, day, type) for the spatial model.
 - The target is complaint counts, never decibels. This must stay visible on the first screen.
 - The Wake the Block tab (#tab=honk) is a separate physics model in decibels (one stationary source at 3 a.m., real footprints and roof heights, PLUTO homes, Basner 2006 wake curve). It never uses complaints for the physics; it shows the block's 311 rate beside the count so the gap between who hears and who calls is visible. Counts are a middle estimate with a range from measured window losses (Locher et al. 2018 quartiles), back-room shielding (10 to 20 dB) and side-street decay (20 to 30 dB per 100 m); residents are scaled to the 2020 Census.
-- Terminology: WAPE (weighted absolute percentage error), MASE (scaled against seasonal-naive error), sMAPE, coverage, baseline, holdout, rolling origin.
-- Honest result to preserve: the model is about 4% better than last-week persistence on weighted error, wins 3 of 4 quarters, loses the Nov 2025 quarter that holds an unexplained citywide surge, and has worse RMSE and R2 than persistence.
+- Terminology: WAPE (weighted absolute percentage error), MASE (scaled against the in-sample error of repeating last week), sMAPE, coverage, baseline, holdout, rolling origin.
+- Honest result to preserve: whatever the current `data/metrics.json` says, including when the selected model trails its baselines (the scorecard is regenerated weekly and the Readme results block is rewritten from it; do not hard-code a skill figure in copy). The Nov 2025 quarter holds a three-week surge that sits in one ZIP (10466), not citywide, and the model has had worse RMSE and R2 than persistence.
 
 ## Brand Commitments
 None beyond honesty of claims. No emoji. No invented numbers.
