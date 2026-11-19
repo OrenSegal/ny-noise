@@ -94,12 +94,18 @@ def _overpass(body: str) -> dict:
 
     s, w, n, e = BBOX
     q = f"[out:json][timeout:180][bbox:{s},{w},{n},{e}];({body});out geom tags;"
+    r = None
     for i in range(6):
-        r = requests.post("https://overpass-api.de/api/interpreter", data={"data": q}, timeout=300,
-                          headers={"User-Agent": "ny-noise-research/0.1"})
-        if r.status_code == 200:
-            return r.json()
+        try:  # a dropped connection is retried like a busy server: one blip must not fail the weekly refresh
+            r = requests.post("https://overpass-api.de/api/interpreter", data={"data": q}, timeout=300,
+                              headers={"User-Agent": "ny-noise-research/0.1"})
+            if r.status_code == 200:
+                return r.json()
+        except (requests.Timeout, requests.ConnectionError):
+            pass
         time.sleep(10 * 2 ** i)
+    if r is None:
+        raise RuntimeError("Overpass unreachable; re-run to resume from cache")
     r.raise_for_status()
 
 
@@ -148,13 +154,19 @@ def fetch_all(since: str) -> dict:
 def _census_reporter(county: str) -> dict:
     import requests
 
+    r = None
     for i in range(5):
-        r = requests.get("https://api.censusreporter.org/1.0/data/show/latest", timeout=120,
-                         params={"table_ids": "B25003,B19013", "geo_ids": f"140|05000US36{county}"},
-                         headers={"User-Agent": "ny-noise-research"})
-        if r.status_code == 200:
-            return r.json()
+        try:
+            r = requests.get("https://api.censusreporter.org/1.0/data/show/latest", timeout=120,
+                             params={"table_ids": "B25003,B19013", "geo_ids": f"140|05000US36{county}"},
+                             headers={"User-Agent": "ny-noise-research"})
+            if r.status_code == 200:
+                return r.json()
+        except (requests.Timeout, requests.ConnectionError):
+            pass
         time.sleep(5 * 2 ** i)
+    if r is None:
+        raise RuntimeError("Census Reporter unreachable; re-run to resume from cache")
     r.raise_for_status()
 
 

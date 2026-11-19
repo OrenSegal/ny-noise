@@ -117,3 +117,25 @@ def test_arenas_and_stadiums_are_split_and_small_fields_dropped():
            el("Yankee Stadium", 0.003), el("Forest Hills Stadium", 0.0015, building="yes"), el("PS 12 field", 0.0003)]
     assert len(factors.major_venues(els, indoor=True)) == 2
     assert len(factors.major_venues(els, indoor=False)) == 2  # Yankee + Forest Hills; the school field is too small
+
+
+@pytest.mark.parametrize("fetch", [lambda: factors._overpass('way["highway"="motorway"];'), lambda: factors._census_reporter("061")])
+def test_source_fetches_retry_a_dropped_connection(monkeypatch, fetch):
+    import requests
+
+    calls = []
+
+    class Ok:
+        status_code = 200
+        def json(self): return {"elements": [], "data": {}}
+
+    def flaky(*a, **kw):
+        calls.append(1)
+        if len(calls) == 1:
+            raise requests.ConnectionError("reset by peer")
+        return Ok()
+
+    monkeypatch.setattr(requests, "post", flaky)
+    monkeypatch.setattr(requests, "get", flaky)
+    monkeypatch.setattr(factors.time, "sleep", lambda s: None)
+    assert fetch() == {"elements": [], "data": {}} and len(calls) == 2  # one blip must not fail the weekly refresh
