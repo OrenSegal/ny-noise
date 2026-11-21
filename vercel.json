@@ -4,7 +4,7 @@
   "installCommand": "npm ci --prefix web",
   "buildCommand": "npm run build --prefix web",
   "outputDirectory": "web/dist",
-  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- web vercel.json",
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- web vercel.json; [ $? -eq 0 ]",
   "headers": [
     {
       "source": "/data/(.*)",
