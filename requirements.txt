@@ -1,7 +1,7 @@
 # pipeline: ingest, forecast model, spatial factor model, JSON export
 pandas>=2.2
 numpy>=1.26
-scikit-learn>=1.4
+scikit-learn>=1.9.1
 scipy>=1.11
 requests>=2.31
 geopandas>=1.0
