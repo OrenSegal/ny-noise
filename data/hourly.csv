@@ -1,362 +1,362 @@
 type,dow,hour,n
-Noise,0,0,253
-Noise,0,1,168
-Noise,0,2,143
-Noise,0,3,84
-Noise,0,4,70
-Noise,0,5,132
-Noise,0,6,285
-Noise,0,7,416
-Noise,0,8,458
-Noise,0,9,497
-Noise,0,10,460
-Noise,0,11,423
-Noise,0,12,337
-Noise,0,13,373
-Noise,0,14,364
-Noise,0,15,380
-Noise,0,16,326
-Noise,0,17,256
-Noise,0,18,417
-Noise,0,19,461
-Noise,0,20,564
-Noise,0,21,689
-Noise,0,22,768
-Noise,0,23,649
-Noise,1,0,552
-Noise,1,1,392
-Noise,1,2,224
-Noise,1,3,178
-Noise,1,4,174
-Noise,1,5,216
-Noise,1,6,385
+Noise,0,0,260
+Noise,0,1,170
+Noise,0,2,148
+Noise,0,3,86
+Noise,0,4,71
+Noise,0,5,133
+Noise,0,6,281
+Noise,0,7,417
+Noise,0,8,454
+Noise,0,9,505
+Noise,0,10,456
+Noise,0,11,424
+Noise,0,12,339
+Noise,0,13,374
+Noise,0,14,367
+Noise,0,15,378
+Noise,0,16,324
+Noise,0,17,265
+Noise,0,18,425
+Noise,0,19,465
+Noise,0,20,573
+Noise,0,21,696
+Noise,0,22,780
+Noise,0,23,658
+Noise,1,0,543
+Noise,1,1,394
+Noise,1,2,231
+Noise,1,3,188
+Noise,1,4,175
+Noise,1,5,219
+Noise,1,6,388
 Noise,1,7,534
-Noise,1,8,512
-Noise,1,9,535
-Noise,1,10,475
-Noise,1,11,436
-Noise,1,12,375
-Noise,1,13,387
-Noise,1,14,366
-Noise,1,15,316
-Noise,1,16,298
-Noise,1,17,259
+Noise,1,8,523
+Noise,1,9,543
+Noise,1,10,480
+Noise,1,11,442
+Noise,1,12,377
+Noise,1,13,391
+Noise,1,14,371
+Noise,1,15,313
+Noise,1,16,300
+Noise,1,17,261
 Noise,1,18,394
-Noise,1,19,502
-Noise,1,20,539
-Noise,1,21,639
-Noise,1,22,727
-Noise,1,23,616
-Noise,2,0,547
-Noise,2,1,402
-Noise,2,2,226
+Noise,1,19,517
+Noise,1,20,550
+Noise,1,21,654
+Noise,1,22,748
+Noise,1,23,623
+Noise,2,0,542
+Noise,2,1,419
+Noise,2,2,228
 Noise,2,3,158
-Noise,2,4,157
+Noise,2,4,155
 Noise,2,5,198
-Noise,2,6,385
-Noise,2,7,519
+Noise,2,6,386
+Noise,2,7,533
 Noise,2,8,531
-Noise,2,9,491
-Noise,2,10,464
-Noise,2,11,424
-Noise,2,12,341
-Noise,2,13,360
-Noise,2,14,337
-Noise,2,15,329
-Noise,2,16,284
-Noise,2,17,268
-Noise,2,18,396
+Noise,2,9,498
+Noise,2,10,467
+Noise,2,11,426
+Noise,2,12,347
+Noise,2,13,371
+Noise,2,14,345
+Noise,2,15,333
+Noise,2,16,287
+Noise,2,17,269
+Noise,2,18,399
 Noise,2,19,496
-Noise,2,20,539
-Noise,2,21,656
-Noise,2,22,765
-Noise,2,23,646
-Noise,3,0,512
-Noise,3,1,373
+Noise,2,20,542
+Noise,2,21,657
+Noise,2,22,756
+Noise,2,23,645
+Noise,3,0,510
+Noise,3,1,377
 Noise,3,2,222
-Noise,3,3,142
-Noise,3,4,151
-Noise,3,5,185
-Noise,3,6,351
-Noise,3,7,510
-Noise,3,8,507
-Noise,3,9,506
-Noise,3,10,468
+Noise,3,3,146
+Noise,3,4,154
+Noise,3,5,192
+Noise,3,6,360
+Noise,3,7,507
+Noise,3,8,513
+Noise,3,9,503
+Noise,3,10,463
 Noise,3,11,406
-Noise,3,12,340
-Noise,3,13,350
-Noise,3,14,342
-Noise,3,15,298
-Noise,3,16,242
-Noise,3,17,262
+Noise,3,12,342
+Noise,3,13,351
+Noise,3,14,340
+Noise,3,15,295
+Noise,3,16,244
+Noise,3,17,260
 Noise,3,18,340
-Noise,3,19,393
-Noise,3,20,484
-Noise,3,21,544
-Noise,3,22,627
-Noise,3,23,602
-Noise,4,0,456
-Noise,4,1,356
-Noise,4,2,213
-Noise,4,3,156
-Noise,4,4,126
-Noise,4,5,158
-Noise,4,6,302
-Noise,4,7,457
-Noise,4,8,454
-Noise,4,9,464
-Noise,4,10,445
-Noise,4,11,444
-Noise,4,12,287
-Noise,4,13,294
-Noise,4,14,353
-Noise,4,15,278
-Noise,4,16,252
-Noise,4,17,215
+Noise,3,19,392
+Noise,3,20,489
+Noise,3,21,552
+Noise,3,22,626
+Noise,3,23,603
+Noise,4,0,470
+Noise,4,1,358
+Noise,4,2,211
+Noise,4,3,155
+Noise,4,4,125
+Noise,4,5,159
+Noise,4,6,307
+Noise,4,7,468
+Noise,4,8,452
+Noise,4,9,461
+Noise,4,10,446
+Noise,4,11,442
+Noise,4,12,292
+Noise,4,13,299
+Noise,4,14,351
+Noise,4,15,277
+Noise,4,16,253
+Noise,4,17,212
 Noise,4,18,310
-Noise,4,19,325
-Noise,4,20,337
-Noise,4,21,372
+Noise,4,19,332
+Noise,4,20,342
+Noise,4,21,371
 Noise,4,22,500
-Noise,4,23,407
-Noise,5,0,420
-Noise,5,1,319
-Noise,5,2,189
-Noise,5,3,140
-Noise,5,4,141
-Noise,5,5,86
-Noise,5,6,195
-Noise,5,7,472
-Noise,5,8,1003
-Noise,5,9,1055
-Noise,5,10,746
-Noise,5,11,562
-Noise,5,12,421
-Noise,5,13,386
-Noise,5,14,350
-Noise,5,15,330
-Noise,5,16,265
-Noise,5,17,239
+Noise,4,23,406
+Noise,5,0,426
+Noise,5,1,317
+Noise,5,2,199
+Noise,5,3,142
+Noise,5,4,143
+Noise,5,5,87
+Noise,5,6,194
+Noise,5,7,476
+Noise,5,8,1018
+Noise,5,9,1077
+Noise,5,10,747
+Noise,5,11,571
+Noise,5,12,422
+Noise,5,13,391
+Noise,5,14,345
+Noise,5,15,323
+Noise,5,16,276
+Noise,5,17,236
 Noise,5,18,224
-Noise,5,19,261
-Noise,5,20,263
-Noise,5,21,292
-Noise,5,22,294
+Noise,5,19,260
+Noise,5,20,267
+Noise,5,21,294
+Noise,5,22,302
 Noise,5,23,240
-Noise,6,0,255
-Noise,6,1,189
-Noise,6,2,133
+Noise,6,0,262
+Noise,6,1,190
+Noise,6,2,132
 Noise,6,3,95
 Noise,6,4,79
-Noise,6,5,78
-Noise,6,6,98
-Noise,6,7,270
-Noise,6,8,560
-Noise,6,9,773
-Noise,6,10,596
-Noise,6,11,441
-Noise,6,12,368
-Noise,6,13,311
-Noise,6,14,298
-Noise,6,15,292
-Noise,6,16,250
+Noise,6,5,75
+Noise,6,6,102
+Noise,6,7,273
+Noise,6,8,566
+Noise,6,9,778
+Noise,6,10,597
+Noise,6,11,436
+Noise,6,12,373
+Noise,6,13,313
+Noise,6,14,297
+Noise,6,15,296
+Noise,6,16,248
 Noise,6,17,236
-Noise,6,18,237
+Noise,6,18,240
 Noise,6,19,204
-Noise,6,20,256
-Noise,6,21,314
-Noise,6,22,315
-Noise,6,23,252
-Noise - Commercial,0,0,761
-Noise - Commercial,0,1,437
+Noise,6,20,261
+Noise,6,21,318
+Noise,6,22,313
+Noise,6,23,247
+Noise - Commercial,0,0,766
+Noise - Commercial,0,1,442
 Noise - Commercial,0,2,285
 Noise - Commercial,0,3,186
-Noise - Commercial,0,4,121
-Noise - Commercial,0,5,80
+Noise - Commercial,0,4,125
+Noise - Commercial,0,5,85
 Noise - Commercial,0,6,92
-Noise - Commercial,0,7,73
-Noise - Commercial,0,8,73
-Noise - Commercial,0,9,79
-Noise - Commercial,0,10,73
-Noise - Commercial,0,11,65
-Noise - Commercial,0,12,86
+Noise - Commercial,0,7,72
+Noise - Commercial,0,8,74
+Noise - Commercial,0,9,80
+Noise - Commercial,0,10,77
+Noise - Commercial,0,11,69
+Noise - Commercial,0,12,88
 Noise - Commercial,0,13,82
-Noise - Commercial,0,14,71
-Noise - Commercial,0,15,109
-Noise - Commercial,0,16,117
-Noise - Commercial,0,17,125
-Noise - Commercial,0,18,191
-Noise - Commercial,0,19,227
-Noise - Commercial,0,20,346
-Noise - Commercial,0,21,424
-Noise - Commercial,0,22,668
-Noise - Commercial,0,23,570
-Noise - Commercial,1,0,454
-Noise - Commercial,1,1,223
-Noise - Commercial,1,2,167
-Noise - Commercial,1,3,93
-Noise - Commercial,1,4,62
+Noise - Commercial,0,14,73
+Noise - Commercial,0,15,107
+Noise - Commercial,0,16,116
+Noise - Commercial,0,17,129
+Noise - Commercial,0,18,194
+Noise - Commercial,0,19,225
+Noise - Commercial,0,20,350
+Noise - Commercial,0,21,430
+Noise - Commercial,0,22,671
+Noise - Commercial,0,23,564
+Noise - Commercial,1,0,451
+Noise - Commercial,1,1,226
+Noise - Commercial,1,2,168
+Noise - Commercial,1,3,94
+Noise - Commercial,1,4,64
 Noise - Commercial,1,5,46
-Noise - Commercial,1,6,98
+Noise - Commercial,1,6,99
 Noise - Commercial,1,7,79
-Noise - Commercial,1,8,75
-Noise - Commercial,1,9,87
-Noise - Commercial,1,10,71
-Noise - Commercial,1,11,117
+Noise - Commercial,1,8,74
+Noise - Commercial,1,9,86
+Noise - Commercial,1,10,75
+Noise - Commercial,1,11,113
 Noise - Commercial,1,12,98
-Noise - Commercial,1,13,70
-Noise - Commercial,1,14,78
-Noise - Commercial,1,15,90
-Noise - Commercial,1,16,122
-Noise - Commercial,1,17,139
-Noise - Commercial,1,18,190
-Noise - Commercial,1,19,277
-Noise - Commercial,1,20,355
-Noise - Commercial,1,21,473
-Noise - Commercial,1,22,815
-Noise - Commercial,1,23,792
-Noise - Commercial,2,0,584
-Noise - Commercial,2,1,331
-Noise - Commercial,2,2,193
-Noise - Commercial,2,3,81
+Noise - Commercial,1,13,73
+Noise - Commercial,1,14,81
+Noise - Commercial,1,15,89
+Noise - Commercial,1,16,128
+Noise - Commercial,1,17,135
+Noise - Commercial,1,18,193
+Noise - Commercial,1,19,275
+Noise - Commercial,1,20,361
+Noise - Commercial,1,21,475
+Noise - Commercial,1,22,823
+Noise - Commercial,1,23,788
+Noise - Commercial,2,0,594
+Noise - Commercial,2,1,333
+Noise - Commercial,2,2,192
+Noise - Commercial,2,3,82
 Noise - Commercial,2,4,76
-Noise - Commercial,2,5,45
-Noise - Commercial,2,6,83
-Noise - Commercial,2,7,97
-Noise - Commercial,2,8,90
-Noise - Commercial,2,9,85
-Noise - Commercial,2,10,71
+Noise - Commercial,2,5,47
+Noise - Commercial,2,6,85
+Noise - Commercial,2,7,99
+Noise - Commercial,2,8,94
+Noise - Commercial,2,9,84
+Noise - Commercial,2,10,74
 Noise - Commercial,2,11,89
-Noise - Commercial,2,12,106
-Noise - Commercial,2,13,92
-Noise - Commercial,2,14,90
-Noise - Commercial,2,15,98
-Noise - Commercial,2,16,102
-Noise - Commercial,2,17,133
+Noise - Commercial,2,12,105
+Noise - Commercial,2,13,93
+Noise - Commercial,2,14,91
+Noise - Commercial,2,15,101
+Noise - Commercial,2,16,105
+Noise - Commercial,2,17,131
 Noise - Commercial,2,18,174
-Noise - Commercial,2,19,264
-Noise - Commercial,2,20,427
-Noise - Commercial,2,21,633
-Noise - Commercial,2,22,995
-Noise - Commercial,2,23,865
+Noise - Commercial,2,19,266
+Noise - Commercial,2,20,426
+Noise - Commercial,2,21,642
+Noise - Commercial,2,22,992
+Noise - Commercial,2,23,860
 Noise - Commercial,3,0,568
-Noise - Commercial,3,1,341
-Noise - Commercial,3,2,212
-Noise - Commercial,3,3,105
-Noise - Commercial,3,4,75
-Noise - Commercial,3,5,62
-Noise - Commercial,3,6,88
-Noise - Commercial,3,7,89
-Noise - Commercial,3,8,82
-Noise - Commercial,3,9,72
-Noise - Commercial,3,10,71
+Noise - Commercial,3,1,342
+Noise - Commercial,3,2,210
+Noise - Commercial,3,3,104
+Noise - Commercial,3,4,76
+Noise - Commercial,3,5,63
+Noise - Commercial,3,6,87
+Noise - Commercial,3,7,90
+Noise - Commercial,3,8,83
+Noise - Commercial,3,9,75
+Noise - Commercial,3,10,73
 Noise - Commercial,3,11,83
-Noise - Commercial,3,12,105
-Noise - Commercial,3,13,85
+Noise - Commercial,3,12,106
+Noise - Commercial,3,13,88
 Noise - Commercial,3,14,92
-Noise - Commercial,3,15,68
+Noise - Commercial,3,15,67
 Noise - Commercial,3,16,121
-Noise - Commercial,3,17,158
-Noise - Commercial,3,18,207
-Noise - Commercial,3,19,285
-Noise - Commercial,3,20,446
+Noise - Commercial,3,17,156
+Noise - Commercial,3,18,208
+Noise - Commercial,3,19,294
+Noise - Commercial,3,20,448
 Noise - Commercial,3,21,672
-Noise - Commercial,3,22,1233
-Noise - Commercial,3,23,1082
-Noise - Commercial,4,0,778
-Noise - Commercial,4,1,431
-Noise - Commercial,4,2,259
-Noise - Commercial,4,3,146
-Noise - Commercial,4,4,112
-Noise - Commercial,4,5,50
-Noise - Commercial,4,6,70
-Noise - Commercial,4,7,62
-Noise - Commercial,4,8,104
+Noise - Commercial,3,22,1236
+Noise - Commercial,3,23,1109
+Noise - Commercial,4,0,784
+Noise - Commercial,4,1,436
+Noise - Commercial,4,2,257
+Noise - Commercial,4,3,148
+Noise - Commercial,4,4,115
+Noise - Commercial,4,5,51
+Noise - Commercial,4,6,72
+Noise - Commercial,4,7,64
+Noise - Commercial,4,8,105
 Noise - Commercial,4,9,79
-Noise - Commercial,4,10,107
-Noise - Commercial,4,11,89
-Noise - Commercial,4,12,111
+Noise - Commercial,4,10,112
+Noise - Commercial,4,11,91
+Noise - Commercial,4,12,115
 Noise - Commercial,4,13,105
-Noise - Commercial,4,14,108
-Noise - Commercial,4,15,117
-Noise - Commercial,4,16,167
-Noise - Commercial,4,17,209
-Noise - Commercial,4,18,273
-Noise - Commercial,4,19,354
-Noise - Commercial,4,20,572
-Noise - Commercial,4,21,872
-Noise - Commercial,4,22,1910
-Noise - Commercial,4,23,2191
-Noise - Commercial,5,0,1988
-Noise - Commercial,5,1,1355
-Noise - Commercial,5,2,790
-Noise - Commercial,5,3,406
-Noise - Commercial,5,4,245
-Noise - Commercial,5,5,153
-Noise - Commercial,5,6,127
-Noise - Commercial,5,7,92
-Noise - Commercial,5,8,80
-Noise - Commercial,5,9,135
+Noise - Commercial,4,14,109
+Noise - Commercial,4,15,119
+Noise - Commercial,4,16,166
+Noise - Commercial,4,17,211
+Noise - Commercial,4,18,282
+Noise - Commercial,4,19,357
+Noise - Commercial,4,20,576
+Noise - Commercial,4,21,879
+Noise - Commercial,4,22,1914
+Noise - Commercial,4,23,2224
+Noise - Commercial,5,0,1982
+Noise - Commercial,5,1,1367
+Noise - Commercial,5,2,795
+Noise - Commercial,5,3,405
+Noise - Commercial,5,4,235
+Noise - Commercial,5,5,152
+Noise - Commercial,5,6,126
+Noise - Commercial,5,7,94
+Noise - Commercial,5,8,83
+Noise - Commercial,5,9,138
 Noise - Commercial,5,10,139
-Noise - Commercial,5,11,144
-Noise - Commercial,5,12,157
-Noise - Commercial,5,13,192
-Noise - Commercial,5,14,213
-Noise - Commercial,5,15,262
-Noise - Commercial,5,16,346
-Noise - Commercial,5,17,331
-Noise - Commercial,5,18,409
-Noise - Commercial,5,19,526
-Noise - Commercial,5,20,785
-Noise - Commercial,5,21,1100
-Noise - Commercial,5,22,2389
-Noise - Commercial,5,23,2537
-Noise - Commercial,6,0,2536
-Noise - Commercial,6,1,1861
-Noise - Commercial,6,2,1053
-Noise - Commercial,6,3,613
-Noise - Commercial,6,4,364
-Noise - Commercial,6,5,179
-Noise - Commercial,6,6,113
-Noise - Commercial,6,7,71
-Noise - Commercial,6,8,83
-Noise - Commercial,6,9,143
-Noise - Commercial,6,10,144
-Noise - Commercial,6,11,145
-Noise - Commercial,6,12,171
-Noise - Commercial,6,13,201
-Noise - Commercial,6,14,222
-Noise - Commercial,6,15,230
-Noise - Commercial,6,16,304
-Noise - Commercial,6,17,333
-Noise - Commercial,6,18,396
-Noise - Commercial,6,19,517
+Noise - Commercial,5,11,146
+Noise - Commercial,5,12,160
+Noise - Commercial,5,13,193
+Noise - Commercial,5,14,216
+Noise - Commercial,5,15,267
+Noise - Commercial,5,16,351
+Noise - Commercial,5,17,336
+Noise - Commercial,5,18,413
+Noise - Commercial,5,19,534
+Noise - Commercial,5,20,793
+Noise - Commercial,5,21,1112
+Noise - Commercial,5,22,2420
+Noise - Commercial,5,23,2549
+Noise - Commercial,6,0,2537
+Noise - Commercial,6,1,1864
+Noise - Commercial,6,2,1051
+Noise - Commercial,6,3,603
+Noise - Commercial,6,4,371
+Noise - Commercial,6,5,184
+Noise - Commercial,6,6,110
+Noise - Commercial,6,7,72
+Noise - Commercial,6,8,82
+Noise - Commercial,6,9,146
+Noise - Commercial,6,10,146
+Noise - Commercial,6,11,141
+Noise - Commercial,6,12,173
+Noise - Commercial,6,13,209
+Noise - Commercial,6,14,221
+Noise - Commercial,6,15,235
+Noise - Commercial,6,16,313
+Noise - Commercial,6,17,327
+Noise - Commercial,6,18,399
+Noise - Commercial,6,19,522
 Noise - Commercial,6,20,777
-Noise - Commercial,6,21,1050
-Noise - Commercial,6,22,1406
+Noise - Commercial,6,21,1062
+Noise - Commercial,6,22,1401
 Noise - Commercial,6,23,1012
-Noise - Helicopter,0,0,3
+Noise - Helicopter,0,0,4
 Noise - Helicopter,0,1,1
 Noise - Helicopter,0,2,4
 Noise - Helicopter,0,3,6
 Noise - Helicopter,0,4,1
 Noise - Helicopter,0,5,4
-Noise - Helicopter,0,6,33
-Noise - Helicopter,0,7,41
-Noise - Helicopter,0,8,34
-Noise - Helicopter,0,9,58
-Noise - Helicopter,0,10,83
-Noise - Helicopter,0,11,68
-Noise - Helicopter,0,12,97
-Noise - Helicopter,0,13,122
-Noise - Helicopter,0,14,124
-Noise - Helicopter,0,15,105
-Noise - Helicopter,0,16,200
-Noise - Helicopter,0,17,148
-Noise - Helicopter,0,18,130
-Noise - Helicopter,0,19,139
+Noise - Helicopter,0,6,32
+Noise - Helicopter,0,7,40
+Noise - Helicopter,0,8,31
+Noise - Helicopter,0,9,56
+Noise - Helicopter,0,10,80
+Noise - Helicopter,0,11,62
+Noise - Helicopter,0,12,91
+Noise - Helicopter,0,13,119
+Noise - Helicopter,0,14,122
+Noise - Helicopter,0,15,99
+Noise - Helicopter,0,16,192
+Noise - Helicopter,0,17,146
+Noise - Helicopter,0,18,125
+Noise - Helicopter,0,19,138
 Noise - Helicopter,0,20,165
-Noise - Helicopter,0,21,34
+Noise - Helicopter,0,21,35
 Noise - Helicopter,0,22,56
 Noise - Helicopter,0,23,38
 Noise - Helicopter,1,0,10
@@ -365,21 +365,21 @@ Noise - Helicopter,1,2,1
 Noise - Helicopter,1,3,4
 Noise - Helicopter,1,4,3
 Noise - Helicopter,1,5,4
-Noise - Helicopter,1,6,57
+Noise - Helicopter,1,6,56
 Noise - Helicopter,1,7,75
-Noise - Helicopter,1,8,45
-Noise - Helicopter,1,9,67
-Noise - Helicopter,1,10,73
-Noise - Helicopter,1,11,121
-Noise - Helicopter,1,12,115
-Noise - Helicopter,1,13,96
-Noise - Helicopter,1,14,114
-Noise - Helicopter,1,15,129
-Noise - Helicopter,1,16,185
-Noise - Helicopter,1,17,168
-Noise - Helicopter,1,18,91
-Noise - Helicopter,1,19,56
-Noise - Helicopter,1,20,113
+Noise - Helicopter,1,8,44
+Noise - Helicopter,1,9,64
+Noise - Helicopter,1,10,67
+Noise - Helicopter,1,11,130
+Noise - Helicopter,1,12,114
+Noise - Helicopter,1,13,90
+Noise - Helicopter,1,14,110
+Noise - Helicopter,1,15,124
+Noise - Helicopter,1,16,174
+Noise - Helicopter,1,17,161
+Noise - Helicopter,1,18,84
+Noise - Helicopter,1,19,53
+Noise - Helicopter,1,20,105
 Noise - Helicopter,1,21,59
 Noise - Helicopter,1,22,25
 Noise - Helicopter,1,23,14
@@ -389,21 +389,21 @@ Noise - Helicopter,2,2,9
 Noise - Helicopter,2,3,5
 Noise - Helicopter,2,4,5
 Noise - Helicopter,2,5,8
-Noise - Helicopter,2,6,63
-Noise - Helicopter,2,7,86
-Noise - Helicopter,2,8,31
+Noise - Helicopter,2,6,62
+Noise - Helicopter,2,7,85
+Noise - Helicopter,2,8,39
 Noise - Helicopter,2,9,65
 Noise - Helicopter,2,10,107
-Noise - Helicopter,2,11,105
-Noise - Helicopter,2,12,82
-Noise - Helicopter,2,13,97
-Noise - Helicopter,2,14,99
-Noise - Helicopter,2,15,110
-Noise - Helicopter,2,16,140
-Noise - Helicopter,2,17,133
-Noise - Helicopter,2,18,102
+Noise - Helicopter,2,11,102
+Noise - Helicopter,2,12,78
+Noise - Helicopter,2,13,92
+Noise - Helicopter,2,14,92
+Noise - Helicopter,2,15,107
+Noise - Helicopter,2,16,130
+Noise - Helicopter,2,17,128
+Noise - Helicopter,2,18,98
 Noise - Helicopter,2,19,119
-Noise - Helicopter,2,20,56
+Noise - Helicopter,2,20,54
 Noise - Helicopter,2,21,33
 Noise - Helicopter,2,22,25
 Noise - Helicopter,2,23,28
@@ -413,21 +413,21 @@ Noise - Helicopter,3,2,4
 Noise - Helicopter,3,4,1
 Noise - Helicopter,3,5,4
 Noise - Helicopter,3,6,44
-Noise - Helicopter,3,7,49
-Noise - Helicopter,3,8,47
-Noise - Helicopter,3,9,37
-Noise - Helicopter,3,10,86
-Noise - Helicopter,3,11,79
-Noise - Helicopter,3,12,151
-Noise - Helicopter,3,13,110
-Noise - Helicopter,3,14,101
-Noise - Helicopter,3,15,160
-Noise - Helicopter,3,16,187
-Noise - Helicopter,3,17,152
-Noise - Helicopter,3,18,149
-Noise - Helicopter,3,19,65
-Noise - Helicopter,3,20,84
-Noise - Helicopter,3,21,45
+Noise - Helicopter,3,7,46
+Noise - Helicopter,3,8,44
+Noise - Helicopter,3,9,34
+Noise - Helicopter,3,10,78
+Noise - Helicopter,3,11,76
+Noise - Helicopter,3,12,147
+Noise - Helicopter,3,13,99
+Noise - Helicopter,3,14,91
+Noise - Helicopter,3,15,156
+Noise - Helicopter,3,16,179
+Noise - Helicopter,3,17,143
+Noise - Helicopter,3,18,147
+Noise - Helicopter,3,19,63
+Noise - Helicopter,3,20,78
+Noise - Helicopter,3,21,46
 Noise - Helicopter,3,22,44
 Noise - Helicopter,3,23,5
 Noise - Helicopter,4,0,7
@@ -436,25 +436,25 @@ Noise - Helicopter,4,2,1
 Noise - Helicopter,4,3,2
 Noise - Helicopter,4,4,1
 Noise - Helicopter,4,5,2
-Noise - Helicopter,4,6,22
-Noise - Helicopter,4,7,30
+Noise - Helicopter,4,6,23
+Noise - Helicopter,4,7,29
 Noise - Helicopter,4,8,26
-Noise - Helicopter,4,9,39
-Noise - Helicopter,4,10,107
+Noise - Helicopter,4,9,36
+Noise - Helicopter,4,10,108
 Noise - Helicopter,4,11,86
-Noise - Helicopter,4,12,78
-Noise - Helicopter,4,13,92
-Noise - Helicopter,4,14,118
-Noise - Helicopter,4,15,132
+Noise - Helicopter,4,12,79
+Noise - Helicopter,4,13,87
+Noise - Helicopter,4,14,108
+Noise - Helicopter,4,15,127
 Noise - Helicopter,4,16,118
-Noise - Helicopter,4,17,99
+Noise - Helicopter,4,17,94
 Noise - Helicopter,4,18,95
-Noise - Helicopter,4,19,129
-Noise - Helicopter,4,20,95
-Noise - Helicopter,4,21,76
-Noise - Helicopter,4,22,30
+Noise - Helicopter,4,19,128
+Noise - Helicopter,4,20,92
+Noise - Helicopter,4,21,75
+Noise - Helicopter,4,22,28
 Noise - Helicopter,4,23,26
-Noise - Helicopter,5,0,8
+Noise - Helicopter,5,0,6
 Noise - Helicopter,5,1,4
 Noise - Helicopter,5,2,6
 Noise - Helicopter,5,3,1
@@ -462,23 +462,23 @@ Noise - Helicopter,5,4,5
 Noise - Helicopter,5,5,4
 Noise - Helicopter,5,6,3
 Noise - Helicopter,5,7,7
-Noise - Helicopter,5,8,3
+Noise - Helicopter,5,8,2
 Noise - Helicopter,5,9,11
-Noise - Helicopter,5,10,95
-Noise - Helicopter,5,11,101
-Noise - Helicopter,5,12,102
+Noise - Helicopter,5,10,97
+Noise - Helicopter,5,11,103
+Noise - Helicopter,5,12,100
 Noise - Helicopter,5,13,70
-Noise - Helicopter,5,14,80
-Noise - Helicopter,5,15,132
-Noise - Helicopter,5,16,87
-Noise - Helicopter,5,17,88
-Noise - Helicopter,5,18,73
-Noise - Helicopter,5,19,144
+Noise - Helicopter,5,14,79
+Noise - Helicopter,5,15,134
+Noise - Helicopter,5,16,88
+Noise - Helicopter,5,17,90
+Noise - Helicopter,5,18,72
+Noise - Helicopter,5,19,125
 Noise - Helicopter,5,20,96
-Noise - Helicopter,5,21,45
-Noise - Helicopter,5,22,27
-Noise - Helicopter,5,23,35
-Noise - Helicopter,6,0,14
+Noise - Helicopter,5,21,44
+Noise - Helicopter,5,22,19
+Noise - Helicopter,5,23,34
+Noise - Helicopter,6,0,13
 Noise - Helicopter,6,1,8
 Noise - Helicopter,6,2,5
 Noise - Helicopter,6,3,1
@@ -488,18 +488,18 @@ Noise - Helicopter,6,6,6
 Noise - Helicopter,6,7,15
 Noise - Helicopter,6,8,19
 Noise - Helicopter,6,9,21
-Noise - Helicopter,6,10,34
-Noise - Helicopter,6,11,59
-Noise - Helicopter,6,12,88
-Noise - Helicopter,6,13,137
-Noise - Helicopter,6,14,100
-Noise - Helicopter,6,15,57
-Noise - Helicopter,6,16,125
-Noise - Helicopter,6,17,85
-Noise - Helicopter,6,18,89
-Noise - Helicopter,6,19,160
-Noise - Helicopter,6,20,116
-Noise - Helicopter,6,21,65
+Noise - Helicopter,6,10,32
+Noise - Helicopter,6,11,48
+Noise - Helicopter,6,12,86
+Noise - Helicopter,6,13,135
+Noise - Helicopter,6,14,98
+Noise - Helicopter,6,15,51
+Noise - Helicopter,6,16,116
+Noise - Helicopter,6,17,81
+Noise - Helicopter,6,18,84
+Noise - Helicopter,6,19,150
+Noise - Helicopter,6,20,113
+Noise - Helicopter,6,21,62
 Noise - Helicopter,6,22,13
 Noise - Helicopter,6,23,13
 Noise - House of Worship,0,0,22
@@ -508,19 +508,19 @@ Noise - House of Worship,0,2,12
 Noise - House of Worship,0,3,3
 Noise - House of Worship,0,4,3
 Noise - House of Worship,0,5,3
-Noise - House of Worship,0,6,5
+Noise - House of Worship,0,6,4
 Noise - House of Worship,0,7,4
 Noise - House of Worship,0,8,4
 Noise - House of Worship,0,9,17
-Noise - House of Worship,0,10,9
-Noise - House of Worship,0,11,35
+Noise - House of Worship,0,10,8
+Noise - House of Worship,0,11,34
 Noise - House of Worship,0,12,22
 Noise - House of Worship,0,13,24
 Noise - House of Worship,0,14,22
 Noise - House of Worship,0,15,32
 Noise - House of Worship,0,16,36
-Noise - House of Worship,0,17,18
-Noise - House of Worship,0,18,5
+Noise - House of Worship,0,17,19
+Noise - House of Worship,0,18,4
 Noise - House of Worship,0,19,5
 Noise - House of Worship,0,20,14
 Noise - House of Worship,0,21,14
@@ -532,21 +532,21 @@ Noise - House of Worship,1,2,11
 Noise - House of Worship,1,3,25
 Noise - House of Worship,1,4,46
 Noise - House of Worship,1,5,50
-Noise - House of Worship,1,6,20
+Noise - House of Worship,1,6,19
 Noise - House of Worship,1,7,1
 Noise - House of Worship,1,8,6
 Noise - House of Worship,1,9,33
 Noise - House of Worship,1,10,12
-Noise - House of Worship,1,11,47
-Noise - House of Worship,1,12,28
+Noise - House of Worship,1,11,46
+Noise - House of Worship,1,12,27
 Noise - House of Worship,1,13,24
 Noise - House of Worship,1,14,19
-Noise - House of Worship,1,15,26
-Noise - House of Worship,1,16,27
-Noise - House of Worship,1,17,27
-Noise - House of Worship,1,18,6
-Noise - House of Worship,1,19,9
-Noise - House of Worship,1,20,10
+Noise - House of Worship,1,15,25
+Noise - House of Worship,1,16,25
+Noise - House of Worship,1,17,26
+Noise - House of Worship,1,18,4
+Noise - House of Worship,1,19,8
+Noise - House of Worship,1,20,9
 Noise - House of Worship,1,21,17
 Noise - House of Worship,1,22,28
 Noise - House of Worship,1,23,17
@@ -554,23 +554,23 @@ Noise - House of Worship,2,0,17
 Noise - House of Worship,2,1,26
 Noise - House of Worship,2,2,12
 Noise - House of Worship,2,4,9
-Noise - House of Worship,2,5,43
+Noise - House of Worship,2,5,41
 Noise - House of Worship,2,6,16
 Noise - House of Worship,2,7,13
 Noise - House of Worship,2,8,8
-Noise - House of Worship,2,9,22
+Noise - House of Worship,2,9,21
 Noise - House of Worship,2,10,6
 Noise - House of Worship,2,11,36
-Noise - House of Worship,2,12,23
-Noise - House of Worship,2,13,15
+Noise - House of Worship,2,12,22
+Noise - House of Worship,2,13,14
 Noise - House of Worship,2,14,9
-Noise - House of Worship,2,15,35
-Noise - House of Worship,2,16,38
+Noise - House of Worship,2,15,36
+Noise - House of Worship,2,16,35
 Noise - House of Worship,2,17,13
 Noise - House of Worship,2,18,6
-Noise - House of Worship,2,19,11
+Noise - House of Worship,2,19,10
 Noise - House of Worship,2,20,14
-Noise - House of Worship,2,21,20
+Noise - House of Worship,2,21,21
 Noise - House of Worship,2,22,29
 Noise - House of Worship,2,23,18
 Noise - House of Worship,3,0,21
@@ -578,21 +578,21 @@ Noise - House of Worship,3,1,22
 Noise - House of Worship,3,2,8
 Noise - House of Worship,3,3,1
 Noise - House of Worship,3,4,8
-Noise - House of Worship,3,5,21
+Noise - House of Worship,3,5,20
 Noise - House of Worship,3,6,10
 Noise - House of Worship,3,7,2
 Noise - House of Worship,3,8,5
-Noise - House of Worship,3,9,29
+Noise - House of Worship,3,9,28
 Noise - House of Worship,3,10,16
 Noise - House of Worship,3,11,13
 Noise - House of Worship,3,12,17
 Noise - House of Worship,3,13,13
-Noise - House of Worship,3,14,18
+Noise - House of Worship,3,14,17
 Noise - House of Worship,3,15,24
 Noise - House of Worship,3,16,23
-Noise - House of Worship,3,17,16
+Noise - House of Worship,3,17,15
 Noise - House of Worship,3,18,3
-Noise - House of Worship,3,19,15
+Noise - House of Worship,3,19,16
 Noise - House of Worship,3,20,21
 Noise - House of Worship,3,21,9
 Noise - House of Worship,3,22,20
@@ -602,8 +602,8 @@ Noise - House of Worship,4,1,17
 Noise - House of Worship,4,2,13
 Noise - House of Worship,4,3,5
 Noise - House of Worship,4,4,7
-Noise - House of Worship,4,5,24
-Noise - House of Worship,4,6,16
+Noise - House of Worship,4,5,21
+Noise - House of Worship,4,6,15
 Noise - House of Worship,4,7,3
 Noise - House of Worship,4,8,15
 Noise - House of Worship,4,9,26
@@ -611,17 +611,17 @@ Noise - House of Worship,4,10,11
 Noise - House of Worship,4,11,19
 Noise - House of Worship,4,12,18
 Noise - House of Worship,4,13,32
-Noise - House of Worship,4,14,34
-Noise - House of Worship,4,15,4
+Noise - House of Worship,4,14,35
+Noise - House of Worship,4,15,3
 Noise - House of Worship,4,16,4
 Noise - House of Worship,4,17,6
-Noise - House of Worship,4,18,10
-Noise - House of Worship,4,19,9
+Noise - House of Worship,4,18,9
+Noise - House of Worship,4,19,10
 Noise - House of Worship,4,20,20
 Noise - House of Worship,4,21,13
 Noise - House of Worship,4,22,35
 Noise - House of Worship,4,23,25
-Noise - House of Worship,5,0,44
+Noise - House of Worship,5,0,45
 Noise - House of Worship,5,1,5
 Noise - House of Worship,5,2,3
 Noise - House of Worship,5,3,1
@@ -629,39 +629,39 @@ Noise - House of Worship,5,4,3
 Noise - House of Worship,5,5,3
 Noise - House of Worship,5,6,5
 Noise - House of Worship,5,8,6
-Noise - House of Worship,5,9,9
+Noise - House of Worship,5,9,10
 Noise - House of Worship,5,10,7
 Noise - House of Worship,5,11,7
 Noise - House of Worship,5,12,13
-Noise - House of Worship,5,13,16
-Noise - House of Worship,5,14,12
-Noise - House of Worship,5,15,8
+Noise - House of Worship,5,13,15
+Noise - House of Worship,5,14,14
+Noise - House of Worship,5,15,9
 Noise - House of Worship,5,16,5
 Noise - House of Worship,5,17,3
 Noise - House of Worship,5,18,7
-Noise - House of Worship,5,19,13
+Noise - House of Worship,5,19,12
 Noise - House of Worship,5,20,12
 Noise - House of Worship,5,21,11
 Noise - House of Worship,5,22,17
-Noise - House of Worship,5,23,7
-Noise - House of Worship,6,0,13
+Noise - House of Worship,5,23,8
+Noise - House of Worship,6,0,12
 Noise - House of Worship,6,1,8
 Noise - House of Worship,6,2,7
 Noise - House of Worship,6,3,1
 Noise - House of Worship,6,4,2
 Noise - House of Worship,6,5,3
-Noise - House of Worship,6,6,3
-Noise - House of Worship,6,7,3
+Noise - House of Worship,6,6,2
+Noise - House of Worship,6,7,4
 Noise - House of Worship,6,8,5
 Noise - House of Worship,6,9,29
 Noise - House of Worship,6,10,17
 Noise - House of Worship,6,11,31
-Noise - House of Worship,6,12,36
+Noise - House of Worship,6,12,37
 Noise - House of Worship,6,13,30
-Noise - House of Worship,6,14,20
-Noise - House of Worship,6,15,11
-Noise - House of Worship,6,16,16
-Noise - House of Worship,6,17,8
+Noise - House of Worship,6,14,19
+Noise - House of Worship,6,15,12
+Noise - House of Worship,6,16,17
+Noise - House of Worship,6,17,7
 Noise - House of Worship,6,18,6
 Noise - House of Worship,6,19,12
 Noise - House of Worship,6,20,12
@@ -669,15 +669,15 @@ Noise - House of Worship,6,21,21
 Noise - House of Worship,6,22,11
 Noise - House of Worship,6,23,18
 Noise - Park,0,0,110
-Noise - Park,0,1,82
+Noise - Park,0,1,81
 Noise - Park,0,2,29
-Noise - Park,0,3,23
+Noise - Park,0,3,22
 Noise - Park,0,4,16
-Noise - Park,0,5,5
-Noise - Park,0,6,9
+Noise - Park,0,5,6
+Noise - Park,0,6,11
 Noise - Park,0,7,9
 Noise - Park,0,8,7
-Noise - Park,0,9,12
+Noise - Park,0,9,11
 Noise - Park,0,10,17
 Noise - Park,0,11,10
 Noise - Park,0,12,11
@@ -690,15 +690,15 @@ Noise - Park,0,18,53
 Noise - Park,0,19,76
 Noise - Park,0,20,71
 Noise - Park,0,21,140
-Noise - Park,0,22,123
-Noise - Park,0,23,92
+Noise - Park,0,22,122
+Noise - Park,0,23,90
 Noise - Park,1,0,40
-Noise - Park,1,1,36
+Noise - Park,1,1,35
 Noise - Park,1,2,16
 Noise - Park,1,3,15
 Noise - Park,1,4,2
 Noise - Park,1,5,7
-Noise - Park,1,6,8
+Noise - Park,1,6,9
 Noise - Park,1,7,8
 Noise - Park,1,8,7
 Noise - Park,1,9,6
@@ -711,12 +711,12 @@ Noise - Park,1,15,25
 Noise - Park,1,16,24
 Noise - Park,1,17,26
 Noise - Park,1,18,44
-Noise - Park,1,19,59
+Noise - Park,1,19,57
 Noise - Park,1,20,60
-Noise - Park,1,21,112
-Noise - Park,1,22,87
-Noise - Park,1,23,62
-Noise - Park,2,0,56
+Noise - Park,1,21,113
+Noise - Park,1,22,89
+Noise - Park,1,23,63
+Noise - Park,2,0,55
 Noise - Park,2,1,28
 Noise - Park,2,2,28
 Noise - Park,2,3,14
@@ -732,39 +732,39 @@ Noise - Park,2,12,12
 Noise - Park,2,13,9
 Noise - Park,2,14,9
 Noise - Park,2,15,16
-Noise - Park,2,16,25
-Noise - Park,2,17,28
+Noise - Park,2,16,26
+Noise - Park,2,17,29
 Noise - Park,2,18,33
-Noise - Park,2,19,37
-Noise - Park,2,20,53
-Noise - Park,2,21,120
-Noise - Park,2,22,74
-Noise - Park,2,23,62
-Noise - Park,3,0,52
+Noise - Park,2,19,36
+Noise - Park,2,20,52
+Noise - Park,2,21,115
+Noise - Park,2,22,73
+Noise - Park,2,23,61
+Noise - Park,3,0,53
 Noise - Park,3,1,31
 Noise - Park,3,2,10
 Noise - Park,3,3,12
 Noise - Park,3,4,9
 Noise - Park,3,5,9
-Noise - Park,3,6,10
-Noise - Park,3,7,10
+Noise - Park,3,6,9
+Noise - Park,3,7,9
 Noise - Park,3,8,4
 Noise - Park,3,9,15
-Noise - Park,3,10,8
+Noise - Park,3,10,7
 Noise - Park,3,11,8
 Noise - Park,3,12,13
-Noise - Park,3,13,7
+Noise - Park,3,13,8
 Noise - Park,3,14,10
 Noise - Park,3,15,24
 Noise - Park,3,16,19
-Noise - Park,3,17,21
-Noise - Park,3,18,26
-Noise - Park,3,19,43
+Noise - Park,3,17,23
+Noise - Park,3,18,27
+Noise - Park,3,19,44
 Noise - Park,3,20,36
-Noise - Park,3,21,143
-Noise - Park,3,22,95
+Noise - Park,3,21,148
+Noise - Park,3,22,92
 Noise - Park,3,23,75
-Noise - Park,4,0,42
+Noise - Park,4,0,43
 Noise - Park,4,1,25
 Noise - Park,4,2,24
 Noise - Park,4,3,10
@@ -773,570 +773,570 @@ Noise - Park,4,5,7
 Noise - Park,4,6,12
 Noise - Park,4,7,8
 Noise - Park,4,8,10
-Noise - Park,4,9,12
+Noise - Park,4,9,11
 Noise - Park,4,10,9
 Noise - Park,4,11,12
 Noise - Park,4,12,16
 Noise - Park,4,13,18
 Noise - Park,4,14,21
-Noise - Park,4,15,26
-Noise - Park,4,16,35
+Noise - Park,4,15,24
+Noise - Park,4,16,33
 Noise - Park,4,17,31
-Noise - Park,4,18,53
+Noise - Park,4,18,54
 Noise - Park,4,19,65
 Noise - Park,4,20,85
-Noise - Park,4,21,179
-Noise - Park,4,22,170
-Noise - Park,4,23,126
-Noise - Park,5,0,91
-Noise - Park,5,1,68
-Noise - Park,5,2,37
+Noise - Park,4,21,186
+Noise - Park,4,22,175
+Noise - Park,4,23,127
+Noise - Park,5,0,93
+Noise - Park,5,1,65
+Noise - Park,5,2,35
 Noise - Park,5,3,22
 Noise - Park,5,4,13
-Noise - Park,5,5,21
+Noise - Park,5,5,22
 Noise - Park,5,6,9
 Noise - Park,5,7,13
-Noise - Park,5,8,14
+Noise - Park,5,8,15
 Noise - Park,5,9,13
 Noise - Park,5,10,24
-Noise - Park,5,11,24
+Noise - Park,5,11,25
 Noise - Park,5,12,35
 Noise - Park,5,13,66
-Noise - Park,5,14,68
-Noise - Park,5,15,57
-Noise - Park,5,16,68
+Noise - Park,5,14,67
+Noise - Park,5,15,56
+Noise - Park,5,16,69
 Noise - Park,5,17,78
-Noise - Park,5,18,99
-Noise - Park,5,19,126
-Noise - Park,5,20,163
-Noise - Park,5,21,223
-Noise - Park,5,22,249
-Noise - Park,5,23,173
+Noise - Park,5,18,97
+Noise - Park,5,19,127
+Noise - Park,5,20,165
+Noise - Park,5,21,226
+Noise - Park,5,22,253
+Noise - Park,5,23,175
 Noise - Park,6,0,133
-Noise - Park,6,1,85
+Noise - Park,6,1,86
 Noise - Park,6,2,62
 Noise - Park,6,3,43
-Noise - Park,6,4,39
-Noise - Park,6,5,23
-Noise - Park,6,6,25
-Noise - Park,6,7,23
-Noise - Park,6,8,35
+Noise - Park,6,4,40
+Noise - Park,6,5,25
+Noise - Park,6,6,26
+Noise - Park,6,7,22
+Noise - Park,6,8,34
 Noise - Park,6,9,20
-Noise - Park,6,10,14
-Noise - Park,6,11,25
-Noise - Park,6,12,25
-Noise - Park,6,13,60
-Noise - Park,6,14,78
-Noise - Park,6,15,110
-Noise - Park,6,16,108
+Noise - Park,6,10,15
+Noise - Park,6,11,24
+Noise - Park,6,12,23
+Noise - Park,6,13,58
+Noise - Park,6,14,75
+Noise - Park,6,15,109
+Noise - Park,6,16,111
 Noise - Park,6,17,137
 Noise - Park,6,18,177
 Noise - Park,6,19,209
-Noise - Park,6,20,217
+Noise - Park,6,20,219
 Noise - Park,6,21,298
-Noise - Park,6,22,231
+Noise - Park,6,22,234
 Noise - Park,6,23,159
-Noise - Residential,0,0,4388
-Noise - Residential,0,1,2876
-Noise - Residential,0,2,1860
-Noise - Residential,0,3,1462
-Noise - Residential,0,4,1100
-Noise - Residential,0,5,986
-Noise - Residential,0,6,1188
-Noise - Residential,0,7,1157
-Noise - Residential,0,8,1210
-Noise - Residential,0,9,1295
-Noise - Residential,0,10,1331
-Noise - Residential,0,11,1482
-Noise - Residential,0,12,1451
-Noise - Residential,0,13,1449
-Noise - Residential,0,14,1450
-Noise - Residential,0,15,1690
-Noise - Residential,0,16,1879
-Noise - Residential,0,17,2219
-Noise - Residential,0,18,2236
-Noise - Residential,0,19,2644
-Noise - Residential,0,20,3091
-Noise - Residential,0,21,3792
-Noise - Residential,0,22,4607
-Noise - Residential,0,23,4089
-Noise - Residential,1,0,3263
-Noise - Residential,1,1,2098
-Noise - Residential,1,2,1577
-Noise - Residential,1,3,1331
-Noise - Residential,1,4,1117
-Noise - Residential,1,5,1101
-Noise - Residential,1,6,1219
-Noise - Residential,1,7,1207
-Noise - Residential,1,8,1102
-Noise - Residential,1,9,1171
-Noise - Residential,1,10,1182
-Noise - Residential,1,11,1352
-Noise - Residential,1,12,1432
-Noise - Residential,1,13,1485
-Noise - Residential,1,14,1420
-Noise - Residential,1,15,1601
-Noise - Residential,1,16,1909
-Noise - Residential,1,17,2002
-Noise - Residential,1,18,2376
-Noise - Residential,1,19,2812
-Noise - Residential,1,20,3210
-Noise - Residential,1,21,3708
-Noise - Residential,1,22,4506
-Noise - Residential,1,23,4118
-Noise - Residential,2,0,3117
-Noise - Residential,2,1,2221
-Noise - Residential,2,2,1499
-Noise - Residential,2,3,1219
-Noise - Residential,2,4,907
-Noise - Residential,2,5,1037
-Noise - Residential,2,6,1171
-Noise - Residential,2,7,1136
-Noise - Residential,2,8,1166
-Noise - Residential,2,9,1196
-Noise - Residential,2,10,1359
-Noise - Residential,2,11,1474
-Noise - Residential,2,12,1417
-Noise - Residential,2,13,1318
-Noise - Residential,2,14,1414
-Noise - Residential,2,15,1521
-Noise - Residential,2,16,1686
+Noise - Residential,0,0,4360
+Noise - Residential,0,1,2898
+Noise - Residential,0,2,1871
+Noise - Residential,0,3,1456
+Noise - Residential,0,4,1094
+Noise - Residential,0,5,982
+Noise - Residential,0,6,1194
+Noise - Residential,0,7,1159
+Noise - Residential,0,8,1219
+Noise - Residential,0,9,1308
+Noise - Residential,0,10,1333
+Noise - Residential,0,11,1485
+Noise - Residential,0,12,1465
+Noise - Residential,0,13,1452
+Noise - Residential,0,14,1445
+Noise - Residential,0,15,1704
+Noise - Residential,0,16,1895
+Noise - Residential,0,17,2223
+Noise - Residential,0,18,2247
+Noise - Residential,0,19,2653
+Noise - Residential,0,20,3094
+Noise - Residential,0,21,3808
+Noise - Residential,0,22,4624
+Noise - Residential,0,23,4104
+Noise - Residential,1,0,3265
+Noise - Residential,1,1,2093
+Noise - Residential,1,2,1578
+Noise - Residential,1,3,1342
+Noise - Residential,1,4,1127
+Noise - Residential,1,5,1109
+Noise - Residential,1,6,1214
+Noise - Residential,1,7,1210
+Noise - Residential,1,8,1104
+Noise - Residential,1,9,1187
+Noise - Residential,1,10,1188
+Noise - Residential,1,11,1356
+Noise - Residential,1,12,1424
+Noise - Residential,1,13,1490
+Noise - Residential,1,14,1409
+Noise - Residential,1,15,1607
+Noise - Residential,1,16,1924
+Noise - Residential,1,17,1995
+Noise - Residential,1,18,2373
+Noise - Residential,1,19,2820
+Noise - Residential,1,20,3216
+Noise - Residential,1,21,3697
+Noise - Residential,1,22,4508
+Noise - Residential,1,23,4094
+Noise - Residential,2,0,3106
+Noise - Residential,2,1,2236
+Noise - Residential,2,2,1493
+Noise - Residential,2,3,1229
+Noise - Residential,2,4,905
+Noise - Residential,2,5,1036
+Noise - Residential,2,6,1157
+Noise - Residential,2,7,1138
+Noise - Residential,2,8,1158
+Noise - Residential,2,9,1203
+Noise - Residential,2,10,1350
+Noise - Residential,2,11,1476
+Noise - Residential,2,12,1415
+Noise - Residential,2,13,1327
+Noise - Residential,2,14,1417
+Noise - Residential,2,15,1533
+Noise - Residential,2,16,1711
 Noise - Residential,2,17,1833
-Noise - Residential,2,18,2168
-Noise - Residential,2,19,2678
-Noise - Residential,2,20,3058
-Noise - Residential,2,21,3538
-Noise - Residential,2,22,4412
+Noise - Residential,2,18,2178
+Noise - Residential,2,19,2704
+Noise - Residential,2,20,3089
+Noise - Residential,2,21,3556
+Noise - Residential,2,22,4404
 Noise - Residential,2,23,4090
-Noise - Residential,3,0,3219
-Noise - Residential,3,1,2573
-Noise - Residential,3,2,1779
-Noise - Residential,3,3,1474
-Noise - Residential,3,4,1194
-Noise - Residential,3,5,1047
-Noise - Residential,3,6,1305
+Noise - Residential,3,0,3224
+Noise - Residential,3,1,2572
+Noise - Residential,3,2,1795
+Noise - Residential,3,3,1469
+Noise - Residential,3,4,1185
+Noise - Residential,3,5,1054
+Noise - Residential,3,6,1309
 Noise - Residential,3,7,1222
-Noise - Residential,3,8,1342
-Noise - Residential,3,9,1139
-Noise - Residential,3,10,1158
-Noise - Residential,3,11,1248
-Noise - Residential,3,12,1327
-Noise - Residential,3,13,1332
-Noise - Residential,3,14,1323
-Noise - Residential,3,15,1661
-Noise - Residential,3,16,1809
-Noise - Residential,3,17,2016
-Noise - Residential,3,18,2213
-Noise - Residential,3,19,2706
-Noise - Residential,3,20,3170
-Noise - Residential,3,21,3669
-Noise - Residential,3,22,4593
-Noise - Residential,3,23,4256
-Noise - Residential,4,0,3729
-Noise - Residential,4,1,2413
-Noise - Residential,4,2,1677
-Noise - Residential,4,3,1286
-Noise - Residential,4,4,1073
-Noise - Residential,4,5,1144
-Noise - Residential,4,6,1202
-Noise - Residential,4,7,1147
-Noise - Residential,4,8,1177
-Noise - Residential,4,9,1344
-Noise - Residential,4,10,1310
-Noise - Residential,4,11,1544
-Noise - Residential,4,12,1415
-Noise - Residential,4,13,1442
-Noise - Residential,4,14,1517
-Noise - Residential,4,15,1650
-Noise - Residential,4,16,1802
-Noise - Residential,4,17,1962
-Noise - Residential,4,18,2365
-Noise - Residential,4,19,2767
-Noise - Residential,4,20,3570
-Noise - Residential,4,21,4411
-Noise - Residential,4,22,6723
-Noise - Residential,4,23,7079
-Noise - Residential,5,0,6380
-Noise - Residential,5,1,4701
-Noise - Residential,5,2,2992
-Noise - Residential,5,3,2319
-Noise - Residential,5,4,1700
-Noise - Residential,5,5,1385
-Noise - Residential,5,6,1188
-Noise - Residential,5,7,1258
-Noise - Residential,5,8,1503
-Noise - Residential,5,9,1819
-Noise - Residential,5,10,1787
-Noise - Residential,5,11,1937
-Noise - Residential,5,12,1929
+Noise - Residential,3,8,1341
+Noise - Residential,3,9,1131
+Noise - Residential,3,10,1145
+Noise - Residential,3,11,1242
+Noise - Residential,3,12,1320
+Noise - Residential,3,13,1327
+Noise - Residential,3,14,1318
+Noise - Residential,3,15,1586
+Noise - Residential,3,16,1723
+Noise - Residential,3,17,1909
+Noise - Residential,3,18,2150
+Noise - Residential,3,19,2614
+Noise - Residential,3,20,3097
+Noise - Residential,3,21,3648
+Noise - Residential,3,22,4546
+Noise - Residential,3,23,4194
+Noise - Residential,4,0,3682
+Noise - Residential,4,1,2384
+Noise - Residential,4,2,1681
+Noise - Residential,4,3,1284
+Noise - Residential,4,4,1079
+Noise - Residential,4,5,1146
+Noise - Residential,4,6,1205
+Noise - Residential,4,7,1156
+Noise - Residential,4,8,1182
+Noise - Residential,4,9,1343
+Noise - Residential,4,10,1315
+Noise - Residential,4,11,1540
+Noise - Residential,4,12,1425
+Noise - Residential,4,13,1440
+Noise - Residential,4,14,1512
+Noise - Residential,4,15,1655
+Noise - Residential,4,16,1818
+Noise - Residential,4,17,1967
+Noise - Residential,4,18,2399
+Noise - Residential,4,19,2774
+Noise - Residential,4,20,3578
+Noise - Residential,4,21,4438
+Noise - Residential,4,22,6756
+Noise - Residential,4,23,7123
+Noise - Residential,5,0,6411
+Noise - Residential,5,1,4704
+Noise - Residential,5,2,2999
+Noise - Residential,5,3,2308
+Noise - Residential,5,4,1706
+Noise - Residential,5,5,1394
+Noise - Residential,5,6,1191
+Noise - Residential,5,7,1269
+Noise - Residential,5,8,1507
+Noise - Residential,5,9,1823
+Noise - Residential,5,10,1810
+Noise - Residential,5,11,1931
+Noise - Residential,5,12,1917
 Noise - Residential,5,13,2045
-Noise - Residential,5,14,2214
-Noise - Residential,5,15,2307
-Noise - Residential,5,16,2407
-Noise - Residential,5,17,2785
-Noise - Residential,5,18,3101
-Noise - Residential,5,19,3819
-Noise - Residential,5,20,4755
-Noise - Residential,5,21,6282
-Noise - Residential,5,22,10142
-Noise - Residential,5,23,10639
-Noise - Residential,6,0,10284
-Noise - Residential,6,1,7941
-Noise - Residential,6,2,4924
-Noise - Residential,6,3,3350
-Noise - Residential,6,4,2378
-Noise - Residential,6,5,1831
-Noise - Residential,6,6,1345
-Noise - Residential,6,7,1369
-Noise - Residential,6,8,1489
-Noise - Residential,6,9,1718
-Noise - Residential,6,10,1851
-Noise - Residential,6,11,2068
-Noise - Residential,6,12,2057
-Noise - Residential,6,13,2155
-Noise - Residential,6,14,2278
-Noise - Residential,6,15,2434
-Noise - Residential,6,16,2567
+Noise - Residential,5,14,2211
+Noise - Residential,5,15,2310
+Noise - Residential,5,16,2398
+Noise - Residential,5,17,2792
+Noise - Residential,5,18,3110
+Noise - Residential,5,19,3838
+Noise - Residential,5,20,4691
+Noise - Residential,5,21,6242
+Noise - Residential,5,22,10225
+Noise - Residential,5,23,10680
+Noise - Residential,6,0,10329
+Noise - Residential,6,1,7964
+Noise - Residential,6,2,4932
+Noise - Residential,6,3,3342
+Noise - Residential,6,4,2380
+Noise - Residential,6,5,1809
+Noise - Residential,6,6,1336
+Noise - Residential,6,7,1379
+Noise - Residential,6,8,1497
+Noise - Residential,6,9,1732
+Noise - Residential,6,10,1875
+Noise - Residential,6,11,2042
+Noise - Residential,6,12,1955
+Noise - Residential,6,13,2059
+Noise - Residential,6,14,2254
+Noise - Residential,6,15,2483
+Noise - Residential,6,16,2607
 Noise - Residential,6,17,2701
-Noise - Residential,6,18,3014
-Noise - Residential,6,19,3516
-Noise - Residential,6,20,4333
-Noise - Residential,6,21,5043
-Noise - Residential,6,22,6539
-Noise - Residential,6,23,5397
-Noise - Street/Sidewalk,0,0,2490
-Noise - Street/Sidewalk,0,1,1413
-Noise - Street/Sidewalk,0,2,907
-Noise - Street/Sidewalk,0,3,525
-Noise - Street/Sidewalk,0,4,334
-Noise - Street/Sidewalk,0,5,233
-Noise - Street/Sidewalk,0,6,193
+Noise - Residential,6,18,3007
+Noise - Residential,6,19,3487
+Noise - Residential,6,20,4248
+Noise - Residential,6,21,5018
+Noise - Residential,6,22,6504
+Noise - Residential,6,23,5331
+Noise - Street/Sidewalk,0,0,2500
+Noise - Street/Sidewalk,0,1,1407
+Noise - Street/Sidewalk,0,2,911
+Noise - Street/Sidewalk,0,3,526
+Noise - Street/Sidewalk,0,4,333
+Noise - Street/Sidewalk,0,5,234
+Noise - Street/Sidewalk,0,6,178
 Noise - Street/Sidewalk,0,7,221
-Noise - Street/Sidewalk,0,8,211
-Noise - Street/Sidewalk,0,9,246
-Noise - Street/Sidewalk,0,10,271
-Noise - Street/Sidewalk,0,11,304
-Noise - Street/Sidewalk,0,12,355
-Noise - Street/Sidewalk,0,13,345
-Noise - Street/Sidewalk,0,14,447
-Noise - Street/Sidewalk,0,15,436
-Noise - Street/Sidewalk,0,16,602
-Noise - Street/Sidewalk,0,17,729
-Noise - Street/Sidewalk,0,18,853
-Noise - Street/Sidewalk,0,19,1133
-Noise - Street/Sidewalk,0,20,1343
-Noise - Street/Sidewalk,0,21,1882
-Noise - Street/Sidewalk,0,22,2322
-Noise - Street/Sidewalk,0,23,1858
-Noise - Street/Sidewalk,1,0,1390
-Noise - Street/Sidewalk,1,1,748
+Noise - Street/Sidewalk,0,8,212
+Noise - Street/Sidewalk,0,9,245
+Noise - Street/Sidewalk,0,10,270
+Noise - Street/Sidewalk,0,11,303
+Noise - Street/Sidewalk,0,12,352
+Noise - Street/Sidewalk,0,13,346
+Noise - Street/Sidewalk,0,14,446
+Noise - Street/Sidewalk,0,15,437
+Noise - Street/Sidewalk,0,16,603
+Noise - Street/Sidewalk,0,17,728
+Noise - Street/Sidewalk,0,18,856
+Noise - Street/Sidewalk,0,19,1134
+Noise - Street/Sidewalk,0,20,1353
+Noise - Street/Sidewalk,0,21,1877
+Noise - Street/Sidewalk,0,22,2299
+Noise - Street/Sidewalk,0,23,1856
+Noise - Street/Sidewalk,1,0,1398
+Noise - Street/Sidewalk,1,1,752
 Noise - Street/Sidewalk,1,2,488
-Noise - Street/Sidewalk,1,3,337
-Noise - Street/Sidewalk,1,4,224
-Noise - Street/Sidewalk,1,5,182
+Noise - Street/Sidewalk,1,3,338
+Noise - Street/Sidewalk,1,4,227
+Noise - Street/Sidewalk,1,5,166
 Noise - Street/Sidewalk,1,6,123
-Noise - Street/Sidewalk,1,7,198
-Noise - Street/Sidewalk,1,8,233
-Noise - Street/Sidewalk,1,9,235
-Noise - Street/Sidewalk,1,10,231
-Noise - Street/Sidewalk,1,11,278
-Noise - Street/Sidewalk,1,12,371
-Noise - Street/Sidewalk,1,13,346
-Noise - Street/Sidewalk,1,14,389
-Noise - Street/Sidewalk,1,15,472
-Noise - Street/Sidewalk,1,16,572
-Noise - Street/Sidewalk,1,17,674
-Noise - Street/Sidewalk,1,18,856
-Noise - Street/Sidewalk,1,19,1130
-Noise - Street/Sidewalk,1,20,1419
-Noise - Street/Sidewalk,1,21,1977
-Noise - Street/Sidewalk,1,22,2269
-Noise - Street/Sidewalk,1,23,1966
-Noise - Street/Sidewalk,2,0,1392
-Noise - Street/Sidewalk,2,1,906
-Noise - Street/Sidewalk,2,2,538
+Noise - Street/Sidewalk,1,7,194
+Noise - Street/Sidewalk,1,8,236
+Noise - Street/Sidewalk,1,9,233
+Noise - Street/Sidewalk,1,10,224
+Noise - Street/Sidewalk,1,11,275
+Noise - Street/Sidewalk,1,12,368
+Noise - Street/Sidewalk,1,13,351
+Noise - Street/Sidewalk,1,14,392
+Noise - Street/Sidewalk,1,15,474
+Noise - Street/Sidewalk,1,16,576
+Noise - Street/Sidewalk,1,17,685
+Noise - Street/Sidewalk,1,18,839
+Noise - Street/Sidewalk,1,19,1136
+Noise - Street/Sidewalk,1,20,1428
+Noise - Street/Sidewalk,1,21,1979
+Noise - Street/Sidewalk,1,22,2270
+Noise - Street/Sidewalk,1,23,1930
+Noise - Street/Sidewalk,2,0,1387
+Noise - Street/Sidewalk,2,1,905
+Noise - Street/Sidewalk,2,2,539
 Noise - Street/Sidewalk,2,3,377
-Noise - Street/Sidewalk,2,4,258
+Noise - Street/Sidewalk,2,4,260
 Noise - Street/Sidewalk,2,5,156
-Noise - Street/Sidewalk,2,6,158
-Noise - Street/Sidewalk,2,7,220
-Noise - Street/Sidewalk,2,8,236
-Noise - Street/Sidewalk,2,9,246
-Noise - Street/Sidewalk,2,10,260
-Noise - Street/Sidewalk,2,11,288
-Noise - Street/Sidewalk,2,12,356
-Noise - Street/Sidewalk,2,13,360
-Noise - Street/Sidewalk,2,14,367
-Noise - Street/Sidewalk,2,15,482
-Noise - Street/Sidewalk,2,16,630
-Noise - Street/Sidewalk,2,17,684
-Noise - Street/Sidewalk,2,18,883
-Noise - Street/Sidewalk,2,19,1050
-Noise - Street/Sidewalk,2,20,1303
-Noise - Street/Sidewalk,2,21,1817
-Noise - Street/Sidewalk,2,22,2179
-Noise - Street/Sidewalk,2,23,1848
-Noise - Street/Sidewalk,3,0,1516
-Noise - Street/Sidewalk,3,1,904
-Noise - Street/Sidewalk,3,2,530
-Noise - Street/Sidewalk,3,3,327
-Noise - Street/Sidewalk,3,4,225
-Noise - Street/Sidewalk,3,5,184
+Noise - Street/Sidewalk,2,6,148
+Noise - Street/Sidewalk,2,7,226
+Noise - Street/Sidewalk,2,8,237
+Noise - Street/Sidewalk,2,9,247
+Noise - Street/Sidewalk,2,10,262
+Noise - Street/Sidewalk,2,11,284
+Noise - Street/Sidewalk,2,12,346
+Noise - Street/Sidewalk,2,13,359
+Noise - Street/Sidewalk,2,14,363
+Noise - Street/Sidewalk,2,15,484
+Noise - Street/Sidewalk,2,16,638
+Noise - Street/Sidewalk,2,17,676
+Noise - Street/Sidewalk,2,18,892
+Noise - Street/Sidewalk,2,19,1063
+Noise - Street/Sidewalk,2,20,1310
+Noise - Street/Sidewalk,2,21,1813
+Noise - Street/Sidewalk,2,22,2192
+Noise - Street/Sidewalk,2,23,1862
+Noise - Street/Sidewalk,3,0,1544
+Noise - Street/Sidewalk,3,1,892
+Noise - Street/Sidewalk,3,2,534
+Noise - Street/Sidewalk,3,3,328
+Noise - Street/Sidewalk,3,4,226
+Noise - Street/Sidewalk,3,5,170
 Noise - Street/Sidewalk,3,6,165
-Noise - Street/Sidewalk,3,7,208
-Noise - Street/Sidewalk,3,8,225
-Noise - Street/Sidewalk,3,9,287
-Noise - Street/Sidewalk,3,10,256
-Noise - Street/Sidewalk,3,11,302
-Noise - Street/Sidewalk,3,12,383
-Noise - Street/Sidewalk,3,13,379
-Noise - Street/Sidewalk,3,14,356
-Noise - Street/Sidewalk,3,15,455
-Noise - Street/Sidewalk,3,16,636
-Noise - Street/Sidewalk,3,17,737
-Noise - Street/Sidewalk,3,18,926
-Noise - Street/Sidewalk,3,19,1144
-Noise - Street/Sidewalk,3,20,1443
-Noise - Street/Sidewalk,3,21,2003
-Noise - Street/Sidewalk,3,22,2392
-Noise - Street/Sidewalk,3,23,1928
-Noise - Street/Sidewalk,4,0,1573
-Noise - Street/Sidewalk,4,1,983
-Noise - Street/Sidewalk,4,2,581
-Noise - Street/Sidewalk,4,3,360
-Noise - Street/Sidewalk,4,4,269
-Noise - Street/Sidewalk,4,5,165
-Noise - Street/Sidewalk,4,6,168
-Noise - Street/Sidewalk,4,7,172
+Noise - Street/Sidewalk,3,7,205
+Noise - Street/Sidewalk,3,8,228
+Noise - Street/Sidewalk,3,9,284
+Noise - Street/Sidewalk,3,10,257
+Noise - Street/Sidewalk,3,11,306
+Noise - Street/Sidewalk,3,12,379
+Noise - Street/Sidewalk,3,13,391
+Noise - Street/Sidewalk,3,14,363
+Noise - Street/Sidewalk,3,15,491
+Noise - Street/Sidewalk,3,16,640
+Noise - Street/Sidewalk,3,17,750
+Noise - Street/Sidewalk,3,18,929
+Noise - Street/Sidewalk,3,19,1139
+Noise - Street/Sidewalk,3,20,1440
+Noise - Street/Sidewalk,3,21,2016
+Noise - Street/Sidewalk,3,22,2390
+Noise - Street/Sidewalk,3,23,1947
+Noise - Street/Sidewalk,4,0,1569
+Noise - Street/Sidewalk,4,1,993
+Noise - Street/Sidewalk,4,2,585
+Noise - Street/Sidewalk,4,3,358
+Noise - Street/Sidewalk,4,4,275
+Noise - Street/Sidewalk,4,5,167
+Noise - Street/Sidewalk,4,6,159
+Noise - Street/Sidewalk,4,7,171
 Noise - Street/Sidewalk,4,8,219
-Noise - Street/Sidewalk,4,9,246
+Noise - Street/Sidewalk,4,9,245
 Noise - Street/Sidewalk,4,10,269
-Noise - Street/Sidewalk,4,11,350
-Noise - Street/Sidewalk,4,12,431
-Noise - Street/Sidewalk,4,13,427
+Noise - Street/Sidewalk,4,11,339
+Noise - Street/Sidewalk,4,12,446
+Noise - Street/Sidewalk,4,13,436
 Noise - Street/Sidewalk,4,14,478
-Noise - Street/Sidewalk,4,15,685
-Noise - Street/Sidewalk,4,16,834
+Noise - Street/Sidewalk,4,15,684
+Noise - Street/Sidewalk,4,16,837
 Noise - Street/Sidewalk,4,17,995
-Noise - Street/Sidewalk,4,18,1126
-Noise - Street/Sidewalk,4,19,1525
-Noise - Street/Sidewalk,4,20,2111
-Noise - Street/Sidewalk,4,21,2726
-Noise - Street/Sidewalk,4,22,3849
-Noise - Street/Sidewalk,4,23,4100
-Noise - Street/Sidewalk,5,0,3702
-Noise - Street/Sidewalk,5,1,2636
-Noise - Street/Sidewalk,5,2,1594
-Noise - Street/Sidewalk,5,3,1090
-Noise - Street/Sidewalk,5,4,877
-Noise - Street/Sidewalk,5,5,446
-Noise - Street/Sidewalk,5,6,243
-Noise - Street/Sidewalk,5,7,251
-Noise - Street/Sidewalk,5,8,357
-Noise - Street/Sidewalk,5,9,400
-Noise - Street/Sidewalk,5,10,465
-Noise - Street/Sidewalk,5,11,597
-Noise - Street/Sidewalk,5,12,768
-Noise - Street/Sidewalk,5,13,902
-Noise - Street/Sidewalk,5,14,927
-Noise - Street/Sidewalk,5,15,985
-Noise - Street/Sidewalk,5,16,1135
-Noise - Street/Sidewalk,5,17,1351
-Noise - Street/Sidewalk,5,18,1565
-Noise - Street/Sidewalk,5,19,2034
-Noise - Street/Sidewalk,5,20,2556
-Noise - Street/Sidewalk,5,21,3388
-Noise - Street/Sidewalk,5,22,4913
-Noise - Street/Sidewalk,5,23,4778
-Noise - Street/Sidewalk,6,0,4497
-Noise - Street/Sidewalk,6,1,3282
-Noise - Street/Sidewalk,6,2,2177
-Noise - Street/Sidewalk,6,3,1573
-Noise - Street/Sidewalk,6,4,1285
-Noise - Street/Sidewalk,6,5,687
-Noise - Street/Sidewalk,6,6,443
-Noise - Street/Sidewalk,6,7,358
-Noise - Street/Sidewalk,6,8,306
+Noise - Street/Sidewalk,4,18,1132
+Noise - Street/Sidewalk,4,19,1553
+Noise - Street/Sidewalk,4,20,2133
+Noise - Street/Sidewalk,4,21,2747
+Noise - Street/Sidewalk,4,22,3868
+Noise - Street/Sidewalk,4,23,4124
+Noise - Street/Sidewalk,5,0,3746
+Noise - Street/Sidewalk,5,1,2638
+Noise - Street/Sidewalk,5,2,1610
+Noise - Street/Sidewalk,5,3,1096
+Noise - Street/Sidewalk,5,4,875
+Noise - Street/Sidewalk,5,5,445
+Noise - Street/Sidewalk,5,6,245
+Noise - Street/Sidewalk,5,7,254
+Noise - Street/Sidewalk,5,8,358
+Noise - Street/Sidewalk,5,9,410
+Noise - Street/Sidewalk,5,10,471
+Noise - Street/Sidewalk,5,11,604
+Noise - Street/Sidewalk,5,12,777
+Noise - Street/Sidewalk,5,13,898
+Noise - Street/Sidewalk,5,14,934
+Noise - Street/Sidewalk,5,15,997
+Noise - Street/Sidewalk,5,16,1157
+Noise - Street/Sidewalk,5,17,1376
+Noise - Street/Sidewalk,5,18,1578
+Noise - Street/Sidewalk,5,19,2042
+Noise - Street/Sidewalk,5,20,2590
+Noise - Street/Sidewalk,5,21,3403
+Noise - Street/Sidewalk,5,22,4936
+Noise - Street/Sidewalk,5,23,4805
+Noise - Street/Sidewalk,6,0,4539
+Noise - Street/Sidewalk,6,1,3303
+Noise - Street/Sidewalk,6,2,2194
+Noise - Street/Sidewalk,6,3,1583
+Noise - Street/Sidewalk,6,4,1306
+Noise - Street/Sidewalk,6,5,696
+Noise - Street/Sidewalk,6,6,445
+Noise - Street/Sidewalk,6,7,370
+Noise - Street/Sidewalk,6,8,309
 Noise - Street/Sidewalk,6,9,278
-Noise - Street/Sidewalk,6,10,382
-Noise - Street/Sidewalk,6,11,429
-Noise - Street/Sidewalk,6,12,570
-Noise - Street/Sidewalk,6,13,713
-Noise - Street/Sidewalk,6,14,936
-Noise - Street/Sidewalk,6,15,1038
-Noise - Street/Sidewalk,6,16,1246
-Noise - Street/Sidewalk,6,17,1521
-Noise - Street/Sidewalk,6,18,1771
-Noise - Street/Sidewalk,6,19,2305
-Noise - Street/Sidewalk,6,20,3116
-Noise - Street/Sidewalk,6,21,3756
-Noise - Street/Sidewalk,6,22,4347
-Noise - Street/Sidewalk,6,23,3304
-Noise - Vehicle,0,0,545
-Noise - Vehicle,0,1,315
-Noise - Vehicle,0,2,198
-Noise - Vehicle,0,3,147
-Noise - Vehicle,0,4,138
-Noise - Vehicle,0,5,111
-Noise - Vehicle,0,6,140
-Noise - Vehicle,0,7,148
-Noise - Vehicle,0,8,240
-Noise - Vehicle,0,9,270
-Noise - Vehicle,0,10,204
+Noise - Street/Sidewalk,6,10,384
+Noise - Street/Sidewalk,6,11,428
+Noise - Street/Sidewalk,6,12,564
+Noise - Street/Sidewalk,6,13,702
+Noise - Street/Sidewalk,6,14,925
+Noise - Street/Sidewalk,6,15,1053
+Noise - Street/Sidewalk,6,16,1270
+Noise - Street/Sidewalk,6,17,1550
+Noise - Street/Sidewalk,6,18,1790
+Noise - Street/Sidewalk,6,19,2332
+Noise - Street/Sidewalk,6,20,3139
+Noise - Street/Sidewalk,6,21,3766
+Noise - Street/Sidewalk,6,22,4362
+Noise - Street/Sidewalk,6,23,3316
+Noise - Vehicle,0,0,546
+Noise - Vehicle,0,1,307
+Noise - Vehicle,0,2,197
+Noise - Vehicle,0,3,143
+Noise - Vehicle,0,4,135
+Noise - Vehicle,0,5,113
+Noise - Vehicle,0,6,143
+Noise - Vehicle,0,7,152
+Noise - Vehicle,0,8,245
+Noise - Vehicle,0,9,259
+Noise - Vehicle,0,10,201
 Noise - Vehicle,0,11,185
-Noise - Vehicle,0,12,207
+Noise - Vehicle,0,12,208
 Noise - Vehicle,0,13,188
-Noise - Vehicle,0,14,229
-Noise - Vehicle,0,15,263
-Noise - Vehicle,0,16,286
-Noise - Vehicle,0,17,337
-Noise - Vehicle,0,18,322
+Noise - Vehicle,0,14,227
+Noise - Vehicle,0,15,264
+Noise - Vehicle,0,16,289
+Noise - Vehicle,0,17,335
+Noise - Vehicle,0,18,332
 Noise - Vehicle,0,19,375
-Noise - Vehicle,0,20,399
-Noise - Vehicle,0,21,465
-Noise - Vehicle,0,22,468
-Noise - Vehicle,0,23,414
-Noise - Vehicle,1,0,327
-Noise - Vehicle,1,1,207
-Noise - Vehicle,1,2,139
+Noise - Vehicle,0,20,403
+Noise - Vehicle,0,21,461
+Noise - Vehicle,0,22,465
+Noise - Vehicle,0,23,412
+Noise - Vehicle,1,0,328
+Noise - Vehicle,1,1,211
+Noise - Vehicle,1,2,140
 Noise - Vehicle,1,3,108
 Noise - Vehicle,1,4,89
-Noise - Vehicle,1,5,120
-Noise - Vehicle,1,6,149
+Noise - Vehicle,1,5,122
+Noise - Vehicle,1,6,147
 Noise - Vehicle,1,7,151
 Noise - Vehicle,1,8,258
-Noise - Vehicle,1,9,252
-Noise - Vehicle,1,10,208
+Noise - Vehicle,1,9,242
+Noise - Vehicle,1,10,205
 Noise - Vehicle,1,11,255
 Noise - Vehicle,1,12,218
-Noise - Vehicle,1,13,193
-Noise - Vehicle,1,14,232
-Noise - Vehicle,1,15,301
-Noise - Vehicle,1,16,286
-Noise - Vehicle,1,17,280
-Noise - Vehicle,1,18,334
-Noise - Vehicle,1,19,458
-Noise - Vehicle,1,20,414
-Noise - Vehicle,1,21,496
-Noise - Vehicle,1,22,537
+Noise - Vehicle,1,13,196
+Noise - Vehicle,1,14,234
+Noise - Vehicle,1,15,304
+Noise - Vehicle,1,16,294
+Noise - Vehicle,1,17,276
+Noise - Vehicle,1,18,335
+Noise - Vehicle,1,19,443
+Noise - Vehicle,1,20,422
+Noise - Vehicle,1,21,502
+Noise - Vehicle,1,22,542
 Noise - Vehicle,1,23,461
 Noise - Vehicle,2,0,383
-Noise - Vehicle,2,1,229
-Noise - Vehicle,2,2,178
+Noise - Vehicle,2,1,231
+Noise - Vehicle,2,2,181
 Noise - Vehicle,2,3,104
-Noise - Vehicle,2,4,129
-Noise - Vehicle,2,5,134
-Noise - Vehicle,2,6,163
-Noise - Vehicle,2,7,176
+Noise - Vehicle,2,4,127
+Noise - Vehicle,2,5,136
+Noise - Vehicle,2,6,164
+Noise - Vehicle,2,7,182
 Noise - Vehicle,2,8,228
-Noise - Vehicle,2,9,239
-Noise - Vehicle,2,10,238
-Noise - Vehicle,2,11,215
-Noise - Vehicle,2,12,207
-Noise - Vehicle,2,13,220
-Noise - Vehicle,2,14,248
-Noise - Vehicle,2,15,296
-Noise - Vehicle,2,16,309
-Noise - Vehicle,2,17,334
-Noise - Vehicle,2,18,369
+Noise - Vehicle,2,9,238
+Noise - Vehicle,2,10,240
+Noise - Vehicle,2,11,204
+Noise - Vehicle,2,12,209
+Noise - Vehicle,2,13,227
+Noise - Vehicle,2,14,257
+Noise - Vehicle,2,15,297
+Noise - Vehicle,2,16,312
+Noise - Vehicle,2,17,338
+Noise - Vehicle,2,18,375
 Noise - Vehicle,2,19,453
-Noise - Vehicle,2,20,400
-Noise - Vehicle,2,21,452
-Noise - Vehicle,2,22,524
-Noise - Vehicle,2,23,441
-Noise - Vehicle,3,0,354
-Noise - Vehicle,3,1,221
-Noise - Vehicle,3,2,145
-Noise - Vehicle,3,3,108
-Noise - Vehicle,3,4,118
-Noise - Vehicle,3,5,133
-Noise - Vehicle,3,6,147
-Noise - Vehicle,3,7,201
-Noise - Vehicle,3,8,307
-Noise - Vehicle,3,9,251
-Noise - Vehicle,3,10,259
-Noise - Vehicle,3,11,328
-Noise - Vehicle,3,12,283
-Noise - Vehicle,3,13,226
-Noise - Vehicle,3,14,263
-Noise - Vehicle,3,15,302
-Noise - Vehicle,3,16,311
-Noise - Vehicle,3,17,372
-Noise - Vehicle,3,18,343
-Noise - Vehicle,3,19,407
-Noise - Vehicle,3,20,440
-Noise - Vehicle,3,21,436
-Noise - Vehicle,3,22,522
-Noise - Vehicle,3,23,450
-Noise - Vehicle,4,0,439
-Noise - Vehicle,4,1,244
-Noise - Vehicle,4,2,181
-Noise - Vehicle,4,3,121
-Noise - Vehicle,4,4,106
-Noise - Vehicle,4,5,121
-Noise - Vehicle,4,6,112
+Noise - Vehicle,2,20,399
+Noise - Vehicle,2,21,459
+Noise - Vehicle,2,22,530
+Noise - Vehicle,2,23,444
+Noise - Vehicle,3,0,359
+Noise - Vehicle,3,1,236
+Noise - Vehicle,3,2,146
+Noise - Vehicle,3,3,105
+Noise - Vehicle,3,4,119
+Noise - Vehicle,3,5,132
+Noise - Vehicle,3,6,145
+Noise - Vehicle,3,7,202
+Noise - Vehicle,3,8,309
+Noise - Vehicle,3,9,247
+Noise - Vehicle,3,10,253
+Noise - Vehicle,3,11,327
+Noise - Vehicle,3,12,282
+Noise - Vehicle,3,13,223
+Noise - Vehicle,3,14,262
+Noise - Vehicle,3,15,301
+Noise - Vehicle,3,16,334
+Noise - Vehicle,3,17,355
+Noise - Vehicle,3,18,350
+Noise - Vehicle,3,19,417
+Noise - Vehicle,3,20,445
+Noise - Vehicle,3,21,437
+Noise - Vehicle,3,22,524
+Noise - Vehicle,3,23,453
+Noise - Vehicle,4,0,432
+Noise - Vehicle,4,1,241
+Noise - Vehicle,4,2,183
+Noise - Vehicle,4,3,123
+Noise - Vehicle,4,4,108
+Noise - Vehicle,4,5,123
+Noise - Vehicle,4,6,114
 Noise - Vehicle,4,7,141
-Noise - Vehicle,4,8,257
-Noise - Vehicle,4,9,273
+Noise - Vehicle,4,8,263
+Noise - Vehicle,4,9,267
 Noise - Vehicle,4,10,228
-Noise - Vehicle,4,11,221
-Noise - Vehicle,4,12,257
-Noise - Vehicle,4,13,273
-Noise - Vehicle,4,14,302
-Noise - Vehicle,4,15,320
-Noise - Vehicle,4,16,300
-Noise - Vehicle,4,17,391
-Noise - Vehicle,4,18,425
-Noise - Vehicle,4,19,470
-Noise - Vehicle,4,20,538
-Noise - Vehicle,4,21,588
-Noise - Vehicle,4,22,682
-Noise - Vehicle,4,23,705
-Noise - Vehicle,5,0,674
-Noise - Vehicle,5,1,472
-Noise - Vehicle,5,2,341
-Noise - Vehicle,5,3,266
-Noise - Vehicle,5,4,283
-Noise - Vehicle,5,5,144
-Noise - Vehicle,5,6,140
-Noise - Vehicle,5,7,110
+Noise - Vehicle,4,11,219
+Noise - Vehicle,4,12,267
+Noise - Vehicle,4,13,272
+Noise - Vehicle,4,14,300
+Noise - Vehicle,4,15,322
+Noise - Vehicle,4,16,304
+Noise - Vehicle,4,17,395
+Noise - Vehicle,4,18,430
+Noise - Vehicle,4,19,471
+Noise - Vehicle,4,20,535
+Noise - Vehicle,4,21,601
+Noise - Vehicle,4,22,680
+Noise - Vehicle,4,23,708
+Noise - Vehicle,5,0,668
+Noise - Vehicle,5,1,473
+Noise - Vehicle,5,2,347
+Noise - Vehicle,5,3,264
+Noise - Vehicle,5,4,284
+Noise - Vehicle,5,5,147
+Noise - Vehicle,5,6,143
+Noise - Vehicle,5,7,111
 Noise - Vehicle,5,8,177
-Noise - Vehicle,5,9,222
+Noise - Vehicle,5,9,223
 Noise - Vehicle,5,10,256
-Noise - Vehicle,5,11,258
-Noise - Vehicle,5,12,250
-Noise - Vehicle,5,13,310
-Noise - Vehicle,5,14,323
-Noise - Vehicle,5,15,337
-Noise - Vehicle,5,16,307
-Noise - Vehicle,5,17,357
-Noise - Vehicle,5,18,437
+Noise - Vehicle,5,11,259
+Noise - Vehicle,5,12,255
+Noise - Vehicle,5,13,313
+Noise - Vehicle,5,14,326
+Noise - Vehicle,5,15,346
+Noise - Vehicle,5,16,313
+Noise - Vehicle,5,17,363
+Noise - Vehicle,5,18,444
 Noise - Vehicle,5,19,553
 Noise - Vehicle,5,20,516
 Noise - Vehicle,5,21,602
-Noise - Vehicle,5,22,727
-Noise - Vehicle,5,23,643
-Noise - Vehicle,6,0,690
+Noise - Vehicle,5,22,729
+Noise - Vehicle,5,23,634
+Noise - Vehicle,6,0,689
 Noise - Vehicle,6,1,474
-Noise - Vehicle,6,2,377
-Noise - Vehicle,6,3,312
-Noise - Vehicle,6,4,352
-Noise - Vehicle,6,5,213
-Noise - Vehicle,6,6,142
+Noise - Vehicle,6,2,379
+Noise - Vehicle,6,3,318
+Noise - Vehicle,6,4,359
+Noise - Vehicle,6,5,214
+Noise - Vehicle,6,6,148
 Noise - Vehicle,6,7,190
-Noise - Vehicle,6,8,165
-Noise - Vehicle,6,9,178
-Noise - Vehicle,6,10,194
-Noise - Vehicle,6,11,244
-Noise - Vehicle,6,12,300
-Noise - Vehicle,6,13,329
-Noise - Vehicle,6,14,327
-Noise - Vehicle,6,15,392
-Noise - Vehicle,6,16,460
-Noise - Vehicle,6,17,522
-Noise - Vehicle,6,18,493
-Noise - Vehicle,6,19,526
-Noise - Vehicle,6,20,676
-Noise - Vehicle,6,21,742
-Noise - Vehicle,6,22,684
-Noise - Vehicle,6,23,631
+Noise - Vehicle,6,8,168
+Noise - Vehicle,6,9,175
+Noise - Vehicle,6,10,196
+Noise - Vehicle,6,11,243
+Noise - Vehicle,6,12,309
+Noise - Vehicle,6,13,324
+Noise - Vehicle,6,14,323
+Noise - Vehicle,6,15,391
+Noise - Vehicle,6,16,466
+Noise - Vehicle,6,17,529
+Noise - Vehicle,6,18,492
+Noise - Vehicle,6,19,531
+Noise - Vehicle,6,20,680
+Noise - Vehicle,6,21,739
+Noise - Vehicle,6,22,692
+Noise - Vehicle,6,23,634

@@ -1,9 +1,9 @@
 {
-  "built_at": "2026-11-17T18:38:32+00:00",
+  "built_at": "2026-11-24T20:16:41+00:00",
   "source": "https://data.cityofnewyork.us/resource/erm2-nwe9.json",
-  "raw_rows": 3688814,
+  "raw_rows": 3704139,
   "zips": 177,
   "first_week": "2021-12-27",
-  "last_week": "2026-11-09",
-  "panel_rows": 45135
+  "last_week": "2026-11-16",
+  "panel_rows": 45312
 }

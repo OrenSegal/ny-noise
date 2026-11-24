@@ -25,17 +25,17 @@ What it cannot tell you: how loud a place is in decibels (311 records reports), 
 ### Spatial model: what goes with noise near a point
 
 <!-- results:spatial -->
-6,533 hex cells (H3 resolution 9), 785k damped complaints (from 1.05M complaint-days and 1.6M raw reports) from 2024-11-18 to 2026-11-15. Scored with spatial cross-validation: each fold holds out whole ~36 km² areas, so a cell is never judged by a model that saw its neighbours.
+6,534 hex cells (H3 resolution 9), 787k damped complaints (from 1.05M complaint-days and 1.6M raw reports) from 2024-11-25 to 2026-11-22. Scored with spatial cross-validation: each fold holds out whole ~36 km² areas, so a cell is never judged by a model that saw its neighbours.
 
 | Model (spatial CV) | Poisson deviance explained | Rank correlation | MAE per cell |
 |---|---|---|---|
-| **Full: 30 features** | **0.777** | **0.88** | **49** |
-| Residential units only (exposure) | 0.660 | 0.81 | 65 |
-| Full, random folds (leaky) | 0.832 | 0.90 | 42 |
-| Day only (06 to 22) | 0.724 | 0.87 | 28 |
-| Night only (22 to 06) | 0.770 | 0.86 | 25 |
+| **Full: 30 features** | **0.776** | **0.88** | **49** |
+| Residential units only (exposure) | 0.661 | 0.81 | 65 |
+| Full, random folds (leaky) | 0.831 | 0.90 | 42 |
+| Day only (06 to 22) | 0.730 | 0.87 | 28 |
+| Night only (22 to 06) | 0.773 | 0.86 | 25 |
 
-Urban and census factors add 0.117 of deviance over exposure alone. Spearman correlations for the per-type checks: helicopter complaints against distance to a heliport -0.34; commercial complaints against bars and clubs heard from homes +0.56; vehicle complaints against through truck routes heard from homes +0.09; street complaints against bars and clubs heard from homes +0.46; residential complaints against residential units in cell +0.83.
+Urban and census factors add 0.114 of deviance over exposure alone. Spearman correlations for the per-type checks: helicopter complaints against distance to a heliport -0.34; commercial complaints against bars and clubs heard from homes +0.56; vehicle complaints against through truck routes heard from homes +0.09; street complaints against bars and clubs heard from homes +0.46; residential complaints against residential units in cell +0.84.
 <!-- /results:spatial -->
 
 Renter share is the strongest after housing: a block in a tract with 78% renters runs about 1.5x the complaints of one with 11%, everything else equal. That is reporting propensity as much as sound, and it is why the observed / expected lens is the fairer comparison between neighbourhoods. Measured traffic volume adds little; people rarely call 311 about steady traffic. Random folds would overstate fit by about the same amount, which is why they are not the headline. Each complaint type lines up with its obvious source: helicopter complaints rise near heliports, commercial and street complaints with bar exposure at homes, residential with housing units; vehicle complaints track through truck exposure only weakly.
@@ -45,23 +45,23 @@ Strongest associations after exposure: liquor-store and bodega exposure, commerc
 ### Forecast: next week by ZIP
 
 <!-- results:forecast -->
-Scored on the most recent 52 weeks (2025-11-17 to 2026-11-09, 9,204 ZIP-weeks), which that run held out of training and model selection. The refresh job reruns every week, so the holdout slides forward a week at a time and consecutive scorecards share all but one week. This block is rewritten from `data/metrics.json` by `python -m nynoise.readme`.
+Scored on the most recent 52 weeks (2025-11-24 to 2026-11-16, 9,204 ZIP-weeks), which that run held out of training and model selection. The refresh job reruns every week, so the holdout slides forward a week at a time and consecutive scorecards share all but one week. This block is rewritten from `data/metrics.json` by `python -m nynoise.readme`.
 
 | Forecast | MAE | WAPE | sMAPE | MASE | R² |
 |---|---|---|---|---|---|
-| Exponential smoothing | 22.63 | 26.5% | 29.2% | 0.91 | 0.44 |
-| Random forest | 22.68 | 26.6% | 28.2% | 0.91 | 0.33 |
-| Blend of last week and 4-week mean | 22.78 | 26.7% | 29.6% | 0.91 | 0.49 |
-| Last week (persistence) | 23.67 | 27.8% | 33.2% | 0.95 | 0.58 |
-| Mean of last 4 weeks | 24.27 | 28.5% | 29.6% | 0.97 | 0.18 |
-| **Histogram gradient boosting (selected)** | **24.50** | **28.7%** | **28.8%** | **0.98** | **0.14** |
-| Same week last year | 40.40 | 47.4% | 40.7% | 1.62 | -2.25 |
+| Random forest | 22.46 | 26.3% | 28.3% | 0.90 | 0.40 |
+| Exponential smoothing | 22.59 | 26.5% | 29.2% | 0.90 | 0.44 |
+| Blend of last week and 4-week mean | 22.73 | 26.6% | 29.7% | 0.91 | 0.49 |
+| Last week (persistence) | 23.58 | 27.6% | 33.3% | 0.94 | 0.58 |
+| **Histogram gradient boosting (selected)** | **23.98** | **28.1%** | **28.8%** | **0.96** | **0.28** |
+| Mean of last 4 weeks | 24.26 | 28.4% | 29.6% | 0.97 | 0.18 |
+| Same week last year | 39.86 | 46.7% | 40.8% | 1.60 | -2.16 |
 
-Skill is the reduction in weighted error (WAPE); intervals resample whole weeks. Against exponential smoothing, the best baseline on this holdout: -8.3% (95% interval -17.1% to -1.0%, ahead in 12 of 52 weeks); the interval excludes zero. Against last week: -3.5% (95% interval -12.7% to +4.8%, ahead in 25 of 52 weeks). Rolling origin: ahead of that quarter's best baseline in 1 of 4 quarters, ahead of last week in 3; behind last week on RMSE (219 against 154). MASE is scaled by the in-sample error of repeating last week. Exponential smoothing uses the weight (0.5) that did best on the training weeks.
+Skill is the reduction in weighted error (WAPE); intervals resample whole weeks. Against exponential smoothing, the best baseline on this holdout: -6.2% (95% interval -13.6% to +0.7%, ahead in 13 of 52 weeks); the interval includes zero, so the edge over that baseline is not established. Against last week: -1.7% (95% interval -9.7% to +5.1%, ahead in 26 of 52 weeks). Rolling origin: ahead of that quarter's best baseline in 0 of 4 quarters, ahead of last week in 3; behind last week on RMSE (200 against 152). MASE is scaled by the in-sample error of repeating last week. Exponential smoothing uses the weight (0.5) that did best on the training weeks.
 
-Model choice: random forest had the lower cross-validated error than the published histogram gradient boosting by 0.0006 (standard error 0.0006 over 4 folds) and did not replace it; a challenger takes over only when its gain exceeds the standard error.
+Model choice: random forest had the lower cross-validated error than the published histogram gradient boosting by 0.0001 (standard error 0.0004 over 4 folds) and did not replace it; a challenger takes over only when its gain exceeds the standard error.
 
-80% intervals covered 80.3% of the holdout; median ZIP 81%; by volume: low-volume ZIPs 77.8%; mid-volume ZIPs 80.5%; high-volume ZIPs 82.7%.
+80% intervals covered 79.0% of the holdout; median ZIP 81%; by volume: low-volume ZIPs 77.1%; mid-volume ZIPs 79.5%; high-volume ZIPs 80.3%.
 <!-- /results:forecast -->
 
 The model lags big jumps in the busiest ZIPs, and the first holdout quarter holds an unexplained citywide surge (Nov 24 to Dec 8, 2025) that no forecast here anticipated.
